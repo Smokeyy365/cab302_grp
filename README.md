@@ -83,8 +83,8 @@ We will evaluate and justify the selection of a project management tool:
 ---
 
 ## ✅ Next Steps
-- [✅] Set up GitHub repo and branch structure  
-- [✅] Choose final project management tool  
+- [x] Set up GitHub repo and branch structure  
+- [x] Choose final project management tool  
 - [ ] Begin prototyping core UI (planner + dashboard)  
 - [ ] Implement Google Sign-In and Calendar Sync  
 
