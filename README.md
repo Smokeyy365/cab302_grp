@@ -1,4 +1,4 @@
-# 🎓 EduPlanner — Smart Educational Task & Assessment Planner
+# 🎓 EduPlanner — Smart Educational Task & Assessment Planner.
 
 **EduPlanner** is a smart, integrated education-focused app that helps students plan, track, and manage their academic workloads. With a strong focus on usability, integration, and clarity, the app enables students to break down assignments, track progress via rubrics, and manage time efficiently.
 
