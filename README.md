@@ -74,19 +74,11 @@ We will evaluate and justify the selection of a project management tool:
 
 ---
 
-# Checkpoints
-
-## ✅ Checkpoint 1 Steps
-- [x] Set up GitHub repo and branch structure 
-- [x] Choose final project management tool - Github Projects
-- [ ] Team Compact
-- [x] Communications Setup
-- [ ] Initial Research
-
-
-## Checkpoint 2 Steps
-- [ ] Begin prototyping core UI (planner + dashboard)  
-- [ ] Implement Google Sign-In and Calendar Sync
+## ✅ Next Steps
+- [x] Set up GitHub repo and branch structure  
+- [x] Choose final project management tool  
+- [x] Begin prototyping core UI (planner + dashboard)  
+- [ ] Implement Google Sign-In and Calendar Sync  
 
 ---
 
