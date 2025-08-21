@@ -1,0 +1,1 @@
+package com.cab302.eduplanner.repository; public class RubricRepository {}
