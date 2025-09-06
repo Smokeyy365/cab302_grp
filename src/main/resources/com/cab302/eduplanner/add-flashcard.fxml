@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.cab302.eduplanner.controller.AddFlashcardController"
+      spacing="10" alignment="CENTER"
+      prefWidth="300" prefHeight="220">
+
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <Label text="Add New Flashcard" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <TextField fx:id="questionField" promptText="Enter question"/>
+    <TextField fx:id="answerField" promptText="Enter answer"/>
+
+    <!-- Inline validation error message -->
+    <Label fx:id="errorLabel" textFill="red" visible="false"/>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Save" fx:id="saveButton"/>
+        <Button text="Cancel" fx:id="cancelButton"/>
+    </HBox>
+</VBox>

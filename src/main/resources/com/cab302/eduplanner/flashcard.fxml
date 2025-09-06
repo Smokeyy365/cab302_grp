@@ -17,7 +17,6 @@
             <Label text="FLASHCARDS"
                    style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
             <Button text="Home" fx:id="homeButton"/>
-            <Button text="Manage" fx:id="manageButton"/>
         </HBox>
     </top>
 
@@ -44,13 +43,19 @@
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
+
+            <!-- Action buttons -->
             <HBox spacing="10" alignment="center">
                 <Button text="Shuffle" fx:id="shuffleButton"/>
                 <Button text="Flip" fx:id="flipButton"/>
-                <Button text="Reset" fx:id="resetButton"/>   <!-- NEW -->
-                <Button text="Finish" fx:id="finishButton"/> <!-- NEW -->
+                <Button text="Add" fx:id="addButton"/>
+                <Button text="Edit" fx:id="editButton"/>
+                <Button text="Delete" fx:id="deleteButton"/>
+                <Button text="Reset" fx:id="resetButton"/>
+                <Button text="Finish" fx:id="finishButton"/>
             </HBox>
 
+            <!-- Progress tracking -->
             <ProgressBar fx:id="progressBar" prefWidth="300"/>
             <Label fx:id="progressLabel" text="Progress: 0/0"/>
         </VBox>
