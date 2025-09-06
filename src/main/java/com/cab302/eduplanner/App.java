@@ -10,9 +10,10 @@ import java.io.IOException;
 public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        // Loads flashcard.fxml from resources/com/cab302/eduplanner/
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("flashcard.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 960, 600);
+        stage.setTitle("EduPlanner — Flashcards");
         stage.setScene(scene);
         stage.show();
     }

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.cab302.eduplanner.controller.FlashcardController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <!-- Top Header -->
+    <top>
+        <HBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Label text="FLASHCARDS"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Button text="Home" fx:id="homeButton"/>
+            <Button text="Manage" fx:id="manageButton"/>
+        </HBox>
+    </top>
+
+    <!-- Center Flashcard Area -->
+    <center>
+        <StackPane fx:id="flashcardPane" prefWidth="400" prefHeight="200"
+                   style="-fx-border-color: #bbb; -fx-background-color: white;">
+            <Label fx:id="flashcardText" wrapText="true"
+                   style="-fx-font-size: 18px;"/>
+        </StackPane>
+    </center>
+
+    <!-- Left/Right Navigation -->
+    <left>
+        <Button text="&lt;" fx:id="prevButton" maxHeight="Infinity"/>
+    </left>
+    <right>
+        <Button text="&gt;" fx:id="nextButton" maxHeight="Infinity"/>
+    </right>
+
+    <!-- Bottom Controls -->
+    <bottom>
+        <VBox spacing="10" alignment="center">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <HBox spacing="10" alignment="center">
+                <Button text="Shuffle" fx:id="shuffleButton"/>
+                <Button text="Flip" fx:id="flipButton"/>
+                <Button text="Reset" fx:id="resetButton"/>   <!-- NEW -->
+                <Button text="Finish" fx:id="finishButton"/> <!-- NEW -->
+            </HBox>
+
+            <ProgressBar fx:id="progressBar" prefWidth="300"/>
+            <Label fx:id="progressLabel" text="Progress: 0/0"/>
+        </VBox>
+    </bottom>
+</BorderPane>
