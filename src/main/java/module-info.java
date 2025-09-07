@@ -4,6 +4,7 @@ module com.cab302.eduplanner {
 
     requires net.synedra.validatorfx;
     requires org.kordamp.bootstrapfx.core;
+    requires jbcrypt;
 
     // for reflection access by FXML
     opens com.cab302.eduplanner.controller to javafx.fxml;

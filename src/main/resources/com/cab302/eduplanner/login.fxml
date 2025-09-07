@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.cab302.eduplanner.controller.LoginController">
+    <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+        <Label text="EduPlanner — Login"/>
+        <TextField fx:id="usernameField" promptText="Username"/>
+        <PasswordField fx:id="passwordField" promptText="Password"/>
+        <HBox spacing="10">
+            <children>
+                <Button fx:id="loginButton" text="Login" onAction="#onLogin"/>
+                <Button fx:id="registerButton" text="Register" onAction="#onRegister"/>
+            </children>
+        </HBox>
+        <Label fx:id="messageLabel" textFill="red"/>
+    </VBox>
+</AnchorPane>
