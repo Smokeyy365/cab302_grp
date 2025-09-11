@@ -7,7 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import java.io.IOException;
 
+import com.cab302.eduplanner.App;
 import com.cab302.eduplanner.model.Flashcard;
 
 import java.util.*;
@@ -15,7 +17,7 @@ import java.util.*;
 public class FlashcardController {
 
     // UI elements from flashcard.fxml
-    @FXML private Button homeButton;
+    @FXML private Button dashboardButton;
     @FXML private Button prevButton, nextButton;
     @FXML private Button shuffleButton, flipButton;
     @FXML private Button resetButton, finishButton;
@@ -47,7 +49,16 @@ public class FlashcardController {
         resetButton.setOnAction(e -> resetDeck());
         finishButton.setOnAction(e -> finishDeck());
 
-        homeButton.setOnAction(e -> System.out.println("TODO: Navigate Home"));
+        // temporary link from home button to dashboard
+        dashboardButton.setOnAction(e -> {
+            try {
+                Stage stage = (Stage) dashboardButton.getScene().getWindow();
+                App.changeScene(stage, "/com/cab302/eduplanner/dashboard.fxml", "EduPlanner — Dashboard");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+
         addButton.setOnAction(e -> openAddFlashcardDialog());
         editButton.setOnAction(e -> openEditFlashcardDialog());
         deleteButton.setOnAction(e -> deleteFlashcard());
