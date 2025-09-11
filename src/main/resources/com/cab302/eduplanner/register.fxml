@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.cab302.eduplanner.controller.LoginController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <children>
+        <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+              AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+            <Label text="EduPlanner — Login"/>
+            <TextField fx:id="usernameField" promptText="Username"/>
+            <PasswordField fx:id="passwordField" promptText="Password"/>
+            <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password"/>
+            <HBox spacing="10">
+                <children>
+                    <Button fx:id="registerButton" text="Register" onAction="#onRegister"/>
+                    <Button fx:id="loginButton" text="Already have an account?" onAction="#openLogin"/>
+                </children>
+            </HBox>
+            <Label fx:id="messageLabel" textFill="red"/>
+        </VBox>
+    </children>
+
+</AnchorPane>

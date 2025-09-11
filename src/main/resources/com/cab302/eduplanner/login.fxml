@@ -16,7 +16,7 @@
         <HBox spacing="10">
             <children>
                 <Button fx:id="loginButton" text="Login" onAction="#onLogin"/>
-                <Button fx:id="registerButton" text="Register" onAction="#onRegister"/>
+                <Button fx:id="registerButton" text="Register" onAction="#openRegister"/>
             </children>
         </HBox>
         <Label fx:id="messageLabel" textFill="red"/>
