@@ -13,12 +13,20 @@ public class App extends Application {
         // Loads flashcard.fxml from resources/com/cab302/eduplanner/
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 960, 600);
-        stage.setTitle("EduPlanner — Dickhead");
+        stage.setTitle("EduPlanner — Login");
         stage.setScene(scene);
         stage.show();
     }
 
     public static void main(String[] args) {
         launch();
+    }
+
+    public static void changeScene(Stage stage, String fxml, String title) throws IOException {
+    FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
+    Scene scene = new Scene(fxmlLoader.load(), 960, 600);
+    stage.setTitle(title);
+    stage.setScene(scene);
+    stage.show();
     }
 }

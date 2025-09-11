@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="eduplanner" />
+        <module name="javafx-boiler" />
       </profile>
     </annotationProcessing>
   </component>

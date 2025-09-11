@@ -1,7 +1,7 @@
 package com.cab302.eduplanner.controller;
 
 import com.cab302.eduplanner.service.AuthService;
-
+import com.cab302.eduplanner.App;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,11 +47,9 @@ public class LoginController {
 
     private void openMainUI() {
         try {
-            FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/com/cab302/eduplanner/flashcard.fxml"));
-            Scene scene = new Scene(loader.load(), 960, 600);
-            Stage stage = (Stage) ((Node) usernameField).getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("EduPlanner — Flashcards");
+            // Get current stage by accessing any node in the scene
+            Stage stage = (Stage) loginButton.getScene().getWindow();
+            App.changeScene(stage,"/com/cab302/eduplanner/flashcard.fxml",  "EduPlanner — Main");
         } catch (IOException e) {
             messageLabel.setText("Unable to open main UI.");
         }
