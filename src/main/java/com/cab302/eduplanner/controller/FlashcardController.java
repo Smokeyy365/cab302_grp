@@ -16,6 +16,7 @@ public class FlashcardController {
 
     // UI elements from flashcard.fxml
     @FXML private Button homeButton;
+    @FXML private Button uploadButton;
     @FXML private Button prevButton, nextButton;
     @FXML private Button shuffleButton, flipButton;
     @FXML private Button resetButton, finishButton;
@@ -29,6 +30,8 @@ public class FlashcardController {
     private int currentIndex = 0;
     private boolean showingQuestion = true;
     private boolean finished = false;
+
+    private Stage addFlashcardStage;        // track Add popup so multiple aren't created
 
     @FXML
     public void initialize() {
@@ -48,6 +51,7 @@ public class FlashcardController {
         finishButton.setOnAction(e -> finishDeck());
 
         homeButton.setOnAction(e -> System.out.println("TODO: Navigate Home"));
+        uploadButton.setOnAction(e -> System.out.println("TODO: Upload to Google Drive"));
         addButton.setOnAction(e -> openAddFlashcardDialog());
         editButton.setOnAction(e -> openEditFlashcardDialog());
         deleteButton.setOnAction(e -> deleteFlashcard());
@@ -152,13 +156,21 @@ public class FlashcardController {
     // Add
     private void openAddFlashcardDialog() {
         try {
+            if (addFlashcardStage != null && addFlashcardStage.isShowing()) {
+                addFlashcardStage.toFront();
+                return;
+            }
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/cab302/eduplanner/add-flashcard.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();
             stage.setTitle("Add Flashcard");
             stage.setScene(new Scene(root));
-            stage.showAndWait();
+
+            addFlashcardStage.setOnHidden(e -> addFlashcardStage = null);
+
+            addFlashcardStage.showAndWait();
 
             AddFlashcardController controller = loader.getController();
             Flashcard newCard = controller.getNewFlashcard();
@@ -168,6 +180,7 @@ public class FlashcardController {
                 updateFlashcardView();
             }
         } catch (Exception ex) {
+            System.err.println("Error opening Add Flashcard dialog: " +ex.getMessage());
             ex.printStackTrace();
         }
     }

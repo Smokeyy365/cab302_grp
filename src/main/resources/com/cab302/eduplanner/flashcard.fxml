@@ -17,6 +17,7 @@
             <Label text="FLASHCARDS"
                    style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
             <Button text="Home" fx:id="homeButton"/>
+            <BUtton text="Upload" fx:id="uploadButton"/>
         </HBox>
     </top>
 
