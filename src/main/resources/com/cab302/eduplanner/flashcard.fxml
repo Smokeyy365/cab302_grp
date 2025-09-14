@@ -7,7 +7,8 @@
 <BorderPane prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/17.0.12"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.cab302.eduplanner.controller.FlashcardController">
+            fx:controller="com.cab302.eduplanner.controller.FlashcardController"
+            stylesheets="@styles/flashcard.css">
 
     <!-- Top Header -->
     <top>
@@ -16,34 +17,52 @@
                 <Insets bottom="10" left="10" right="10" top="10" />
             </padding>
 
-            <!-- Title on left -->
-            <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="FLASHCARDS" />
+            <!-- Title styled like login page -->
+            <Label text="FLASHCARDS" styleClass="app-title" />
 
-            <!-- Buttons on right -->
+            <!-- Buttons -->
             <HBox spacing="5">
-                <Button fx:id="dashboardButton" text="Dashboard" />
-                <Button fx:id="uploadButton" text="Upload to Google Drive" />
+                <Button fx:id="dashboardButton" text="Dashboard" styleClass="secondary"/>
+                <Button fx:id="uploadButton" text="Upload" styleClass="secondary"/>
             </HBox>
         </HBox>
     </top>
 
-    <!-- Center Flashcard Area -->
-    <center>
-        <StackPane fx:id="flashcardPane" prefHeight="200" prefWidth="400"
-                   style="-fx-border-color: #bbb; -fx-background-color: white;">
-            <Label fx:id="flashcardText"
-                   style="-fx-font-size: 18px;"
-                   wrapText="true" />
-        </StackPane>
-    </center>
-
-    <!-- Left/Right Navigation -->
+    <!-- Sidebar for Folders/Decks -->
     <left>
-        <Button fx:id="prevButton" maxHeight="Infinity" text="&lt;" />
+        <VBox spacing="10" prefWidth="220" style="-fx-background-color: #ffffff; -fx-padding: 10;">
+            <Label text="Subjects" styleClass="app-title"/>
+
+            <!-- Folder + Deck tree -->
+            <TreeView fx:id="folderTree" VBox.vgrow="ALWAYS"/>
+
+            <!-- Action buttons -->
+            <HBox spacing="5">
+                <Button fx:id="newFolderButton" text="New Folder" styleClass="primary"/>
+                <Button fx:id="newDeckButton" text="New Deck" styleClass="primary"/>
+            </HBox>
+            <HBox spacing="5">
+                <Button fx:id="renameButton" text="Rename" styleClass="secondary"/>
+                <Button fx:id="deleteFolderDeckButton" text="Delete" styleClass="secondary"/>
+            </HBox>
+        </VBox>
     </left>
-    <right>
-        <Button fx:id="nextButton" maxHeight="Infinity" text="&gt;" />
-    </right>
+
+    <!-- Center with arrows beside flashcard -->
+    <center>
+        <HBox alignment="CENTER" spacing="10">
+            <!-- Prev button -->
+            <Button fx:id="prevButton" text="⟨" styleClass="nav-arrow"/>
+
+            <!-- Flashcard area -->
+            <StackPane fx:id="flashcardPane" prefHeight="200" prefWidth="380">
+                <Label fx:id="flashcardText" wrapText="true" />
+            </StackPane>
+
+            <!-- Next button -->
+            <Button fx:id="nextButton" text="⟩" styleClass="nav-arrow"/>
+        </HBox>
+    </center>
 
     <!-- Bottom Controls -->
     <bottom>
@@ -56,17 +75,17 @@
             <HBox alignment="CENTER" spacing="50">
                 <!-- Left group -->
                 <HBox spacing="5">
-                    <Button fx:id="shuffleButton" text="Shuffle" />
-                    <Button fx:id="flipButton" text="Flip" />
-                    <Button fx:id="finishButton" text="Finish" />
-                    <Button fx:id="resetButton" text="Reset" />
+                    <Button fx:id="shuffleButton" text="Shuffle" styleClass="secondary"/>
+                    <Button fx:id="flipButton" text="Flip" styleClass="secondary"/>
+                    <Button fx:id="finishButton" text="Finish" styleClass="secondary"/>
+                    <Button fx:id="resetButton" text="Reset" styleClass="secondary"/>
                 </HBox>
 
                 <!-- Right group -->
                 <HBox spacing="5">
-                    <Button fx:id="addButton" text="Add" />
-                    <Button fx:id="editButton" text="Edit" />
-                    <Button fx:id="deleteButton" text="Delete" />
+                    <Button fx:id="addButton" text="Add" styleClass="secondary"/>
+                    <Button fx:id="editButton" text="Edit" styleClass="secondary"/>
+                    <Button fx:id="deleteButton" text="Delete" styleClass="secondary"/>
                 </HBox>
             </HBox>
 

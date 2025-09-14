@@ -1,0 +1,106 @@
+/* ====================== */
+/* Flashcards Page Styles */
+/* ====================== */
+
+/* Flashcard card area */
+#flashcardPane {
+    -fx-pref-width: 380;   /* slightly wider like a card */
+    -fx-pref-height: 200;
+    -fx-background-color: -color-primary;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0.2, 0, 3);
+    -fx-padding: 20;
+    -fx-alignment: center;
+}
+
+#flashcardText {
+    -fx-font-size: 20px;
+    -fx-font-weight: 600;
+    -fx-text-fill: white;
+    -fx-alignment: center;
+}
+
+/* Navigation arrows */
+.nav-arrow {
+    -fx-background-radius: 4;
+    -fx-background-color: white;
+    -fx-border-color: -color-primary;
+    -fx-border-width: 1;
+    -fx-text-fill: -color-primary;
+    -fx-font-size: 18px;
+    -fx-padding: 6 14;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0.1, 0, 1);
+}
+
+.nav-arrow:hover {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: white;
+}
+
+/* Sidebar (folders + decks) */
+#folderTree {
+    -fx-background-color: white;
+    -fx-border-color: -color-primary;
+    -fx-border-radius: 6;
+    -fx-padding: 4;
+}
+
+/* TreeView cells (rows) */
+#folderTree .tree-cell {
+    -fx-background-color: white;
+    -fx-text-fill: -color-text;
+    -fx-padding: 6 8;
+    -fx-font-size: 13px;
+}
+
+/* Hover row */
+#folderTree .tree-cell:hover {
+    -fx-background-color: rgba(38, 92, 75, 0.06); /* faint green tint */
+}
+
+/* Selected row */
+#folderTree .tree-cell:filled:selected {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: white;
+}
+
+/* Folder labels bold */
+#folderTree .tree-cell:filled:selected .text,
+#folderTree .tree-cell:filled .text {
+    -fx-font-weight: 600;
+}
+
+/* Action buttons in sidebar */
+#newFolderButton, #newDeckButton {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 6 12 6 12;
+}
+
+#newFolderButton:hover, #newDeckButton:hover {
+    -fx-background-color: derive(-color-primary, -10%);
+}
+
+#renameButton, #deleteFolderDeckButton {
+    -fx-background-color: white;
+    -fx-text-fill: -color-primary;
+    -fx-border-color: -color-primary;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-padding: 6 12 6 12;
+}
+
+#renameButton:hover, #deleteFolderDeckButton:hover {
+    -fx-background-color: rgba(38, 92, 75, 0.06);
+}
+
+/* Progress bar styling */
+.progress-bar {
+    -fx-accent: -color-primary;
+    -fx-control-inner-background: #e5e7eb; /* light gray */
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
