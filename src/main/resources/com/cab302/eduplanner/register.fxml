@@ -2,15 +2,21 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.cab302.eduplanner.controller.LoginController"
             prefHeight="400.0" prefWidth="600.0">
 
+    <children>
         <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
-              AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
-            <Label text="EduPlanner — Login"/>
+              AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20" styleClass="auth-container">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Label text="EduPlanner - Register" styleClass="app-title"/>
             <TextField fx:id="firstNameField" promptText="First Name"/>
             <TextField fx:id="lastNameField" promptText="Last Name"/>
             <TextField fx:id="emailField" promptText="Email"/>
@@ -18,13 +24,15 @@
             <TextField fx:id="usernameField" promptText="Username"/>
             <PasswordField fx:id="passwordField" promptText="Password"/>
             <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password"/>
-            <HBox spacing="10">
+            <HBox spacing="10" styleClass="actions-row">
                 <children>
-                    <Button fx:id="registerButton" text="Register" onAction="#onRegister"/>
-                    <Button fx:id="loginButton" text="Already have an account?" onAction="#openLogin"/>
+                    <Button fx:id="registerButton" text="Register" onAction="#onRegister" styleClass="primary"/>
+                    <Button fx:id="loginButton" text="Already have an account?" onAction="#openLogin" styleClass="secondary"/>
                 </children>
             </HBox>
-            <Label fx:id="messageLabel" textFill="red"/>
+            <Label fx:id="messageLabel" styleClass="error-text"/>
         </VBox>
+    </children>
 
 </AnchorPane>
+

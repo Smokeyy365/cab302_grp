@@ -1,0 +1,88 @@
+/* Global application styles for EduPlanner */
+
+/* Root theme tokens (looked-up colors) */
+.root {
+    -color-primary: #265C4B; /* dark teal green */
+    -color-accent: #3B82F6;  /* blue-600 */
+    -color-danger: #dc2626;  /* red-600 */
+    -color-text: #111827;    /* gray-900 */
+    -color-muted: #6b7280;   /* gray-500 */
+
+    -fx-font-family: "Segoe UI", "Inter", Arial, sans-serif;
+    -fx-text-fill: -color-text;
+    -fx-background-color: #FAF9F6; /* app background */
+}
+
+/* Containers */
+.auth-container {
+    /* Optional card-like look; comment out if undesired */
+    -fx-background-color: transparent;
+    /* You can set spacing/padding here if you want layout via CSS */
+    /* -fx-spacing: 12; */
+    /* -fx-padding: 20 20 20 20; */
+}
+
+/* Typography */
+.label {
+    -fx-text-fill: -color-text;
+}
+
+.label.app-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -color-primary;
+}
+
+/* Inputs */
+.text-field, .password-field {
+    -fx-background-color: #f3f4f6; /* light gray */
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-border-color: derive(-color-muted, 30%);
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-padding: 8 10 8 10;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: -color-primary;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.2), 6, 0.1, 0, 1);
+}
+
+/* Buttons */
+.button {
+    -fx-background-radius: 6;
+    -fx-padding: 8 16 8 16;
+    -fx-font-weight: 600;
+}
+
+.button.primary {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: white;
+}
+
+.button.primary:hover {
+    -fx-background-color: derive(-color-primary, 10%);
+}
+
+.button.secondary {
+    -fx-background-color: transparent;
+    -fx-border-color: -color-primary;
+    -fx-border-width: 1;
+    -fx-text-fill: -color-primary;
+}
+
+.button.secondary:hover {
+    -fx-background-color: rgba(37,99,235,0.06);
+}
+
+/* Messages */
+.error-text {
+    -fx-text-fill: -color-danger;
+    -fx-font-weight: 600;
+}
+
+/* Layout helpers */
+.actions-row {
+    -fx-padding: 10 0 0 0;
+}
