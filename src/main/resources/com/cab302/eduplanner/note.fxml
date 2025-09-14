@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.cab302.eduplanner.controller.NoteController">
+
+    <!-- Sidebar: folders + notes -->
+    <left>
+        <VBox spacing="10" style="-fx-background-color: #f4f4f4;" prefWidth="220">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <Label text="Folders &amp; Notes" style="-fx-font-weight: bold; -fx-font-size: 14;" />
+            <TreeView fx:id="folderTree" prefHeight="400" prefWidth="200"/>
+            <HBox spacing="5">
+                <Button fx:id="addFolderButton" text="Add Folder" />
+                <Button fx:id="addNoteButton" text="Add Note" />
+            </HBox>
+            <HBox spacing="5">
+                <Button fx:id="renameButton" text="Rename" />
+                <Button fx:id="deleteButton" text="Delete" />
+            </HBox>
+            <Button fx:id="dashboardButton" text="Back to Dashboard" />
+        </VBox>
+    </left>
+
+    <!-- Main editor -->
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <TextField fx:id="titleField" promptText="Note Title"
+                       style="-fx-font-size: 16; -fx-font-weight: bold;" />
+            <TextArea fx:id="contentArea" promptText="Write your note here..."
+                      wrapText="true" prefHeight="400" />
+            <HBox spacing="10">
+                <Button fx:id="saveButton" text="Save" />
+                <Button fx:id="cancelButton" text="Cancel" />
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

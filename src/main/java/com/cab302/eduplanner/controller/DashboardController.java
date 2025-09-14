@@ -72,6 +72,7 @@ public class DashboardController {
         detailButton.setOnAction(e -> info("Tasks detailed view TBD"));
 
         flashcardsTile.setOnAction(e -> navigate("/com/cab302/eduplanner/flashcard.fxml", "EduPlanner — Flashcards"));
+        notesTile.setOnAction( e -> navigate("/com/cab302/eduplanner/note.fxml", "EduPlanner — Notes"));
         pomodoroTile.setDisable(true);
 
         render();
