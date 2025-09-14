@@ -1,24 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.cab302.eduplanner.controller.LoginController">
-    <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
-          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+<AnchorPane prefHeight="287.0" prefWidth="435.0" style="-fx-background-color: #FAF9F6;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cab302.eduplanner.controller.LoginController">
+    <VBox alignment="CENTER" layoutX="20.0" layoutY="16.0" prefHeight="256.0" prefWidth="396.0" spacing="10.0" style="-fx-background-color: #FAF9F6;" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="19.0" AnchorPane.topAnchor="16.0">
         <padding>
-            <Insets top="20" right="20" bottom="20" left="20"/>
+            <Insets bottom="20" left="20" right="20" top="20" />
         </padding>
-        <Label text="EduPlanner — Login"/>
-        <TextField fx:id="usernameField" promptText="Username"/>
-        <PasswordField fx:id="passwordField" promptText="Password"/>
-        <HBox spacing="10">
+        <Label contentDisplay="CENTER" text="EduPlanner — Login">
+         <font>
+            <Font name="Calibri Bold" size="27.0" />
+         </font></Label>
+        <TextField fx:id="usernameField" promptText="Username" style="-fx-background-color: lightgray;">
+         <cursor>
+            <Cursor fx:constant="TEXT" />
+         </cursor></TextField>
+        <PasswordField fx:id="passwordField" prefHeight="25.0" prefWidth="245.0" promptText="Password" style="-fx-background-color: lightgray;" />
+        <HBox alignment="CENTER" spacing="10" style="-fx-padding: 10,0,0,0;">
             <children>
-                <Button fx:id="loginButton" text="Login" onAction="#onLogin"/>
-                <Button fx:id="registerButton" text="Register" onAction="#openRegister"/>
+                <Button fx:id="loginButton" alignment="CENTER" onAction="#onLogin" style="-fx-pref-width: 100; -fx-background-color: #265C4B;" text="Login" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Calibri Bold" size="18.0" />
+               </font></Button>
+                <Button fx:id="registerButton" alignment="CENTER" contentDisplay="CENTER" onAction="#openRegister" style="-fx-pref-width: 100; -fx-background-color: #265C4B;" text="Register" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Calibri Bold" size="18.0" />
+               </font></Button>
             </children>
         </HBox>
-        <Label fx:id="messageLabel" textFill="red"/>
+        <Label fx:id="messageLabel" textFill="red" />
     </VBox>
 </AnchorPane>

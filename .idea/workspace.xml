@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="751c1d7f-a4a1-4bfd-a722-22bf9669f28f" name="Changes" comment="Enhance user registration and authentication: add email and name fields, migrate to database storage">
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/register.fxml" afterDir="false" />
+    <list default="true" id="751c1d7f-a4a1-4bfd-a722-22bf9669f28f" name="Changes" comment="Refactor registration UI and update UserRepository: remove unused imports, streamline layout, and add optional method for user retrieval">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/login.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/login.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,7 +179,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757842132260</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Refactor registration UI and update UserRepository: remove unused imports, streamline layout, and add optional method for user retrieval">
+      <option name="closed" value="true" />
+      <created>1757842246095</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1757842246095</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -202,6 +211,7 @@
     <MESSAGE value="Fix login/register navi and set Dashboard as landing page&#10;- added enter and arrow key navi&#10;- updated stage handling&#10;- changed login redirect&#10;- added requires java.sql to module-info so DatabaseConnection compiles" />
     <MESSAGE value="Polish Flashcards CRUD popups&#10;- prevent multiple popups&#10;- added delete confirmation&#10;- added enter/arrow/escape navi for popups" />
     <MESSAGE value="Enhance user registration and authentication: add email and name fields, migrate to database storage" />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhance user registration and authentication: add email and name fields, migrate to database storage" />
+    <MESSAGE value="Refactor registration UI and update UserRepository: remove unused imports, streamline layout, and add optional method for user retrieval" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor registration UI and update UserRepository: remove unused imports, streamline layout, and add optional method for user retrieval" />
   </component>
 </project>
