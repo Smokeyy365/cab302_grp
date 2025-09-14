@@ -16,6 +16,9 @@ public class LoginController {
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private PasswordField confirmPasswordField;
+    @FXML private TextField emailField;
+    @FXML private TextField firstNameField;
+    @FXML private TextField lastNameField;
     @FXML private Button loginButton;
     @FXML private Button registerButton;
     @FXML private Label messageLabel;
@@ -131,6 +134,9 @@ public class LoginController {
     @FXML
     private void onRegister(ActionEvent event) {
         String u = usernameField.getText();
+        String email = emailField.getText();
+        String fname = firstNameField.getText();
+        String lname = lastNameField.getText();
         String p = passwordField.getText();
         String cp = confirmPasswordField.getText();
 
@@ -139,7 +145,12 @@ public class LoginController {
             return;
         }
 
-        boolean ok = auth.register(u, p);
+        if (u.isBlank() || email.isBlank() || fname.isBlank() || lname.isBlank() || p.isBlank()) {
+            messageLabel.setText("All fields are required.");
+            return;
+        }
+
+        boolean ok = auth.register(u, email, fname, lname, p);
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         try {

@@ -4,14 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="751c1d7f-a4a1-4bfd-a722-22bf9669f28f" name="Changes" comment="Polish Flashcards CRUD popups&#10;- prevent multiple popups&#10;- added delete confirmation&#10;- added enter/arrow/escape navi for popups">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/controller/NoteController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/model/Folder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/model/Note.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/note.fxml" afterDir="false" />
+    <list default="true" id="751c1d7f-a4a1-4bfd-a722-22bf9669f28f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.agent.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.edit.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/controller/DashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/controller/DashboardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/dashboard.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/dashboard.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/controller/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/register.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users.properties" beforeDir="false" afterPath="$PROJECT_DIR$/users.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +57,10 @@
   &quot;associatedIndex&quot;: 8
 }</component>
   <component name="ProjectId" id="32JRi0cvgLcfGyZ0IOLgJTA8XaF" />
+  <component name="ProjectLevelVcsManager">
+    <OptionsSetting value="false" id="Update" />
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
