@@ -4,15 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="751c1d7f-a4a1-4bfd-a722-22bf9669f28f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.agent.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.edit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/cab302/eduplanner/service/AuthService.java" afterDir="false" />
+    <list default="true" id="751c1d7f-a4a1-4bfd-a722-22bf9669f28f" name="Changes" comment="Enhance user registration and authentication: add email and name fields, migrate to database storage">
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/register.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/cab302/eduplanner/register.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users.properties" beforeDir="false" afterPath="$PROJECT_DIR$/users.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -177,7 +170,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757828708367</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Enhance user registration and authentication: add email and name fields, migrate to database storage">
+      <option name="closed" value="true" />
+      <created>1757842132260</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1757842132260</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -200,6 +201,7 @@
     <MESSAGE value="Login/Register Enter + arrow navigation and stage handling&#10;Changed login redirect to open dashboard.fxml instead of flashcards.fxml" />
     <MESSAGE value="Fix login/register navi and set Dashboard as landing page&#10;- added enter and arrow key navi&#10;- updated stage handling&#10;- changed login redirect&#10;- added requires java.sql to module-info so DatabaseConnection compiles" />
     <MESSAGE value="Polish Flashcards CRUD popups&#10;- prevent multiple popups&#10;- added delete confirmation&#10;- added enter/arrow/escape navi for popups" />
-    <option name="LAST_COMMIT_MESSAGE" value="Polish Flashcards CRUD popups&#10;- prevent multiple popups&#10;- added delete confirmation&#10;- added enter/arrow/escape navi for popups" />
+    <MESSAGE value="Enhance user registration and authentication: add email and name fields, migrate to database storage" />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhance user registration and authentication: add email and name fields, migrate to database storage" />
   </component>
 </project>

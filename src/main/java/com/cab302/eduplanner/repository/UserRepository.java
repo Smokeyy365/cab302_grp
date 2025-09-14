@@ -67,6 +67,7 @@ public class UserRepository {
         }
     }
 
+    // this is an optional method, not currently used
     public Optional<User> findById(long id) {
         String sql = "SELECT id, username, email, first_name, last_name, password_hash, created_at FROM users WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -83,6 +84,7 @@ public class UserRepository {
         }
     }
 
+    // TODO: implement updateDetails in AuthService and call this method
     public boolean updateDetails(long id, String email, String firstName, String lastName) {
         String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
