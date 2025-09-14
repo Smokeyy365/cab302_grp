@@ -22,6 +22,7 @@ public class FlashcardController {
     @FXML private Button shuffleButton, flipButton;
     @FXML private Button resetButton, finishButton;
     @FXML private Button addButton, editButton, deleteButton; // new
+    @FXML private Button uploadButton;
     @FXML private StackPane flashcardPane;
     @FXML private Label flashcardText, progressLabel;
     @FXML private ProgressBar progressBar;
@@ -66,6 +67,15 @@ public class FlashcardController {
         addButton.setOnAction(e -> openAddFlashcardDialog());
         editButton.setOnAction(e -> openEditFlashcardDialog());
         deleteButton.setOnAction(e -> deleteFlashcard());
+
+        // Upload button
+        uploadButton.setOnAction(e -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Upload Flashcards");
+            alert.setHeaderText(null);
+            alert.setContentText("Upload functionality not yet implemented");
+            alert.showAndWait();
+        });
 
         updateFlashcardView();
     }

@@ -4,23 +4,36 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cab302.eduplanner.controller.FlashcardController">
+<BorderPane prefHeight="400.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cab302.eduplanner.controller.FlashcardController">
 
     <!-- Top Header -->
     <top>
-        <HBox spacing="10">
+        <HBox spacing="20" alignment="CENTER_LEFT">
             <padding>
                 <Insets bottom="10" left="10" right="10" top="10" />
             </padding>
+
+            <!-- Title on left -->
             <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="FLASHCARDS" />
-            <Button fx:id="dashboardButton" text="Dashboard" />
+
+            <!-- Buttons on right -->
+            <HBox spacing="5">
+                <Button fx:id="dashboardButton" text="Dashboard" />
+                <Button fx:id="uploadButton" text="Upload to Google Drive" />
+            </HBox>
         </HBox>
     </top>
 
     <!-- Center Flashcard Area -->
     <center>
-        <StackPane fx:id="flashcardPane" prefHeight="200" prefWidth="400" style="-fx-border-color: #bbb; -fx-background-color: white;">
-            <Label fx:id="flashcardText" style="-fx-font-size: 18px;" wrapText="true" />
+        <StackPane fx:id="flashcardPane" prefHeight="200" prefWidth="400"
+                   style="-fx-border-color: #bbb; -fx-background-color: white;">
+            <Label fx:id="flashcardText"
+                   style="-fx-font-size: 18px;"
+                   wrapText="true" />
         </StackPane>
     </center>
 
@@ -34,20 +47,27 @@
 
     <!-- Bottom Controls -->
     <bottom>
-        <VBox alignment="center" spacing="10">
+        <VBox alignment="CENTER" spacing="10">
             <padding>
                 <Insets bottom="10" left="10" right="10" top="10" />
             </padding>
 
-            <!-- Action buttons -->
-            <HBox alignment="center" spacing="10">
-                <Button fx:id="shuffleButton" text="Shuffle" />
-                <Button fx:id="flipButton" text="Flip" />
-                <Button fx:id="addButton" text="Add" />
-                <Button fx:id="editButton" text="Edit" />
-                <Button fx:id="deleteButton" text="Delete" />
-                <Button fx:id="resetButton" text="Reset" />
-                <Button fx:id="finishButton" text="Finish" />
+            <!-- Button groups with fixed 50px gap -->
+            <HBox alignment="CENTER" spacing="50">
+                <!-- Left group -->
+                <HBox spacing="5">
+                    <Button fx:id="shuffleButton" text="Shuffle" />
+                    <Button fx:id="flipButton" text="Flip" />
+                    <Button fx:id="finishButton" text="Finish" />
+                    <Button fx:id="resetButton" text="Reset" />
+                </HBox>
+
+                <!-- Right group -->
+                <HBox spacing="5">
+                    <Button fx:id="addButton" text="Add" />
+                    <Button fx:id="editButton" text="Edit" />
+                    <Button fx:id="deleteButton" text="Delete" />
+                </HBox>
             </HBox>
 
             <!-- Progress tracking -->
@@ -55,4 +75,5 @@
             <Label fx:id="progressLabel" text="Progress: 0/0" />
         </VBox>
     </bottom>
+
 </BorderPane>
