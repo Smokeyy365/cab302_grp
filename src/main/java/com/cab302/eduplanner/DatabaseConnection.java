@@ -19,17 +19,25 @@ public class DatabaseConnection {
 
             System.out.println("Connection to SQLite has been established.");
 
-        } catch (SQLException e) {
+        }
+
+        catch (SQLException e) {
             System.err.println("Database connection error: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
+        }
+
+        catch (ClassNotFoundException e) {
             System.err.println("SQLite JDBC driver not found: " + e.getMessage());
-        } finally {
+        }
+
+        finally {
             try {
                 if (connection != null) {
                     connection.close();
                     System.out.println("Connection to SQLite closed.");
                 }
-            } catch (SQLException ex) {
+            }
+
+            catch (SQLException ex) {
                 System.err.println("Error closing connection: " + ex.getMessage());
             }
         }
