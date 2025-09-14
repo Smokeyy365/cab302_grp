@@ -32,6 +32,10 @@ public class FlashcardController {
     private boolean showingQuestion = true;
     private boolean finished = false;
 
+    // Keep popup stages so multiple aren't spawned
+    private Stage addFlashcardStage;
+    private Stage editFlashcardStage;
+
     @FXML
     public void initialize() {
         // mock data so UI works for now
@@ -163,69 +167,95 @@ public class FlashcardController {
     // Add
     private void openAddFlashcardDialog() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/cab302/eduplanner/add-flashcard.fxml"));
-            Parent root = loader.load();
+            if (addFlashcardStage == null || !addFlashcardStage.isShowing()) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/cab302/eduplanner/add-flashcard.fxml"));
+                Parent root = loader.load();
 
-            Stage stage = new Stage();
-            stage.setTitle("Add Flashcard");
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
+                addFlashcardStage = new Stage();
+                addFlashcardStage.setTitle("Add Flashcard");
+                addFlashcardStage.setScene(new Scene(root));
+                addFlashcardStage.setOnHidden(e -> addFlashcardStage = null); // reset when closed
+                addFlashcardStage.showAndWait();
 
-            AddFlashcardController controller = loader.getController();
-            Flashcard newCard = controller.getNewFlashcard();
-            if (newCard != null) {
-                flashcards.add(newCard);
-                finished = false;
-                updateFlashcardView();
+                AddFlashcardController controller = loader.getController();
+                Flashcard newCard = controller.getNewFlashcard();
+                if (newCard != null) {
+                    flashcards.add(newCard);
+                    finished = false;
+                    updateFlashcardView();
+                }
+            } else {
+                addFlashcardStage.toFront();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+
 
     // Edit
     private void openEditFlashcardDialog() {
         if (flashcards.isEmpty() || finished) return;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/cab302/eduplanner/add-flashcard.fxml"));
-            Parent root = loader.load();
+            if (editFlashcardStage == null || !editFlashcardStage.isShowing()) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/cab302/eduplanner/add-flashcard.fxml"));
+                Parent root = loader.load();
 
-            AddFlashcardController controller = loader.getController();
-            Flashcard current = flashcards.get(currentIndex);
-            controller.setFlashcard(current); // pre-fill fields
+                AddFlashcardController controller = loader.getController();
+                Flashcard current = flashcards.get(currentIndex);
+                controller.setFlashcard(current); // pre-fill fields
 
-            Stage stage = new Stage();
-            stage.setTitle("Edit Flashcard");
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
+                editFlashcardStage = new Stage();
+                editFlashcardStage.setTitle("Edit Flashcard");
+                editFlashcardStage.setScene(new Scene(root));
+                editFlashcardStage.setOnHidden(e -> editFlashcardStage = null); // reset when closed
+                editFlashcardStage.showAndWait();
 
-            Flashcard updated = controller.getNewFlashcard();
-            if (updated != null) {
-                flashcards.set(currentIndex, updated);
-                showingQuestion = true;
-                finished = false;
-                updateFlashcardView();
+                Flashcard updated = controller.getNewFlashcard();
+                if (updated != null) {
+                    flashcards.set(currentIndex, updated);
+                    showingQuestion = true;
+                    finished = false;
+                    updateFlashcardView();
+                }
+            } else {
+                editFlashcardStage.toFront();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
+
     // Delete
     private void deleteFlashcard() {
         if (flashcards.isEmpty() || finished) return;
-        flashcards.remove(currentIndex);
 
-        if (flashcards.isEmpty()) {
+        Flashcard current = flashcards.get(currentIndex);
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Flashcard");
+        alert.setHeaderText("Are you sure you want to delete this flashcard?");
+        alert.setContentText(
+                "Question: " + current.getQuestion() + "\n" +
+                        "Answer: " + current.getAnswer()
+        );
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            flashcards.remove(currentIndex);
+
+            if (flashcards.isEmpty()) {
+                updateFlashcardView();
+                return;
+            }
+
+            if (currentIndex >= flashcards.size()) {
+                currentIndex = flashcards.size() - 1;
+            }
+
+            showingQuestion = true;
             updateFlashcardView();
-            return;
         }
-
-        if (currentIndex >= flashcards.size()) {
-            currentIndex = flashcards.size() - 1;
-        }
-
-        showingQuestion = true;
-        updateFlashcardView();
     }
 }
