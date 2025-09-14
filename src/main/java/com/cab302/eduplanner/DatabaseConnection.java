@@ -14,7 +14,7 @@ public class DatabaseConnection {
 
             // Database URL: jdbc:sqlite:path/to/your/database.db
             // If the database file does not exist, it will be created. (Was created on first run)
-            String url = "jdbc:sqlite:cab302_database.db";
+            String url = "jdbc:sqlite:eduplanner_database.db";
             connection = DriverManager.getConnection(url);
 
             System.out.println("Connection to SQLite has been established.");
