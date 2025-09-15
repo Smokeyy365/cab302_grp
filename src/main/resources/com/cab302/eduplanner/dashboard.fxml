@@ -7,7 +7,10 @@
 <BorderPane prefHeight="600.0" prefWidth="960.0"
             xmlns="http://javafx.com/javafx/17.0.12"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.cab302.eduplanner.controller.DashboardController">
+            fx:controller="com.cab302.eduplanner.controller.DashboardController"
+            stylesheets="@styles/dashboard.css">
+
+
 
     <!-- Main Header -->
     <top>
@@ -52,14 +55,15 @@
             <!-- LEFT COL: Tasks header (row 0) -->
             <HBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
                 <children>
-                    <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Tasks"/>
+                    <Label fx:id="tasksHeader" text="Tasks"/>
                     <Pane HBox.hgrow="ALWAYS"/>
-                    <Button fx:id="sortButton" text="[Sort: Due Date]"/>
-                    <Button fx:id="newButton" text="+ New"/>
-                    <Button fx:id="calendarButton" text="Calendar View"/>
-                    <Button fx:id="detailButton" text="Detail View"/>
+                    <Button fx:id="sortButton" text="[Sort: Due Date]" styleClass="task-header-button"/>
+                    <Button fx:id="newButton" text="+ New" styleClass="task-header-button"/>
+                    <Button fx:id="calendarButton" text="Calendar View" styleClass="task-header-button"/>
+                    <Button fx:id="detailButton" text="Detail View" styleClass="task-header-button"/>
                 </children>
             </HBox>
+
 
             <!-- LEFT COL: Tasks content (row 1) -->
             <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefViewportHeight="520.0"
@@ -67,20 +71,19 @@
                 <content>
                     <VBox fx:id="cardsBox" spacing="6">
                         <!-- placeholder cards for sizing (optional) -->
-                        <HBox spacing="10"
-                              style="-fx-padding:10; -fx-border-color: -fx-box-border; -fx-border-radius:6; -fx-background-radius:6;">
+                        <HBox spacing="10" styleClass="task-card">
                             <children>
                                 <Label text="COMP201 Essay"/>
-                                <Label style="-fx-opacity:0.75;" text="Due: 24 Sep"/>
+                                <Label text="Due: 24 Sep"/>
                                 <Pane HBox.hgrow="ALWAYS"/>
                                 <CheckBox/>
                             </children>
                         </HBox>
-                        <HBox spacing="10"
-                              style="-fx-padding:10; -fx-border-color: -fx-box-border; -fx-border-radius:6; -fx-background-radius:6;">
+
+                        <HBox spacing="10" styleClass="task-card">
                             <children>
                                 <Label text="MATH101 Report"/>
-                                <Label style="-fx-opacity:0.75;" text="Due: 27 Sep"/>
+                                <Label text="Due: 27 Sep"/>
                                 <Pane HBox.hgrow="ALWAYS"/>
                                 <CheckBox/>
                             </children>
@@ -92,10 +95,9 @@
                 </content>
             </ScrollPane>
 
+
             <!-- RIGHT COL: Widgets header (row 0) -->
-            <Label text="Widgets"
-                   style="-fx-font-size: 18px; -fx-font-weight: bold;"
-                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <Label fx:id="widgetsHeader" text="Widgets" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
             <!-- RIGHT COL: Widgets rail (row 1) -->
             <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefViewportHeight="520.0"
@@ -103,10 +105,10 @@
                 <content>
                     <VBox spacing="8" alignment="CENTER">
                         <children>
-                            <Button fx:id="flashcardsTile" text="Flashcards" prefWidth="220.0" prefHeight="160.0"/>
-                            <Button fx:id="notesTile" text="Notes" prefWidth="220.0" prefHeight="160.0"/>
-                            <Button fx:id="pomodoroTile" text="Pomodoro" prefWidth="220.0" prefHeight="160.0" disable="true"/>
-                            <Button fx:id="darkTile" text="Dark Mode" prefWidth="220.0" prefHeight="160.0" disable="true"/>
+                            <Button fx:id="flashcardsTile" text="Flashcards" prefWidth="220.0" prefHeight="160.0" styleClass="widget-button"/>
+                            <Button fx:id="notesTile" text="Notes" prefWidth="220.0" prefHeight="160.0" styleClass="widget-button"/>
+                            <Button fx:id="pomodoroTile" text="Pomodoro" prefWidth="220.0" prefHeight="160.0" disable="true" styleClass="widget-button"/>
+                            <Button fx:id="darkTile" text="Dark Mode" prefWidth="220.0" prefHeight="160.0" disable="true" styleClass="widget-button"/>
                         </children>
                     </VBox>
                 </content>
