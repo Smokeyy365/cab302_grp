@@ -4,8 +4,8 @@
 
 /* Flashcard card area */
 #flashcardPane {
-    -fx-pref-width: 380;   /* slightly wider like a card */
-    -fx-pref-height: 200;
+    -fx-pref-width: 420;   /* a bit wider */
+    -fx-pref-height: 220;
     -fx-background-color: -color-primary;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
@@ -15,10 +15,14 @@
 }
 
 #flashcardText {
-    -fx-font-size: 20px;
+    -fx-font-size: 24px;
     -fx-font-weight: 600;
     -fx-text-fill: white;
-    -fx-alignment: center;
+
+    -fx-text-alignment: center;   /* center text horizontally */
+    -fx-alignment: center;        /* ensure vertical centering in StackPane */
+    -fx-wrap-text: true;
+    -fx-max-width: Infinity;      /* allow stretching */
 }
 
 /* Navigation arrows */
@@ -41,7 +45,7 @@
 
 /* Sidebar (folders + decks) */
 #folderTree {
-    -fx-background-color: white;
+    -fx-background-color: #FAF9F6; /* beige instead of white */
     -fx-border-color: -color-primary;
     -fx-border-radius: 6;
     -fx-padding: 4;
@@ -49,7 +53,7 @@
 
 /* TreeView cells (rows) */
 #folderTree .tree-cell {
-    -fx-background-color: white;
+    -fx-background-color: #FAF9F6; /* beige rows */
     -fx-text-fill: -color-text;
     -fx-padding: 6 8;
     -fx-font-size: 13px;
@@ -85,10 +89,10 @@
 }
 
 #renameButton, #deleteFolderDeckButton {
-    -fx-background-color: white;
+    -fx-background-color: #FAF9F6;   /* beige background */
     -fx-text-fill: -color-primary;
     -fx-border-color: -color-primary;
-    -fx-border-radius: 6;
+    -fx-border-radius: 0;
     -fx-border-width: 1;
     -fx-padding: 6 12 6 12;
 }
@@ -97,10 +101,15 @@
     -fx-background-color: rgba(38, 92, 75, 0.06);
 }
 
-/* Progress bar styling */
+/* Progress bar base */
 .progress-bar {
-    -fx-accent: -color-primary;
-    -fx-control-inner-background: #e5e7eb; /* light gray */
+    -fx-accent: -color-primary;  /* controls both determinate fill and indeterminate dash */
     -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+/* Background track */
+.progress-bar > .track {
+    -fx-background-color: #e5e7eb; /* light gray track */
     -fx-background-radius: 6;
 }

@@ -3,24 +3,35 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 
+<!--
+ Dialog layout for adding/editing a flashcard.
+ Controlled by AddFlashcardController.
+-->
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.cab302.eduplanner.controller.AddFlashcardController"
       spacing="10" alignment="CENTER"
       prefWidth="300" prefHeight="220">
 
+    <!-- Dialog padding -->
     <padding>
         <Insets top="15" right="15" bottom="15" left="15"/>
     </padding>
 
-    <Label text="Add New Flashcard" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+    <!-- Title -->
+    <Label text="Add New Flashcard"
+           style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
 
+    <!-- Question input -->
     <TextField fx:id="questionField" promptText="Enter question"/>
+
+    <!-- Answer input -->
     <TextField fx:id="answerField" promptText="Enter answer"/>
 
-    <!-- Inline validation error message -->
+    <!-- Inline error label, hidden until validation fails -->
     <Label fx:id="errorLabel" textFill="red" visible="false"/>
 
+    <!-- Action buttons -->
     <HBox spacing="10" alignment="CENTER">
         <Button text="Save" fx:id="saveButton"/>
         <Button text="Cancel" fx:id="cancelButton"/>

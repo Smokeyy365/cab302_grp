@@ -10,22 +10,24 @@ import com.cab302.eduplanner.model.Flashcard;
 
 public class AddFlashcardController {
 
+    // ==== UI Elements ====
     @FXML private TextField questionField;
     @FXML private TextField answerField;
     @FXML private Button saveButton;
     @FXML private Button cancelButton;
     @FXML private Label errorLabel; // inline validation label
 
+    // Holds the result (new/edited flashcard)
     private Flashcard newFlashcard; // result after save
 
     @FXML
     public void initialize() {
-        // Button handlers
+        // Button click handlers
         saveButton.setOnAction(e -> saveFlashcard());
         cancelButton.setOnAction(e -> closeWindow());
 
-        // -------- Navigation --------
-        // Question: Enter or down arrow → move to Answer
+        // ==== Keyboard Navigation ====
+        // Question: Enter or down arrow moves to answer
         questionField.setOnAction(e -> answerField.requestFocus());
         questionField.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.DOWN) {
@@ -35,7 +37,7 @@ public class AddFlashcardController {
             }
         });
 
-        // Answer: Enter → save | Up arrow -> back to Question
+        // Answer: Enter saves, up arrow goes back to question
         answerField.setOnAction(e -> saveFlashcard());
         answerField.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.UP) {
@@ -45,7 +47,7 @@ public class AddFlashcardController {
             }
         });
 
-        // Save button: Enter triggers save
+        // Save button: Enter triggers save, Esc cancels
         saveButton.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 saveFlashcard();
@@ -62,6 +64,7 @@ public class AddFlashcardController {
         });
     }
 
+    // Validate fields and create new flashcard
     private void saveFlashcard() {
         String q = questionField.getText().trim();
         String a = answerField.getText().trim();
@@ -75,16 +78,18 @@ public class AddFlashcardController {
         }
     }
 
+    // Close popup window
     private void closeWindow() {
         Stage stage = (Stage) questionField.getScene().getWindow();
         stage.close();
     }
 
+    // Used by FlashcardController to retrieve created/edited card
     public Flashcard getNewFlashcard() {
         return newFlashcard;
     }
 
-    // Pre-fill fields when editing
+    // Pre-fill fields when editing an existing card
     public void setFlashcard(Flashcard flashcard) {
         if (flashcard != null) {
             questionField.setText(flashcard.getQuestion());

@@ -30,7 +30,7 @@
 
     <!-- Sidebar for Folders/Decks -->
     <left>
-        <VBox spacing="10" prefWidth="220" style="-fx-background-color: #ffffff; -fx-padding: 10;">
+        <VBox spacing="10" prefWidth="220" style="-fx-background-color: #faf9f6; -fx-padding: 10;">
             <Label text="Subjects" styleClass="app-title"/>
 
             <!-- Folder + Deck tree -->
@@ -48,51 +48,56 @@
         </VBox>
     </left>
 
-    <!-- Center with arrows beside flashcard -->
+    <!-- Center section -->
     <center>
-        <HBox alignment="CENTER" spacing="10">
-            <!-- Prev button -->
-            <Button fx:id="prevButton" text="⟨" styleClass="nav-arrow"/>
+        <BorderPane>
+            <!-- Flashcard in the middle of space -->
+            <center>
+                <HBox alignment="CENTER" spacing="10">
+                    <Button fx:id="prevButton" text="⟨" styleClass="nav-arrow"/>
+                    <StackPane
+                               prefHeight="350" prefWidth="500"
+                               maxWidth="700"
+                               HBox.hgrow="ALWAYS"
+                               style="-fx-background-color: -color-primary; -fx-border-color: #bbb; -fx-border-radius: 6; -fx-background-radius: 6;">
+                        <Label fx:id="flashcardText"
+                               wrapText="true"
+                               maxWidth="700"
+                               styleClass="flashcard-text"/>
+                    </StackPane>
+                    <Button fx:id="nextButton" text="⟩" styleClass="nav-arrow"/>
+                </HBox>
+            </center>
 
-            <!-- Flashcard area -->
-            <StackPane fx:id="flashcardPane" prefHeight="200" prefWidth="380">
-                <Label fx:id="flashcardText" wrapText="true" />
-            </StackPane>
+            <!-- Bottom controls pinned below flashcard -->
+            <bottom>
+                <VBox alignment="CENTER" spacing="10">
+                    <padding>
+                        <Insets top="15" bottom="25"/>
+                    </padding>
 
-            <!-- Next button -->
-            <Button fx:id="nextButton" text="⟩" styleClass="nav-arrow"/>
-        </HBox>
+                    <HBox alignment="CENTER" spacing="50">
+                        <!-- Left group -->
+                        <HBox spacing="5">
+                            <Button fx:id="shuffleButton" text="Shuffle" styleClass="secondary"/>
+                            <Button fx:id="flipButton" text="Flip" styleClass="secondary"/>
+                            <Button fx:id="finishButton" text="Finish" styleClass="secondary"/>
+                            <Button fx:id="resetButton" text="Reset" styleClass="secondary"/>
+                        </HBox>
+
+                        <!-- Right group -->
+                        <HBox spacing="5">
+                            <Button fx:id="addButton" text="Add" styleClass="secondary"/>
+                            <Button fx:id="editButton" text="Edit" styleClass="secondary"/>
+                            <Button fx:id="deleteButton" text="Delete" styleClass="secondary"/>
+                        </HBox>
+                    </HBox>
+
+                    <!-- Progress tracking -->
+                    <ProgressBar fx:id="progressBar" prefWidth="300"/>
+                    <Label fx:id="progressLabel" text="Progress: 0/0"/>
+                </VBox>
+            </bottom>
+        </BorderPane>
     </center>
-
-    <!-- Bottom Controls -->
-    <bottom>
-        <VBox alignment="CENTER" spacing="10">
-            <padding>
-                <Insets bottom="10" left="10" right="10" top="10" />
-            </padding>
-
-            <!-- Button groups with fixed 50px gap -->
-            <HBox alignment="CENTER" spacing="50">
-                <!-- Left group -->
-                <HBox spacing="5">
-                    <Button fx:id="shuffleButton" text="Shuffle" styleClass="secondary"/>
-                    <Button fx:id="flipButton" text="Flip" styleClass="secondary"/>
-                    <Button fx:id="finishButton" text="Finish" styleClass="secondary"/>
-                    <Button fx:id="resetButton" text="Reset" styleClass="secondary"/>
-                </HBox>
-
-                <!-- Right group -->
-                <HBox spacing="5">
-                    <Button fx:id="addButton" text="Add" styleClass="secondary"/>
-                    <Button fx:id="editButton" text="Edit" styleClass="secondary"/>
-                    <Button fx:id="deleteButton" text="Delete" styleClass="secondary"/>
-                </HBox>
-            </HBox>
-
-            <!-- Progress tracking -->
-            <ProgressBar fx:id="progressBar" prefWidth="300" />
-            <Label fx:id="progressLabel" text="Progress: 0/0" />
-        </VBox>
-    </bottom>
-
 </BorderPane>

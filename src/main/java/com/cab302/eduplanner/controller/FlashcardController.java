@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.ProgressIndicator;
 import javafx.stage.Stage;
 
 import com.cab302.eduplanner.App;
@@ -19,7 +19,7 @@ import java.util.*;
 
 public class FlashcardController {
 
-    // UI elements
+    // ==== UI Elements (linked from flashcard.fxml) ====
     @FXML private Button dashboardButton, uploadButton;
     @FXML private Button prevButton, nextButton;
     @FXML private Button shuffleButton, flipButton;
@@ -28,20 +28,20 @@ public class FlashcardController {
     @FXML private Button newFolderButton, newDeckButton, renameButton, deleteFolderDeckButton;
 
     @FXML private TreeView<String> folderTree;
-    @FXML private StackPane flashcardPane;
     @FXML private Label flashcardText, progressLabel;
     @FXML private ProgressBar progressBar;
 
-    // Shared repository
+    // ==== Data ====
+    // Shared repository so data persists across scene switches
     private final List<FlashcardFolder> folders = FlashcardRepository.getFolders();
 
-    // Current state
+    // Current working state
     private FlashcardDeck currentDeck;
     private int currentIndex = 0;
     private boolean showingQuestion = true;
     private boolean finished = false;
 
-    // Popup stages
+    // Popup dialog stages (to prevent duplicates)
     private Stage addFlashcardStage;
     private Stage editFlashcardStage;
 
@@ -50,7 +50,7 @@ public class FlashcardController {
         setupSidebar();
         setupButtons();
 
-        // Only add demo data if repository is empty
+        // Add demo folder/deck only once, for testing
         if (folders.isEmpty()) {
             FlashcardFolder demoFolder = new FlashcardFolder("CAB302");
             FlashcardDeck week6 = new FlashcardDeck("Week 6");
@@ -63,12 +63,15 @@ public class FlashcardController {
         }
 
         refreshTree();
+
+        updateFlashcardView();
     }
 
-    // ===== Sidebar =====
+    // ==== Sidebar logic (folders + decks) ====
     private void setupSidebar() {
         folderTree.setShowRoot(false);
 
+        // When user selects a deck in the tree, load it
         folderTree.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null && newSel.getParent() != null) {
                 currentDeck = getDeck(newSel.getParent().getValue(), newSel.getValue());
@@ -82,6 +85,7 @@ public class FlashcardController {
             }
         });
 
+        // Create new folder
         newFolderButton.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog("New Folder");
             dialog.setHeaderText("Enter folder name:");
@@ -91,16 +95,26 @@ public class FlashcardController {
             });
         });
 
+        // Create new deck under selected folder
         newDeckButton.setOnAction(e -> {
             TreeItem<String> selected = folderTree.getSelectionModel().getSelectedItem();
-            if (selected == null) return;
+
+            // If nothing selected → show popup
+            if (selected == null) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Create Deck");
+                alert.setHeaderText(null);
+                alert.setContentText("To create a deck, please create or select a folder first.");
+                alert.showAndWait();
+                return;
+            }
 
             // If they clicked a deck, go up to its parent folder
             TreeItem<String> folderItem = (selected.getParent() == folderTree.getRoot())
                     ? selected
                     : selected.getParent();
 
-            // Only allow decks under folders (children of root)
+            // Only allow decks under folders
             if (folderItem != null && folderItem.getParent() == folderTree.getRoot()) {
                 TextInputDialog dialog = new TextInputDialog("New Deck");
                 dialog.setHeaderText("Enter deck name:");
@@ -125,9 +139,17 @@ public class FlashcardController {
                         }
                     }
                 });
+            } else {
+                // Safety: show message if clicked something invalid
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Create Deck");
+                alert.setHeaderText(null);
+                alert.setContentText("Decks can only be created inside folders.");
+                alert.showAndWait();
             }
         });
 
+        // Rename folder or deck
         renameButton.setOnAction(e -> {
             TreeItem<String> selected = folderTree.getSelectionModel().getSelectedItem();
             if (selected != null) {
@@ -146,7 +168,7 @@ public class FlashcardController {
                     }
                     refreshTree();
 
-                    // Re-expand and reselect
+                    // Re-expand and reselect renamed item
                     TreeItem<String> root = folderTree.getRoot();
                     for (TreeItem<String> fItem : root.getChildren()) {
                         if (fItem.getValue().equals(parentValue != null ? parentValue : newName)) {
@@ -168,6 +190,7 @@ public class FlashcardController {
             }
         });
 
+        // Delete folder or deck
         deleteFolderDeckButton.setOnAction(e -> {
             TreeItem<String> selected = folderTree.getSelectionModel().getSelectedItem();
             if (selected != null) {
@@ -184,7 +207,7 @@ public class FlashcardController {
         });
     }
 
-    // ===== Buttons =====
+    // ==== Button actions (main controls) ====
     private void setupButtons() {
         nextButton.setOnAction(e -> nextFlashcard());
         prevButton.setOnAction(e -> prevFlashcard());
@@ -193,12 +216,13 @@ public class FlashcardController {
         resetButton.setOnAction(e -> resetDeck());
         finishButton.setOnAction(e -> finishDeck());
 
+        // Navigation buttons
         dashboardButton.setOnAction(e -> {
             try {
                 Stage stage = (Stage) dashboardButton.getScene().getWindow();
                 App.changeScene(stage, "/com/cab302/eduplanner/dashboard.fxml", "EduPlanner — Dashboard");
             } catch (IOException ex) {
-                ex.printStackTrace();
+                System.err.println("Failed to switch to Dashboard scene: " + ex.getMessage());
             }
         });
 
@@ -210,38 +234,76 @@ public class FlashcardController {
             alert.showAndWait();
         });
 
-        addButton.setOnAction(e -> openAddFlashcardDialog());
-        editButton.setOnAction(e -> openEditFlashcardDialog());
-        deleteButton.setOnAction(e -> deleteFlashcard());
+        // CRUD operations
+        addButton.setOnAction(e -> openAddFlashcardDialog());       // Create
+        editButton.setOnAction(e -> openEditFlashcardDialog());     // Update
+        deleteButton.setOnAction(e -> deleteFlashcard());           // Delete
     }
 
-    // ===== Flashcard navigation =====
+    // ==== Flashcard navigation logic ====
     private void updateFlashcardView() {
-        if (currentDeck == null || currentDeck.getFlashcards().isEmpty()) {
-            flashcardText.setText("No flashcards yet.");
+        // Case 1: No deck selected
+        if (currentDeck == null) {
+            flashcardText.setText("Select a folder and deck to view flashcards.");
             progressLabel.setText("Progress: 0/0");
-            progressBar.setProgress(0);
 
+            // Show animated indeterminate bar
+            progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+
+            // Disable all actions
             nextButton.setDisable(true);
             prevButton.setDisable(true);
             flipButton.setDisable(true);
+            shuffleButton.setDisable(true);
+            resetButton.setDisable(true);
+            finishButton.setDisable(true);
+            addButton.setDisable(true);
             editButton.setDisable(true);
             deleteButton.setDisable(true);
             return;
         }
 
+        // Case 2: Deck selected but empty
+        if (currentDeck.getFlashcards().isEmpty()) {
+            flashcardText.setText("This deck is empty. Add flashcards to get started.");
+            progressLabel.setText("Progress: 0/0");
+
+            // Show animated indeterminate bar
+            progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+
+            // Disable nav/edit/reset/shuffle/finish, but allow Add
+            nextButton.setDisable(true);
+            prevButton.setDisable(true);
+            flipButton.setDisable(true);
+            shuffleButton.setDisable(true);
+            resetButton.setDisable(true);
+            finishButton.setDisable(true);
+            addButton.setDisable(false); // let them add cards
+            editButton.setDisable(true);
+            deleteButton.setDisable(true);
+            return;
+        }
+
+        // Case 3: Normal deck with cards
         Flashcard current = currentDeck.getFlashcards().get(currentIndex);
         flashcardText.setText(showingQuestion ? current.getQuestion() : current.getAnswer());
         progressLabel.setText("Progress: " + (currentIndex + 1) + "/" + currentDeck.getFlashcards().size());
         progressBar.setProgress((double) (currentIndex + 1) / currentDeck.getFlashcards().size());
 
+        // Enable/disable buttons depending on state
         prevButton.setDisable(currentIndex == 0 || finished);
         nextButton.setDisable(finished);
         flipButton.setDisable(finished);
+        shuffleButton.setDisable(finished);
+        resetButton.setDisable(finished);
+        finishButton.setDisable(finished);
+        addButton.setDisable(finished);
         editButton.setDisable(finished);
         deleteButton.setDisable(finished);
     }
 
+
+    // Next flashcard
     private void nextFlashcard() {
         if (currentDeck == null) return;
         if (currentIndex < currentDeck.getFlashcards().size() - 1) {
@@ -256,6 +318,7 @@ public class FlashcardController {
         }
     }
 
+    // Previous flashcard
     private void prevFlashcard() {
         if (currentDeck == null || finished) return;
         if (currentIndex > 0) {
@@ -265,12 +328,14 @@ public class FlashcardController {
         }
     }
 
+    // Flip flashcard
     private void flipFlashcard() {
         if (currentDeck == null || finished) return;
         showingQuestion = !showingQuestion;
         updateFlashcardView();
     }
 
+    // Shuffle flashcard
     private void shuffleFlashcards() {
         if (currentDeck == null) return;
         Collections.shuffle(currentDeck.getFlashcards());
@@ -280,6 +345,7 @@ public class FlashcardController {
         updateFlashcardView();
     }
 
+    // Reset deck
     private void resetDeck() {
         if (currentDeck == null) return;
         currentIndex = 0;
@@ -288,6 +354,7 @@ public class FlashcardController {
         updateFlashcardView();
     }
 
+    // Finish deck
     private void finishDeck() {
         if (currentDeck == null) return;
         flashcardText.setText("🎉 You ended the deck early!");
@@ -296,7 +363,8 @@ public class FlashcardController {
         finished = true;
     }
 
-    // ===== CRUD flashcards =====
+    // ==== CRUD flashcards ====
+    // Add flashcard
     private void openAddFlashcardDialog() {
         if (currentDeck == null) return;
         try {
@@ -321,10 +389,11 @@ public class FlashcardController {
                 addFlashcardStage.toFront();
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.err.println("Error while opening Add Flashcard dialog: " + ex.getMessage());
         }
     }
 
+    // Edit flashcard
     private void openEditFlashcardDialog() {
         if (currentDeck == null || finished) return;
         try {
@@ -353,10 +422,11 @@ public class FlashcardController {
                 editFlashcardStage.toFront();
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.err.println("Error while opening Edit Flashcard dialog: " + ex.getMessage());
         }
     }
 
+    // Delete flashcard
     private void deleteFlashcard() {
         if (currentDeck == null || finished) return;
 
@@ -381,8 +451,9 @@ public class FlashcardController {
         }
     }
 
-    // ===== Helpers =====
+    // ==== Helpers ====
     private void refreshTree() {
+        // Rebuild the sidebar tree from model
         TreeItem<String> root = new TreeItem<>("Root");
         for (FlashcardFolder folder : folders) {
             TreeItem<String> folderItem = new TreeItem<>(folder.getName());
