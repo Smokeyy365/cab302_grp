@@ -19,7 +19,7 @@ public class UserRepository {
              Statement st = conn.createStatement()) {
             st.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS users (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "userid INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "username TEXT NOT NULL UNIQUE, " +
                 "password_hash TEXT NOT NULL, " +
                 "email TEXT, " +
@@ -52,7 +52,7 @@ public class UserRepository {
     }
 
     public Optional<User> findByUsername(String username) {
-        String sql = "SELECT id, username, email, first_name, last_name, password_hash, created_at FROM users WHERE username = ?";
+        String sql = "SELECT userid, username, email, first_name, last_name, password_hash, created_at FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
@@ -68,11 +68,11 @@ public class UserRepository {
     }
 
     // this is an optional method, not currently used
-    public Optional<User> findById(long id) {
-        String sql = "SELECT id, username, email, first_name, last_name, password_hash, created_at FROM users WHERE id = ?";
+    public Optional<User> findByUserId(long userid) {
+        String sql = "SELECT userid, username, email, first_name, last_name, password_hash, created_at FROM users WHERE userid = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, id);
+            ps.setLong(1, userid);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(mapRow(rs));
@@ -85,14 +85,14 @@ public class UserRepository {
     }
 
     // TODO: implement updateDetails in AuthService and call this method
-    public boolean updateDetails(long id, String email, String firstName, String lastName) {
-        String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ? WHERE id = ?";
+    public boolean updateDetails(long userid, String email, String firstName, String lastName) {
+        String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ? WHERE userid = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, firstName);
             ps.setString(3, lastName);
-            ps.setLong(4, id);
+            ps.setLong(4, userid);
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             return false;
@@ -100,7 +100,7 @@ public class UserRepository {
     }
 
     private User mapRow(ResultSet rs) throws SQLException {
-        long id = rs.getLong("id");
+        long userid = rs.getLong("userid");
         String username = rs.getString("username");
         String email = rs.getString("email");
         String firstName = rs.getString("first_name");
@@ -108,11 +108,11 @@ public class UserRepository {
         String passwordHash = rs.getString("password_hash");
         Timestamp ts = rs.getTimestamp("created_at");
         LocalDateTime createdAt = ts != null ? ts.toLocalDateTime() : null;
-        return new User(id, username, email, firstName, lastName, passwordHash, createdAt);
+        return new User(userid, username, email, firstName, lastName, passwordHash, createdAt);
     }
 
     public static class User {
-        private final long id;
+        private final long userid;
         private final String username;
         private final String email;
         private final String firstName;
@@ -120,8 +120,8 @@ public class UserRepository {
         private final String passwordHash; // may be null when exposed outside auth
         private final LocalDateTime createdAt;
 
-        public User(long id, String username, String email, String firstName, String lastName, String passwordHash, LocalDateTime createdAt) {
-            this.id = id;
+        public User(long userid, String username, String email, String firstName, String lastName, String passwordHash, LocalDateTime createdAt) {
+            this.userid = userid;
             this.username = username;
             this.email = email;
             this.firstName = firstName;
@@ -136,10 +136,10 @@ public class UserRepository {
         }
 
         public User withoutSensitive() {
-            return new User(id, username, email, firstName, lastName, null, createdAt);
+            return new User(userid, username, email, firstName, lastName, null, createdAt);
         }
 
-        public long getId() { return id; }
+        public long getUserId() { return userid; }
         public String getUsername() { return username; }
         public String getEmail() { return email; }
         public String getFirstName() { return firstName; }
