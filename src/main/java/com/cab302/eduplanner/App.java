@@ -26,7 +26,7 @@ public class App extends Application {
 
     public static void changeScene(Stage stage, String fxml, String title) throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
-    Scene scene = new Scene(fxmlLoader.load(), 1600, 900);
+    Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
 
     scene.getStylesheets().add(App.class.getResource("styles/app.css").toExternalForm());
     stage.setTitle(title);
