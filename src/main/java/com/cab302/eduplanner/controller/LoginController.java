@@ -2,6 +2,8 @@ package com.cab302.eduplanner.controller;
 
 import com.cab302.eduplanner.service.AuthService;
 import com.cab302.eduplanner.App;
+import com.cab302.eduplanner.repository.UserRepository;
+import com.cab302.eduplanner.appcontext.UserSession;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -93,12 +95,27 @@ public class LoginController {
     private void onLogin(ActionEvent event) {
         String u = usernameField.getText();
         String p = passwordField.getText();
+
         if (auth.authenticate(u, p)) {
+            // Loads user record
+            var repo = new UserRepository();
+            var userOpt = repo.findByUsername(u);
+
+            if (userOpt.isEmpty()) {
+                // Session user check
+                messageLabel.setText("Login succeeded, but user record not found.");
+                return;
+            }
+
+            // Stores basic user info for session
+            UserSession.setCurrentUser(userOpt.get().withoutSensitive());
+
             openMainUI(event);
         } else {
             messageLabel.setText("Invalid credentials");
         }
     }
+
 
     private void openMainUI(ActionEvent event) {
         try {

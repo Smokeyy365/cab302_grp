@@ -2,6 +2,7 @@ package com.cab302.eduplanner.controller;
 
 import com.cab302.eduplanner.App;
 import javafx.application.Platform;
+import com.cab302.eduplanner.appcontext.UserSession;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -58,7 +59,12 @@ public class DashboardController {
         // Removes scene builder junk (my bad)
         cardsBox.getChildren().clear();
 
-        greetingLabel.setText("Welcome back, User");
+        var user = UserSession.getCurrentUser();
+        String first = (user != null && user.getFirstName() != null && !user.getFirstName().isBlank())
+                ? user.getFirstName()
+                : "User";
+        greetingLabel.setText("Welcome back, " + first);
+
         tickClock();
         startMinuteTicker();
 
