@@ -38,6 +38,7 @@ public class RubricController {
         statusLabel.setText("");
     }
 
+    @FXML
     private void handleUploadAssignment() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Assignment");
@@ -52,6 +53,7 @@ public class RubricController {
         }
     }
 
+    @FXML
     private void handleUploadRubric() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Rubric");
@@ -66,6 +68,10 @@ public class RubricController {
             statusLabel.setText("Rubric uploaded: " + file.getName());
         }
     }
+
+    @FXML
+    
+
 
     private void handleSubmitButtonAction() {
         // Handle the submit button action here

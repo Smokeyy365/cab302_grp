@@ -5,20 +5,20 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cab302.eduplanner.Rubric">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cab302.eduplanner.controller.RubricController">
    <children>
-      <HBox alignment="CENTER" layoutX="350.0" layoutY="70.0" prefHeight="160.0" prefWidth="566.0" spacing="100.0" style="-fx-background-color: gray;" stylesheets="@styles/app.css" AnchorPane.bottomAnchor="490.0" AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="350.0" AnchorPane.topAnchor="70.0">
+      <HBox alignment="CENTER" layoutX="350.0" layoutY="70.0" prefHeight="160.0" prefWidth="566.0" spacing="100.0" style="-fx-background-color: gray;" AnchorPane.bottomAnchor="490.0" AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="350.0" AnchorPane.topAnchor="70.0">
          <opaqueInsets>
             <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
          </opaqueInsets>
          <children>
-            <Button alignment="CENTER" mnemonicParsing="false" stylesheets="@styles/app.css" text="Upload Dociment" textAlignment="CENTER">
+            <Button alignment="CENTER" mnemonicParsing="false" text="Upload Document" textAlignment="CENTER" onAction="#handleUploadAssignment">
                <font>
                   <Font name="Calibri Bold" size="14.0" />
                </font>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <Button mnemonicParsing="false" stylesheets="@styles/app.css" text="Upload Rubric">
+            <Button mnemonicParsing="false" text="Upload Rubric" onAction="#handleUploadRubric">
                <font>
                   <Font name="Calibri Bold" size="14.0" />
                </font>
