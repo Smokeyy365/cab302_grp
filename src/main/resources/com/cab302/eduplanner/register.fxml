@@ -10,8 +10,8 @@
             prefHeight="400.0" prefWidth="600.0">
 
     <children>
-        <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
-              AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20" styleClass="auth-container">
+        <VBox fx:id="authContainer" alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+            AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20" styleClass="auth-container">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>

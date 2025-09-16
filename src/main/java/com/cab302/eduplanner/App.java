@@ -17,6 +17,7 @@ public class App extends Application {
         stage.setTitle("EduPlanner — Login");
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.centerOnScreen();
         stage.show();
     }
 
@@ -26,12 +27,13 @@ public class App extends Application {
 
     public static void changeScene(Stage stage, String fxml, String title) throws IOException {
     FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
-    Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+    Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
 
     scene.getStylesheets().add(App.class.getResource("styles/app.css").toExternalForm());
     stage.setTitle(title);
     stage.setScene(scene);
     stage.setResizable(false);
+    stage.centerOnScreen();
     stage.show();
     }
 }
