@@ -1,6 +1,7 @@
 package com.cab302.eduplanner.controller;
 
 import com.cab302.eduplanner.App;
+import com.cab302.eduplanner.appcontext.UserSession;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -37,6 +38,7 @@ public class DashboardController {
     @FXML private Button flashcardsTile;
     @FXML private Button notesTile;
     @FXML private Button pomodoroTile;
+    @FXML private Button darkTile;
     @FXML private Button rubricTile;
 
     // Task sorter - sets default and cycle order
@@ -55,10 +57,16 @@ public class DashboardController {
     private final List<tempTask> tasks = new ArrayList<>();
 
     @FXML public void initialize() {
-        // Removes scene builder junk (my bad)
+        // Clear any placeholder nodes
         cardsBox.getChildren().clear();
 
-        greetingLabel.setText("Welcome back, User");
+        // Greeting from session
+        var user = UserSession.getCurrentUser();
+        String first = (user != null && user.getFirstName() != null && !user.getFirstName().isBlank())
+                ? user.getFirstName()
+                : "User";
+        greetingLabel.setText("Welcome back, " + first);
+
         tickClock();
         startMinuteTicker();
 
@@ -75,6 +83,7 @@ public class DashboardController {
         flashcardsTile.setOnAction(e -> navigate("/com/cab302/eduplanner/flashcard.fxml", "EduPlanner — Flashcards"));
         notesTile.setOnAction( e -> navigate("/com/cab302/eduplanner/note.fxml", "EduPlanner — Notes"));
         pomodoroTile.setDisable(true);
+        darkTile.setDisable(true);
 
         rubricTile.setOnAction(e -> navigate("/com/cab302/eduplanner/rubric.fxml", "EduPlanner — Rubric Analysis"));
         rubricTile.setDisable(false);
@@ -117,7 +126,7 @@ public class DashboardController {
             case GROUPED_SUBJECT -> "[Sort: Grouped by Subject]";
         });
 
-        // Geta active tasks
+        // Active tasks
         List<tempTask> active = tasks.stream().filter(t -> !t.archived).toList();
         emptyLabel.setVisible(active.isEmpty());
 
@@ -133,7 +142,8 @@ public class DashboardController {
                     .distinct()
                     .forEach(subj -> {
                         Label header = new Label(subj);
-                        header.setStyle("-fx-font-weight: bold; -fx-padding: 6 0 2 0;");
+                        // Use a CSS class instead of inline style for group headers (define in dashboard.css if desired)
+                        header.getStyleClass().add("task-group-header");
                         cardsBox.getChildren().add(header);
 
                         active.stream()
@@ -156,14 +166,15 @@ public class DashboardController {
         }
     }
 
-
     // Task node builder
     private Node card(tempTask t) {
         // Title + due date
         Label title = new Label(t.title);
         Label due = new Label(t.due == null ? "No due date"
                 : "Due: " + t.due.format(DateTimeFormatter.ofPattern("dd MMM")));
-        due.setStyle("-fx-opacity: 0.75;");
+
+        // Use CSS class to slightly mute due text while keeping it white
+        due.getStyleClass().add("task-due");
 
         Pane spacer = new Pane();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -173,7 +184,9 @@ public class DashboardController {
         done.setOnAction(e -> { t.archived = true; render(); });
 
         HBox box = new HBox(10, title, due, spacer, done);
-        box.setStyle("-fx-padding:10; -fx-border-color: -fx-box-border; -fx-border-radius:6; -fx-background-radius:6;");
+
+        // Style via CSS (dark green filled card with white text)
+        box.getStyleClass().add("task-card");
 
         // Detailed View
         box.setOnMouseClicked(e -> {
@@ -198,5 +211,4 @@ public class DashboardController {
     private void info(String msg) {
         System.out.println(msg);
     }
-
 }

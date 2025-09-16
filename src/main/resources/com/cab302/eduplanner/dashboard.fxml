@@ -4,101 +4,117 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="600.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cab302.eduplanner.controller.DashboardController">
+<BorderPane prefHeight="600.0" prefWidth="960.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cab302.eduplanner.controller.DashboardController"
+            stylesheets="@styles/dashboard.css">
+
+
 
     <!-- Main Header -->
     <top>
-        <HBox spacing="12">
+        <BorderPane>
             <padding>
-                <Insets bottom="10" left="12" right="12" top="10" />
+                <Insets top="10" right="12" bottom="10" left="12"/>
             </padding>
-            <Label fx:id="greetingLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Welcome back, User" />
-            <Pane HBox.hgrow="ALWAYS" />
-            <Label fx:id="localTimeLabel" text="12:00" />
-        </HBox>
+
+            <center>
+                <Label fx:id="greetingLabel"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold;"
+                       text="Welcome back, User"
+                       BorderPane.alignment="CENTER"/>
+            </center>
+
+            <right>
+                <Label fx:id="localTimeLabel"
+                       style="-fx-font-size: 18px;"
+                       text="12:00"
+                       BorderPane.alignment="CENTER_RIGHT"/>
+            </right>
+        </BorderPane>
     </top>
 
-    <!-- Two Columns -->
+
+    <!-- Two Columns, Two Rows (0: headers, 1: scroll content) -->
     <center>
-        <GridPane hgap="16">
+        <GridPane hgap="16" vgap="8">
             <padding>
-                <Insets bottom="12" left="12" right="12" top="10" />
+                <Insets top="40" right="12" bottom="12" left="12"/>
             </padding>
 
             <columnConstraints>
-                <ColumnConstraints percentWidth="80" />
-                <ColumnConstraints percentWidth="20" />
+                <ColumnConstraints percentWidth="80"/>
+                <ColumnConstraints percentWidth="20"/>
             </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="NEVER" minHeight="30"/>   <!-- headers -->
+                <RowConstraints minHeight="500.0" prefHeight="500.0" maxHeight="500.0"/> <!-- scroll/content -->
+            </rowConstraints>
 
-            <children>
-                <!-- Left: Tasks Panel -->
-                <VBox spacing="8" GridPane.columnIndex="0">
-                    <children>
-                        <!-- Toolbar -->
-                        <HBox spacing="8">
+            <!-- LEFT COL: Tasks header (row 0) -->
+            <HBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <children>
+                    <Label fx:id="tasksHeader" text="Tasks"/>
+                    <Pane HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="sortButton" text="[Sort: Due Date]" styleClass="task-header-button"/>
+                    <Button fx:id="newButton" text="+ New" styleClass="task-header-button"/>
+                    <Button fx:id="calendarButton" text="Calendar View" styleClass="task-header-button"/>
+                    <Button fx:id="detailButton" text="Detail View" styleClass="task-header-button"/>
+                </children>
+            </HBox>
+
+
+            <!-- LEFT COL: Tasks content (row 1) -->
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefViewportHeight="520.0"
+                        GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <content>
+                    <VBox fx:id="cardsBox" spacing="6">
+                        <!-- placeholder cards for sizing (optional) -->
+                        <HBox spacing="10" styleClass="task-card">
                             <children>
-                                <Label style="-fx-font-size: 15px; -fx-font-weight: bold;" text="Tasks" />
-                                <Pane HBox.hgrow="ALWAYS" />
-                                <Button fx:id="sortButton" text="[Sort: Due Date]" />
-                                <Button fx:id="newButton" text="+ New" />
-                                <Button fx:id="calendarButton" text="Calendar View" />
-                                <Button fx:id="detailButton" text="Detail View" />
+                                <Label text="COMP201 Essay"/>
+                                <Label text="Due: 24 Sep"/>
+                                <Pane HBox.hgrow="ALWAYS"/>
+                                <CheckBox/>
                             </children>
                         </HBox>
 
-                        <!-- Cards List -->
-                        <ScrollPane fitToWidth="true" prefViewportHeight="480.0">
-                            <content>
-                                <VBox fx:id="cardsBox" spacing="6">
-                                    <!-- placeholder cards for sizing (optional) -->
-                                    <HBox spacing="10" style="-fx-padding:10; -fx-border-color: -fx-box-border; -fx-border-radius:6; -fx-background-radius:6;">
-                                        <children>
-                                            <Label text="COMP201 Essay" />
-                                            <Label style="-fx-opacity:0.75;" text="Due: 24 Sep" />
-                                            <Pane HBox.hgrow="ALWAYS" />
-                                            <CheckBox />
-                                        </children>
-                                    </HBox>
-                                    <HBox spacing="10" style="-fx-padding:10; -fx-border-color: -fx-box-border; -fx-border-radius:6; -fx-background-radius:6;">
-                                        <children>
-                                            <Label text="MATH101 Report" />
-                                            <Label style="-fx-opacity:0.75;" text="Due: 27 Sep" />
-                                            <Pane HBox.hgrow="ALWAYS" />
-                                            <CheckBox />
-                                        </children>
-                                    </HBox>
-                                </VBox>
-                            </content>
-                        </ScrollPane>
+                        <HBox spacing="10" styleClass="task-card">
+                            <children>
+                                <Label text="MATH101 Report"/>
+                                <Label text="Due: 27 Sep"/>
+                                <Pane HBox.hgrow="ALWAYS"/>
+                                <CheckBox/>
+                            </children>
+                        </HBox>
 
-                        <Label fx:id="emptyLabel" text="No tasks" visible="false" />
-                    </children>
-                </VBox>
+                        <!-- Empty-state label inside scrollable area -->
+                        <Label fx:id="emptyLabel" text="No tasks" visible="false"/>
+                    </VBox>
+                </content>
+            </ScrollPane>
 
-                <!-- Right: Widgets Rail -->
-                <VBox spacing="8" GridPane.columnIndex="1">
-                    <children>
-                        <Label style="-fx-font-size: 15px; -fx-font-weight: bold;" text="Widgets" />
-                        <ScrollPane fitToWidth="true" prefViewportHeight="480.0">
-                            <content>
-                                <StackPane>
-                                    <VBox spacing="8" alignment="CENTER">
-                                        <children>
-                                            <Button fx:id="flashcardsTile" text="Flashcards" prefWidth="180.0" prefHeight="120.0"/>
-                                            <Button fx:id="notesTile" text="Notes" prefWidth="180.0" prefHeight="120.0"/>
-                                            <Button fx:id="pomodoroTile" text="Pomodoro" prefWidth="180.0" prefHeight="120.0" disable="true"/>
-                                            <Button fx:id="rubricTile" text="Rubric" prefWidth="180.0" prefHeight="120.0"/>
-                                        </children>
-                                    </VBox>
-                                </StackPane>
-                            </content>
-                        </ScrollPane>
-                    </children>
-                </VBox>
-            </children>
-         <rowConstraints>
-            <RowConstraints />
-         </rowConstraints>
+
+            <!-- RIGHT COL: Widgets header (row 0) -->
+            <Label fx:id="widgetsHeader" text="Widgets" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+            <!-- RIGHT COL: Widgets rail (row 1) -->
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefViewportHeight="520.0"
+                        GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <content>
+                    <VBox spacing="8" alignment="CENTER">
+                        <children>
+                            <Button fx:id="flashcardsTile" text="Flashcards" prefWidth="220.0" prefHeight="160.0" styleClass="widget-button"/>
+                            <Button fx:id="notesTile" text="Notes" prefWidth="220.0" prefHeight="160.0" styleClass="widget-button"/>
+                            <Button fx:id="pomodoroTile" text="Pomodoro" prefWidth="220.0" prefHeight="160.0" disable="true" styleClass="widget-button"/>
+                            <Button fx:id="rubricTile" text="Rubric" prefWidth="180.0" prefHeight="120.0"/>
+                            <Button fx:id="darkTile" text="Dark Mode" prefWidth="220.0" prefHeight="160.0" disable="true" styleClass="widget-button"/>
+                        </children>
+                    </VBox>
+                </content>
+            </ScrollPane>
+
         </GridPane>
     </center>
 </BorderPane>
