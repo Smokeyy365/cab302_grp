@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cab302.eduplanner.controller.RubricController">
+   <children>
+      <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" styleClass="rubric-root">
+         <children>
+            <VBox spacing="16.0" styleClass="rubric-card" maxWidth="820.0" prefWidth="820.0">
+               <Label text="Rubric Analysis" styleClass="section-title" />
+               <Label fx:id="statusLabel" text="" />
+               <HBox spacing="12.0" styleClass="rubric-upload-row">
+                  <children>
+                     <Button fx:id="uploadAssignmentButton" mnemonicParsing="false" onAction="#handleUploadAssignment" styleClass="primary" text="Upload Assignment" />
+                     <Button fx:id="uploadRubricButton" mnemonicParsing="false" onAction="#handleUploadRubric" styleClass="secondary" text="Upload Rubric" />
+                  </children>
+               </HBox>
+            </VBox>
+            <VBox spacing="18.0" styleClass="rubric-card" maxWidth="820.0" prefWidth="820.0">
+               <HBox spacing="10.0" alignment="CENTER_LEFT">
+                   <children>
+                       <Label text="Feedback" styleClass="section-title" />
+                      <ProgressIndicator fx:id="progressIndicator" prefHeight="40.0" prefWidth="40.0" progress="0.0" />
+                   </children>
+               </HBox>
+               <TextArea fx:id="feedbackTextArea" prefHeight="240.0" prefWidth="720.0" promptText="Feedback will appear here once both documents are processed." wrapText="true" />
+               <HBox spacing="10.0" styleClass="rubric-actions">
+                  <children>
+                     <Button fx:id="backButton" mnemonicParsing="false" styleClass="secondary" text="Back" />
+                     <Button fx:id="submitButton" mnemonicParsing="false" onAction="#handleSubmitButtonAction" styleClass="primary" text="Submit" />
+                  </children>
+               </HBox>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
+

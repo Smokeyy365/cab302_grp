@@ -39,6 +39,7 @@ public class DashboardController {
     @FXML private Button notesTile;
     @FXML private Button pomodoroTile;
     @FXML private Button darkTile;
+    @FXML private Button rubricTile;
 
     // Task sorter - sets default and cycle order
     private enum SortMode { DUE_DATE, ALPHA, GROUPED_SUBJECT }
@@ -83,6 +84,9 @@ public class DashboardController {
         notesTile.setOnAction( e -> navigate("/com/cab302/eduplanner/note.fxml", "EduPlanner — Notes"));
         pomodoroTile.setDisable(true);
         darkTile.setDisable(true);
+
+        rubricTile.setOnAction(e -> navigate("/com/cab302/eduplanner/rubric.fxml", "EduPlanner — Rubric Analysis"));
+        rubricTile.setDisable(false);
 
         render();
     }

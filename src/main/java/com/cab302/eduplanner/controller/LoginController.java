@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
@@ -24,6 +25,7 @@ public class LoginController {
     @FXML private Button loginButton;
     @FXML private Button registerButton;
     @FXML private Label messageLabel;
+    @FXML private VBox authContainer;
 
     private final AuthService auth = new AuthService();
 
@@ -86,6 +88,22 @@ public class LoginController {
                 if (e.getCode() == KeyCode.UP) {
                     passwordField.requestFocus();
                 }
+            });
+        }
+
+        // If we have the authContainer (register screen), bind left/right padding to 30% of scene width
+        if (authContainer != null) {
+            authContainer.sceneProperty().addListener((sObs, oldScene, newScene) -> {
+                if (newScene == null) return;
+                // update padding whenever scene width changes (initial + resizes)
+                newScene.widthProperty().addListener((wObs, oldW, newW) -> {
+                    double horizontal = newW.doubleValue() * 0.3;
+                    authContainer.setPadding(new javafx.geometry.Insets(20, horizontal, 20, horizontal));
+                });
+                // initial set
+                double initialWidth = newScene.getWidth() > 0 ? newScene.getWidth() : authContainer.getWidth();
+                double horizontal = initialWidth * 0.3;
+                authContainer.setPadding(new javafx.geometry.Insets(20, horizontal, 20, horizontal));
             });
         }
     }

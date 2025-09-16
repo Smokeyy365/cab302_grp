@@ -17,6 +17,7 @@ public class App extends Application {
         stage.setTitle("EduPlanner — Login");
         stage.setScene(scene);
         stage.setResizable(false);
+        stage.centerOnScreen();
         stage.show();
     }
 
@@ -32,6 +33,7 @@ public class App extends Application {
     stage.setTitle(title);
     stage.setScene(scene);
     stage.setResizable(false);
+    stage.centerOnScreen();
     stage.show();
     }
 }
