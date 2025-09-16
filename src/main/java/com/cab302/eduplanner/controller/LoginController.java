@@ -139,6 +139,7 @@ public class LoginController {
         try {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             App.changeScene(stage,"/com/cab302/eduplanner/dashboard.fxml", "EduPlanner — Dashboard");
+            stage.centerOnScreen();
         } catch (IOException e) {
             messageLabel.setText("Unable to open main UI.");
         }
