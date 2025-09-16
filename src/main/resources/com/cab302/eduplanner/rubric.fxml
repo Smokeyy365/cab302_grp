@@ -16,12 +16,16 @@
                   <children>
                      <Button fx:id="uploadAssignmentButton" mnemonicParsing="false" onAction="#handleUploadAssignment" styleClass="primary" text="Upload Assignment" />
                      <Button fx:id="uploadRubricButton" mnemonicParsing="false" onAction="#handleUploadRubric" styleClass="secondary" text="Upload Rubric" />
-                     <ProgressIndicator fx:id="progressIndicator" prefHeight="40.0" prefWidth="40.0" progress="0.0" />
                   </children>
                </HBox>
             </VBox>
             <VBox spacing="18.0" styleClass="rubric-card" maxWidth="820.0" prefWidth="820.0">
-               <Label text="Feedback" styleClass="section-title" />
+               <HBox spacing="10.0" alignment="CENTER_LEFT">
+                   <children>
+                       <Label text="Feedback" styleClass="section-title" />
+                      <ProgressIndicator fx:id="progressIndicator" prefHeight="40.0" prefWidth="40.0" progress="0.0" />
+                   </children>
+               </HBox>
                <TextArea fx:id="feedbackTextArea" prefHeight="240.0" prefWidth="720.0" promptText="Feedback will appear here once both documents are processed." wrapText="true" />
                <HBox spacing="10.0" styleClass="rubric-actions">
                   <children>
