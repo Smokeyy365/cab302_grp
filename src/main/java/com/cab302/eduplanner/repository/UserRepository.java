@@ -9,10 +9,9 @@ import java.util.Optional;
 
 public class UserRepository {
 
-    // Removed local DB_URL and init(); DatabaseConnection owns both
+    // Removed local DB URL, schema creation and init()
 
     public UserRepository() {
-        // No schema creation here anymore
     }
 
     private static final DateTimeFormatter SQLITE_DT =
@@ -29,7 +28,6 @@ public class UserRepository {
             ps.setString(5, passwordHash);
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
-            // Likely UNIQUE constraint if username/email exists
             return false;
         }
     }
@@ -50,37 +48,6 @@ public class UserRepository {
         }
     }
 
-    // optional, not currently used
-    public Optional<User> findByUserId(long userId) {
-        final String sql = "SELECT user_id, username, email, first_name, last_name, password_hash, created_at FROM users WHERE user_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(mapRow(rs));
-                }
-                return Optional.empty();
-            }
-        } catch (SQLException e) {
-            return Optional.empty();
-        }
-    }
-
-    // TODO: implement updateDetails in AuthService and call this method
-    public boolean updateDetails(long userId, String email, String firstName, String lastName) {
-        final String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ? WHERE user_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, email);
-            ps.setString(2, firstName);
-            ps.setString(3, lastName);
-            ps.setLong(4, userId);
-            return ps.executeUpdate() == 1;
-        } catch (SQLException e) {
-            return false;
-        }
-    }
 
     private User mapRow(ResultSet rs) throws SQLException {
         long userId = rs.getLong("user_id");
@@ -90,14 +57,12 @@ public class UserRepository {
         String lastName = rs.getString("last_name");
         String passwordHash = rs.getString("password_hash");
 
-        // created_at is TEXT (strftime)
         String createdRaw = rs.getString("created_at");
         LocalDateTime createdAt = null;
         if (createdRaw != null && !createdRaw.isBlank()) {
             try {
                 createdAt = LocalDateTime.parse(createdRaw, SQLITE_DT);
             } catch (Exception ignore) {
-                // keeps null instead of fail
             }
         }
 
