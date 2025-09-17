@@ -18,6 +18,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Backs the dashboard view by wiring task cards, widgets, and navigation shortcuts.
+ */
 public class DashboardController {
 
     // User header
@@ -56,6 +59,9 @@ public class DashboardController {
     }
     private final List<tempTask> tasks = new ArrayList<>();
 
+    /**
+     * Configures greeting content, demo task data, and button handlers after FXML load.
+     */
     @FXML public void initialize() {
         // Clear any placeholder nodes
         cardsBox.getChildren().clear();
@@ -109,6 +115,9 @@ public class DashboardController {
         t.start();
     }
 
+    /**
+     * Advances the current task sort mode to the next available strategy.
+     */
     private void cycleSort() {
         sortMode = switch (sortMode) {
             case DUE_DATE -> SortMode.ALPHA;
@@ -118,6 +127,9 @@ public class DashboardController {
     }
 
     // Displays the tasks in current sort mode
+    /**
+     * Rebuilds the task list UI according to the active sort mode.
+     */
     private void render() {
         // Update sort button label
         sortButton.setText(switch (sortMode) {
@@ -167,6 +179,12 @@ public class DashboardController {
     }
 
     // Task node builder
+    /**
+     * Constructs a task card node for the supplied transient task model.
+     *
+     * @param t temporary task backing the UI card
+     * @return rendered node ready to add to the VBox
+     */
     private Node card(tempTask t) {
         // Title + due date
         Label title = new Label(t.title);
@@ -198,6 +216,12 @@ public class DashboardController {
     }
 
     // Switch scene to another FXML file
+    /**
+     * Transitions the main content area to another FXML-driven feature.
+     *
+     * @param fxml resource path for the destination scene
+     * @param title window title to show after navigation
+     */
     private void navigate(String fxml, String title) {
         try {
             Stage stage = (Stage) cardsBox.getScene().getWindow();

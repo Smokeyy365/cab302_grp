@@ -15,6 +15,9 @@ import javafx.event.ActionEvent;
 
 import java.io.IOException;
 
+/**
+ * Controller responsible for login and registration scenes, including validation and navigation.
+ */
 public class LoginController {
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
@@ -29,6 +32,9 @@ public class LoginController {
 
     private final AuthService auth = new AuthService();
 
+    /**
+     * Wires field focus traversal and dynamic layout behaviours depending on the active form.
+     */
     @FXML
     private void initialize() {
         messageLabel.setText("");
@@ -109,6 +115,11 @@ public class LoginController {
     }
 
     // -------- LOGIN --------
+    /**
+     * Attempts to authenticate the user and opens the dashboard when successful.
+     *
+     * @param event action event fired by hitting the login button or pressing enter
+     */
     @FXML
     private void onLogin(ActionEvent event) {
         String u = usernameField.getText();
@@ -135,6 +146,11 @@ public class LoginController {
     }
 
 
+    /**
+     * Navigates to the dashboard scene while retaining the current window.
+     *
+     * @param event source event used to obtain the originating stage
+     */
     private void openMainUI(ActionEvent event) {
         try {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -146,6 +162,11 @@ public class LoginController {
     }
 
     // -------- NAVIGATION --------
+    /**
+     * Switches to the registration screen.
+     *
+     * @param event action event triggered from the login view
+     */
     @FXML
     private void openRegister(ActionEvent event) {
         try {
@@ -156,6 +177,11 @@ public class LoginController {
         }
     }
 
+    /**
+     * Returns the user to the login screen.
+     *
+     * @param event action event triggered from the register view
+     */
     @FXML
     private void openLogin(ActionEvent event) {
         try {
@@ -167,6 +193,11 @@ public class LoginController {
     }
 
     // -------- REGISTER --------
+    /**
+     * Validates registration details, creates an account, and redirects to login.
+     *
+     * @param event action event fired by the registration button
+     */
     @FXML
     private void onRegister(ActionEvent event) {
         String u = usernameField.getText();
