@@ -70,30 +70,12 @@
                         GridPane.columnIndex="0" GridPane.rowIndex="1">
                 <content>
                     <VBox fx:id="cardsBox" spacing="6">
-                        <!-- placeholder cards for sizing (optional) -->
-                        <HBox spacing="10" styleClass="task-card">
-                            <children>
-                                <Label text="COMP201 Essay"/>
-                                <Label text="Due: 24 Sep"/>
-                                <Pane HBox.hgrow="ALWAYS"/>
-                                <CheckBox/>
-                            </children>
-                        </HBox>
-
-                        <HBox spacing="10" styleClass="task-card">
-                            <children>
-                                <Label text="MATH101 Report"/>
-                                <Label text="Due: 27 Sep"/>
-                                <Pane HBox.hgrow="ALWAYS"/>
-                                <CheckBox/>
-                            </children>
-                        </HBox>
-
                         <!-- Empty-state label inside scrollable area -->
                         <Label fx:id="emptyLabel" text="No tasks" visible="false"/>
                     </VBox>
                 </content>
             </ScrollPane>
+
 
 
             <!-- RIGHT COL: Widgets header (row 0) -->

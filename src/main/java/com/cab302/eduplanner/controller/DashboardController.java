@@ -13,10 +13,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 public class DashboardController {
 
@@ -41,20 +39,8 @@ public class DashboardController {
     @FXML private Button darkTile;
     @FXML private Button rubricTile;
 
-    // Task sorter - sets default and cycle order
     private enum SortMode { DUE_DATE, ALPHA, GROUPED_SUBJECT }
     private SortMode sortMode = SortMode.DUE_DATE;
-
-    // Temp tasks - replace once new task flow and task repo complete
-    private static final class tempTask {
-        final String title, subject;
-        final LocalDate due;
-        boolean archived = false;
-        tempTask(String title, String subject, LocalDate due) {
-            this.title = title; this.subject = subject; this.due = due;
-        }
-    }
-    private final List<tempTask> tasks = new ArrayList<>();
 
     @FXML public void initialize() {
         // Clear any placeholder nodes
@@ -63,17 +49,12 @@ public class DashboardController {
         // Greeting from session
         var user = UserSession.getCurrentUser();
         String first = (user != null && user.getFirstName() != null && !user.getFirstName().isBlank())
-                ? user.getFirstName()
-                : "User";
+                ? user.getFirstName() : "User";
         greetingLabel.setText("Welcome back, " + first);
 
         tickClock();
         startMinuteTicker();
 
-        // Temp tasks
-        tasks.add(new tempTask("Tutorials 6 and 7", "CAB202", LocalDate.now().plusDays(3)));
-        tasks.add(new tempTask("PST", "MXB100", LocalDate.now().plusDays(6)));
-        tasks.add(new tempTask("Checkpoint 3", "CAB302", LocalDate.now().plusDays(1)));
 
         sortButton.setOnAction(e -> { cycleSort(); render(); });
         newButton.setOnAction(e -> info("New task flow TBD"));
@@ -84,7 +65,6 @@ public class DashboardController {
         notesTile.setOnAction( e -> navigate("/com/cab302/eduplanner/note.fxml", "EduPlanner — Notes"));
         pomodoroTile.setDisable(true);
         darkTile.setDisable(true);
-
         rubricTile.setOnAction(e -> navigate("/com/cab302/eduplanner/rubric.fxml", "EduPlanner — Rubric Analysis"));
         rubricTile.setDisable(false);
 
@@ -117,84 +97,15 @@ public class DashboardController {
         };
     }
 
-    // Displays the tasks in current sort mode
     private void render() {
-        // Update sort button label
         sortButton.setText(switch (sortMode) {
             case DUE_DATE -> "[Sort: Due Date]";
             case ALPHA -> "[Sort: Alphabetical]";
             case GROUPED_SUBJECT -> "[Sort: Grouped by Subject]";
         });
 
-        // Active tasks
-        List<tempTask> active = tasks.stream().filter(t -> !t.archived).toList();
-        emptyLabel.setVisible(active.isEmpty());
-
-        // Clear current task cards
         cardsBox.getChildren().clear();
-
-        if (sortMode == SortMode.GROUPED_SUBJECT) {
-            // Group by subject, then sort within each subject by due date
-            active.stream()
-                    .sorted(Comparator.comparing((tempTask t) -> t.subject, String.CASE_INSENSITIVE_ORDER)
-                            .thenComparing(t -> t.due))
-                    .map(t -> t.subject)
-                    .distinct()
-                    .forEach(subj -> {
-                        Label header = new Label(subj);
-                        // Use a CSS class instead of inline style for group headers (define in dashboard.css if desired)
-                        header.getStyleClass().add("task-group-header");
-                        cardsBox.getChildren().add(header);
-
-                        active.stream()
-                                .filter(t -> Objects.equals(t.subject, subj))
-                                .sorted(Comparator.comparing(t -> t.due))
-                                .forEach(t -> cardsBox.getChildren().add(card(t)));
-                    });
-        } else {
-            // Flat list sorted by due date or alphabetical
-            List<tempTask> sorted = new ArrayList<>(active);
-
-            if (sortMode == SortMode.DUE_DATE) {
-                sorted.sort(Comparator.comparing(t -> t.due));
-            } else {
-                sorted.sort(Comparator.comparing((tempTask t) -> t.title, String.CASE_INSENSITIVE_ORDER)
-                        .thenComparing(t -> t.due));
-            }
-
-            sorted.forEach(t -> cardsBox.getChildren().add(card(t)));
-        }
-    }
-
-    // Task node builder
-    private Node card(tempTask t) {
-        // Title + due date
-        Label title = new Label(t.title);
-        Label due = new Label(t.due == null ? "No due date"
-                : "Due: " + t.due.format(DateTimeFormatter.ofPattern("dd MMM")));
-
-        // Use CSS class to slightly mute due text while keeping it white
-        due.getStyleClass().add("task-due");
-
-        Pane spacer = new Pane();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        // Archive tasks
-        CheckBox done = new CheckBox();
-        done.setOnAction(e -> { t.archived = true; render(); });
-
-        HBox box = new HBox(10, title, due, spacer, done);
-
-        // Style via CSS (dark green filled card with white text)
-        box.getStyleClass().add("task-card");
-
-        // Detailed View
-        box.setOnMouseClicked(e -> {
-            if (e.getTarget() instanceof CheckBox) return;
-            info("Open Task Detail/Edit (Planner) — TBD");
-        });
-
-        return box;
+        emptyLabel.setVisible(true);
     }
 
     // Switch scene to another FXML file
