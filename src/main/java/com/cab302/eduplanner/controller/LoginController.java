@@ -2,7 +2,6 @@ package com.cab302.eduplanner.controller;
 
 import com.cab302.eduplanner.service.AuthService;
 import com.cab302.eduplanner.App;
-import com.cab302.eduplanner.repository.UserRepository;
 import com.cab302.eduplanner.appcontext.UserSession;
 
 import javafx.fxml.FXML;
@@ -35,20 +34,14 @@ public class LoginController {
 
         // -------- LOGIN FLOW --------
         if (usernameField != null && passwordField != null && confirmPasswordField == null) {
-            // Enter on username -> move to password
             usernameField.setOnAction(e -> passwordField.requestFocus());
-
-            // Arrow down in username -> move to password
             usernameField.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.DOWN) {
                     passwordField.requestFocus();
                 }
             });
 
-            // Enter on password -> login
             passwordField.setOnAction(this::onLogin);
-
-            // Arrow Up in password -> move back to username
             passwordField.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.UP) {
                     usernameField.requestFocus();
@@ -58,20 +51,14 @@ public class LoginController {
 
         // -------- REGISTER FLOW --------
         if (usernameField != null && passwordField != null && confirmPasswordField != null) {
-            // Enter on username (register screen) -> move to password
             usernameField.setOnAction(e -> passwordField.requestFocus());
-
-            // Arrow down in username -> move to password
             usernameField.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.DOWN) {
                     passwordField.requestFocus();
                 }
             });
 
-            // Enter on password -> move to confirm password
             passwordField.setOnAction(e -> confirmPasswordField.requestFocus());
-
-            // Arrow up/down support for password
             passwordField.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.UP) {
                     usernameField.requestFocus();
@@ -80,10 +67,7 @@ public class LoginController {
                 }
             });
 
-            // Enter on confirm password -> trigger register
             confirmPasswordField.setOnAction(this::onRegister);
-
-            // Arrow up support for confirm password
             confirmPasswordField.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.UP) {
                     passwordField.requestFocus();
@@ -95,12 +79,10 @@ public class LoginController {
         if (authContainer != null) {
             authContainer.sceneProperty().addListener((sObs, oldScene, newScene) -> {
                 if (newScene == null) return;
-                // update padding whenever scene width changes (initial + resizes)
                 newScene.widthProperty().addListener((wObs, oldW, newW) -> {
                     double horizontal = newW.doubleValue() * 0.3;
                     authContainer.setPadding(new javafx.geometry.Insets(20, horizontal, 20, horizontal));
                 });
-                // initial set
                 double initialWidth = newScene.getWidth() > 0 ? newScene.getWidth() : authContainer.getWidth();
                 double horizontal = initialWidth * 0.3;
                 authContainer.setPadding(new javafx.geometry.Insets(20, horizontal, 20, horizontal));
@@ -114,26 +96,14 @@ public class LoginController {
         String u = usernameField.getText();
         String p = passwordField.getText();
 
+        // Uses AuthService instead of re-querying
         if (auth.authenticate(u, p)) {
-            // Loads user record
-            var repo = new UserRepository();
-            var userOpt = repo.findByUsername(u);
-
-            if (userOpt.isEmpty()) {
-                // Session user check
-                messageLabel.setText("Login succeeded, but user record not found.");
-                return;
-            }
-
-            // Stores basic user info for session
-            UserSession.setCurrentUser(userOpt.get().withoutSensitive());
-
+            UserSession.setCurrentUser(auth.getCurrentUser());
             openMainUI(event);
         } else {
             messageLabel.setText("Invalid credentials");
         }
     }
-
 
     private void openMainUI(ActionEvent event) {
         try {
