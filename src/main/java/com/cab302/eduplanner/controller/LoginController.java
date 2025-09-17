@@ -158,6 +158,13 @@ public class LoginController {
 
         boolean ok = auth.register(u, email, fname, lname, p);
 
+        // Added fail message if not unique
+        if (!ok) {
+            messageLabel.setText("Username or email already in use.");
+            return;
+        }
+
+        // Stays on registration screen on fail
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         try {
             App.changeScene(stage,"/com/cab302/eduplanner/login.fxml", "EduPlanner — Login");
@@ -166,6 +173,6 @@ public class LoginController {
             return;
         }
 
-        messageLabel.setText(ok ? "Registered. You can log in now." : "Register failed (exists or invalid).");
+        messageLabel.setText("Registered. You can log in now.");
     }
 }
