@@ -34,3 +34,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+##Google Drive Credentials
+# EduPlanner secrets
+/src/main/resources/credentials.json
+/tokens/

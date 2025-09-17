@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+S<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -28,6 +28,7 @@
             <artifactId>javafx-controls</artifactId>
             <version>21</version>
         </dependency>
+
         <!-- BCrypt for password hashing -->
         <dependency>
             <groupId>at.favre.lib</groupId>
@@ -73,15 +74,50 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Google API base client (AuthorizationCodeFlow, GoogleClientSecrets, etc.) -->
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>2.7.2</version>
+        </dependency>
+
+        <!-- Google OAuth + HTTP -->
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client-jetty</artifactId>
+            <version>1.34.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-gson</artifactId>
+            <version>1.43.3</version>
+        </dependency>
+
+        <!-- Google HTTP client core (contains NetHttpTransport) -->
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client</artifactId>
+            <version>1.45.0</version>
+        </dependency>
+
+        <!-- Google APIs -->
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-calendar</artifactId>
+            <version>v3-rev20240927-2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-drive</artifactId>
+            <version>v3-rev20250701-2.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-            </plugin>
+            <!-- Compiler plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -89,8 +125,15 @@
                 <configuration>
                     <source>21</source>
                     <target>21</target>
+                    <!-- Allow module to read unnamed deps -->
+                    <compilerArgs>
+                        <arg>--add-reads</arg>
+                        <arg>com.cab302.eduplanner=ALL-UNNAMED</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
+
+            <!-- JavaFX plugin -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -107,6 +150,9 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                            <jvmArgs>
+                                --add-reads com.cab302.eduplanner=ALL-UNNAMED
+                            </jvmArgs>
                         </configuration>
                     </execution>
                 </executions>
@@ -114,6 +160,3 @@
         </plugins>
     </build>
 </project>
-
-
-

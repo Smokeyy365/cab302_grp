@@ -7,6 +7,10 @@ module com.cab302.eduplanner {
     requires jbcrypt;
     requires java.sql;
 
+    // Google OAuth redirect
+    requires jdk.httpserver;
+    requires java.desktop;
+
     // for reflection access by FXML
     opens com.cab302.eduplanner.controller to javafx.fxml;
     opens com.cab302.eduplanner.controller.components to javafx.fxml;
