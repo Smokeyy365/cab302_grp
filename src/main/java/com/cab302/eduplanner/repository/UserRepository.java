@@ -19,7 +19,7 @@ public class UserRepository {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // matches datetime
 
     public boolean createUser(String username, String email, String firstName, String lastName, String passwordHash) {
-        final String sql = "INSERT INTO Users (username, email, first_name, last_name, password_hash) VALUES (?,?,?,?,?)";
+        final String sql = "INSERT INTO users (username, email, first_name, last_name, password_hash) VALUES (?,?,?,?,?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
@@ -29,13 +29,13 @@ public class UserRepository {
             ps.setString(5, passwordHash);
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
-            // Likely UNIQUE constraint if username exists
+            // Likely UNIQUE constraint if username/email exists
             return false;
         }
     }
 
     public Optional<User> findByUsername(String username) {
-        final String sql = "SELECT userid, username, email, first_name, last_name, password_hash, created_at FROM Users WHERE username = ?";
+        final String sql = "SELECT user_id, username, email, first_name, last_name, password_hash, created_at FROM users WHERE username = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
@@ -51,11 +51,11 @@ public class UserRepository {
     }
 
     // optional, not currently used
-    public Optional<User> findByUserId(long userid) {
-        final String sql = "SELECT userid, username, email, first_name, last_name, password_hash, created_at FROM Users WHERE userid = ?";
+    public Optional<User> findByUserId(long userId) {
+        final String sql = "SELECT user_id, username, email, first_name, last_name, password_hash, created_at FROM users WHERE user_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, userid);
+            ps.setLong(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(mapRow(rs));
@@ -68,14 +68,14 @@ public class UserRepository {
     }
 
     // TODO: implement updateDetails in AuthService and call this method
-    public boolean updateDetails(long userid, String email, String firstName, String lastName) {
-        final String sql = "UPDATE Users SET email = ?, first_name = ?, last_name = ? WHERE userid = ?";
+    public boolean updateDetails(long userId, String email, String firstName, String lastName) {
+        final String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ? WHERE user_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, firstName);
             ps.setString(3, lastName);
-            ps.setLong(4, userid);
+            ps.setLong(4, userId);
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             return false;
@@ -83,14 +83,14 @@ public class UserRepository {
     }
 
     private User mapRow(ResultSet rs) throws SQLException {
-        long userid = rs.getLong("userid");
+        long userId = rs.getLong("user_id");
         String username = rs.getString("username");
         String email = rs.getString("email");
         String firstName = rs.getString("first_name");
         String lastName = rs.getString("last_name");
         String passwordHash = rs.getString("password_hash");
 
-        // created_at is TEXT (datetime('now'))
+        // created_at is TEXT (strftime)
         String createdRaw = rs.getString("created_at");
         LocalDateTime createdAt = null;
         if (createdRaw != null && !createdRaw.isBlank()) {
@@ -101,7 +101,7 @@ public class UserRepository {
             }
         }
 
-        return new User(userid, username, email, firstName, lastName, passwordHash, createdAt);
+        return new User(userId, username, email, firstName, lastName, passwordHash, createdAt);
     }
 
     public static class User {
@@ -110,7 +110,7 @@ public class UserRepository {
         private final String email;
         private final String firstName;
         private final String lastName;
-        private final String passwordHash; // may be null when exposed outside auth
+        private final String passwordHash;
         private final LocalDateTime createdAt;
 
         public User(long userid, String username, String email, String firstName, String lastName, String passwordHash, LocalDateTime createdAt) {
