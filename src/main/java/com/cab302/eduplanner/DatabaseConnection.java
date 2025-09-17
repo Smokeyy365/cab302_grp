@@ -7,54 +7,25 @@ import java.sql.Statement;
 
 public class DatabaseConnection {
 
-    // SQLite DB file (created in project root if not present)
+    // Single DB URL
     private static final String DB_URL = "jdbc:sqlite:eduplanner_database.db";
 
-    public static void main(String[] args) {
-        Connection connection = null;
-        try {
-            // Load the SQLite JDBC driver
-            Class.forName("org.sqlite.JDBC");
-
-            // Open connection
-            connection = DriverManager.getConnection(DB_URL);
-            System.out.println("Connection to SQLite has been established.");
-
-            // Ensure foreign keys are enforced.
-            enableForeignKeys(connection);
-
-            // Create schema if needed
-            initSchema(connection);
-            System.out.println("Database schema initialized (tables created if missing).");
-
-        } catch (SQLException e) {
-            System.err.println("Database connection error: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.err.println("SQLite JDBC driver not found: " + e.getMessage());
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                    System.out.println("Connection to SQLite closed.");
-                }
-            } catch (SQLException ex) {
-                System.err.println("Error closing connection: " + ex.getMessage());
-            }
-        }
+    // SQLite Driver
+    static {
+        try { Class.forName("org.sqlite.JDBC"); } catch (ClassNotFoundException ignored) {}
     }
 
-    private static void enableForeignKeys(Connection conn) throws SQLException {
+    /** Enables foreign key once per connection */
+    public static Connection getConnection() throws SQLException {
+        Connection conn = DriverManager.getConnection(DB_URL);
         try (Statement st = conn.createStatement()) {
             st.execute("PRAGMA foreign_keys = ON;");
         }
+        return conn;
     }
 
-    /**
-     * Creates the Users, TaskTable, and RubricTable tables if they do not already exist.
-     * Column names and types match your spec. Timestamps use SQLite's datetime('now') default.
-     */
-    private static void initSchema(Connection conn) throws SQLException {
-        // USERS
+    /** Creates/ensures all tables & indexes exist. Call once at app startup. */
+    public static void initSchema() {
         final String createUsers = """
             CREATE TABLE IF NOT EXISTS Users (
                 userid        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,9 +38,6 @@ public class DatabaseConnection {
             );
         """;
 
-        // TASKTABLE
-        // Note: achieved_mark and weighted_mark use REAL to allow decimals; max_mark/task_weight are INTEGER.
-        // deadline stored as TEXT (ISO string recommended) for portability in SQLite.
         final String createTaskTable = """
             CREATE TABLE IF NOT EXISTS TaskTable (
                 taskID        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,7 +56,6 @@ public class DatabaseConnection {
             );
         """;
 
-        // RUBRICTABLE
         final String createRubricTable = """
             CREATE TABLE IF NOT EXISTS RubricTable (
                 rubricID        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -101,7 +68,6 @@ public class DatabaseConnection {
             );
         """;
 
-        // Helpful indexes on FKs
         final String createIdxTaskUser = """
             CREATE INDEX IF NOT EXISTS idx_tasktable_userid ON TaskTable(userid);
         """;
@@ -109,12 +75,15 @@ public class DatabaseConnection {
             CREATE INDEX IF NOT EXISTS idx_rubric_taskid ON RubricTable(taskID);
         """;
 
-        try (Statement st = conn.createStatement()) {
+        try (Connection conn = getConnection(); Statement st = conn.createStatement()) {
             st.execute(createUsers);
             st.execute(createTaskTable);
             st.execute(createRubricTable);
             st.execute(createIdxTaskUser);
             st.execute(createIdxRubricTask);
+        } catch (SQLException e) {
+            System.err.println("Schema init failed: " + e.getMessage());
         }
     }
+
 }
