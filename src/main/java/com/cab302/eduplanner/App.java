@@ -10,7 +10,8 @@ import java.io.IOException;
 public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        // Loads flashcard.fxml from resources/com/cab302/eduplanner/
+        DatabaseConnection.initSchema();
+
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 854, 480);
         scene.getStylesheets().add(App.class.getResource("styles/app.css").toExternalForm());
@@ -26,14 +27,14 @@ public class App extends Application {
     }
 
     public static void changeScene(Stage stage, String fxml, String title) throws IOException {
-    FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
-    Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
+        Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
 
-    scene.getStylesheets().add(App.class.getResource("styles/app.css").toExternalForm());
-    stage.setTitle(title);
-    stage.setScene(scene);
-    stage.setResizable(false);
-    stage.centerOnScreen();
-    stage.show();
+        scene.getStylesheets().add(App.class.getResource("styles/app.css").toExternalForm());
+        stage.setTitle(title);
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.centerOnScreen();
+        stage.show();
     }
 }
