@@ -20,7 +20,7 @@ public class DatabaseConnection {
             connection = DriverManager.getConnection(DB_URL);
             System.out.println("Connection to SQLite has been established.");
 
-            // Ensure foreign keys are enforced
+            // Ensure foreign keys are enforced.
             enableForeignKeys(connection);
 
             // Create schema if needed
