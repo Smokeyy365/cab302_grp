@@ -1,50 +1,33 @@
 package com.cab302.eduplanner.repository;
 
+import com.cab302.eduplanner.DatabaseConnection;
+
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class UserRepository {
-    private static final String DB_URL = "jdbc:sqlite:eduplanner_database.db";
+
+    // Removed local DB_URL and init(); DatabaseConnection owns both
 
     public UserRepository() {
-        init();
+        // No schema creation here anymore
     }
 
-    private void init() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ignored) {}
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement st = conn.createStatement()) {
-            st.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS users (" +
-                "userid INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT NOT NULL UNIQUE, " +
-                "password_hash TEXT NOT NULL, " +
-                "email TEXT, " +
-                "first_name TEXT, " +
-                "last_name TEXT, " +
-                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
-                ")"
-            );
-        } catch (SQLException e) {
-            // In production, use a logger
-            System.err.println("Failed to initialize users table: " + e.getMessage());
-        }
-    }
+    private static final DateTimeFormatter SQLITE_DT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // matches datetime
 
     public boolean createUser(String username, String email, String firstName, String lastName, String passwordHash) {
-        String sql = "INSERT INTO users (username, email, first_name, last_name, password_hash) VALUES (?,?,?,?,?)";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+        final String sql = "INSERT INTO Users (username, email, first_name, last_name, password_hash) VALUES (?,?,?,?,?)";
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, email);
             ps.setString(3, firstName);
             ps.setString(4, lastName);
             ps.setString(5, passwordHash);
-            int updated = ps.executeUpdate();
-            return updated == 1;
+            return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             // Likely UNIQUE constraint if username exists
             return false;
@@ -52,8 +35,8 @@ public class UserRepository {
     }
 
     public Optional<User> findByUsername(String username) {
-        String sql = "SELECT userid, username, email, first_name, last_name, password_hash, created_at FROM users WHERE username = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+        final String sql = "SELECT userid, username, email, first_name, last_name, password_hash, created_at FROM Users WHERE username = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
@@ -67,10 +50,10 @@ public class UserRepository {
         }
     }
 
-    // this is an optional method, not currently used
+    // optional, not currently used
     public Optional<User> findByUserId(long userid) {
-        String sql = "SELECT userid, username, email, first_name, last_name, password_hash, created_at FROM users WHERE userid = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+        final String sql = "SELECT userid, username, email, first_name, last_name, password_hash, created_at FROM Users WHERE userid = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, userid);
             try (ResultSet rs = ps.executeQuery()) {
@@ -86,8 +69,8 @@ public class UserRepository {
 
     // TODO: implement updateDetails in AuthService and call this method
     public boolean updateDetails(long userid, String email, String firstName, String lastName) {
-        String sql = "UPDATE users SET email = ?, first_name = ?, last_name = ? WHERE userid = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+        final String sql = "UPDATE Users SET email = ?, first_name = ?, last_name = ? WHERE userid = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, firstName);
@@ -106,8 +89,18 @@ public class UserRepository {
         String firstName = rs.getString("first_name");
         String lastName = rs.getString("last_name");
         String passwordHash = rs.getString("password_hash");
-        Timestamp ts = rs.getTimestamp("created_at");
-        LocalDateTime createdAt = ts != null ? ts.toLocalDateTime() : null;
+
+        // created_at is TEXT (datetime('now'))
+        String createdRaw = rs.getString("created_at");
+        LocalDateTime createdAt = null;
+        if (createdRaw != null && !createdRaw.isBlank()) {
+            try {
+                createdAt = LocalDateTime.parse(createdRaw, SQLITE_DT);
+            } catch (Exception ignore) {
+                // keeps null instead of fail
+            }
+        }
+
         return new User(userid, username, email, firstName, lastName, passwordHash, createdAt);
     }
 
