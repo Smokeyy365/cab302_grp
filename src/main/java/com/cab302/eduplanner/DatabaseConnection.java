@@ -34,8 +34,8 @@ public class DatabaseConnection {
                 first_name    TEXT,
                 last_name     TEXT,
                 password_hash TEXT    NOT NULL,
-                created_at    TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now')),
-                updated_at    TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now'))
+                created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
+                updated_at    TEXT    NOT NULL DEFAULT (datetime('now'))
             );
         """;
 
@@ -45,13 +45,13 @@ public class DatabaseConnection {
                 user_id       INTEGER NOT NULL,
                 subject       TEXT,
                 title         TEXT    NOT NULL,
-                due_date      TEXT,                                '
+                due_date      TEXT,
                 notes         TEXT,
                 weight        INTEGER,
                 achieved_mark REAL,
                 max_mark      REAL,
-                created_at    TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now')),
-                updated_at    TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%d %H:%M:%S','now')),
+                created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
+                updated_at    TEXT    NOT NULL DEFAULT (datetime('now')),
                 CHECK (weight IS NULL OR weight >= 0),
                 CHECK (achieved_mark IS NULL OR achieved_mark >= 0),
                 CHECK (max_mark IS NULL OR max_mark > 0),
