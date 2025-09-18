@@ -281,44 +281,6 @@ public class DashboardController {
         }
     }
 
-    private Node card(Task t) {
-        String dueText = (t.getDueDate() == null)
-                ? "No due date"
-                : "Due: " + t.getDueDate().format(DateTimeFormatter.ofPattern("dd MMM"));
-
-        Label title = new Label(t.getTitle());
-        Label due = new Label(dueText);
-        due.getStyleClass().add("task-due");
-
-        Pane spacer = new Pane();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        // Delete checkbox (acts as delete for now)
-        CheckBox done = new CheckBox();
-        done.setOnAction(e -> {
-            e.consume();
-            if (confirm("Delete this task?")) {
-                long userId = UserSession.getCurrentUser().getUserId();
-                if (!taskRepo.delete(t.getTaskId(), userId)) {
-                    info("Delete failed");
-                }
-                refreshTasks();
-            } else {
-                done.setSelected(false);
-            }
-        });
-
-        HBox box = new HBox(10, title, due, spacer, done);
-        box.getStyleClass().add("task-card");
-
-        // Click to edit
-        box.setOnMouseClicked(e -> {
-            if (e.getTarget() instanceof CheckBox) return;
-            openEditForm(t);
-        });
-
-        return box;
-    }
 
     /**
      * Opens the modal task creation dialog.
