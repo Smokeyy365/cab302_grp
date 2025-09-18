@@ -1,16 +1,14 @@
 package com.cab302.eduplanner.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ProgressIndicator;
-import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import java.io.File;
-
+import javafx.stage.Stage;
+import java.io.IOException;
 import com.cab302.eduplanner.App;
+
 
 /**
  * Handles rubric uploads and user-facing feedback for the analysis workflow.
@@ -27,7 +25,7 @@ public class RubricController {
     private Button submitButton;
 
     @FXML
-    private Button backButton, uploadAssignmentButton, uploadRubricButton;
+    private Button dashboardButton, uploadAssignmentButton, uploadRubricButton;
 
     @FXML
     private Label statusLabel;
@@ -88,4 +86,19 @@ public class RubricController {
         // Handle the submit button action here
         statusLabel.setText("Rubric analysis submitted.");
     }
+
+    /**
+     * Handles navigation back to the dashboard view.
+     */
+    @FXML
+    private void handleDashboardButtonAction() {
+        try {
+            Stage stage = (Stage) dashboardButton.getScene().getWindow();
+            App.changeScene(stage, "/com/cab302/eduplanner/dashboard.fxml", "EduPlanner — Dashboard");
+        } catch (IOException ex) {
+            System.err.println("Failed to switch to Dashboard scene: " + ex.getMessage());
+            statusLabel.setText("Failed to return to dashboard.");
+        }
+    }
+
 }

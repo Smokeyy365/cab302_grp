@@ -2,8 +2,6 @@ package com.cab302.eduplanner.controller;
 
 import com.cab302.eduplanner.service.AuthService;
 import com.cab302.eduplanner.App;
-import com.cab302.eduplanner.repository.UserRepository;
-import com.cab302.eduplanner.appcontext.UserSession;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -15,9 +13,6 @@ import javafx.event.ActionEvent;
 
 import java.io.IOException;
 
-/**
- * Controller responsible for login and registration scenes, including validation and navigation.
- */
 public class LoginController {
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
@@ -32,29 +27,20 @@ public class LoginController {
 
     private final AuthService auth = new AuthService();
 
-    /**
-     * Wires field focus traversal and dynamic layout behaviours depending on the active form.
-     */
     @FXML
     private void initialize() {
         messageLabel.setText("");
 
         // -------- LOGIN FLOW --------
         if (usernameField != null && passwordField != null && confirmPasswordField == null) {
-            // Enter on username -> move to password
             usernameField.setOnAction(e -> passwordField.requestFocus());
-
-            // Arrow down in username -> move to password
             usernameField.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.DOWN) {
                     passwordField.requestFocus();
                 }
             });
 
-            // Enter on password -> login
             passwordField.setOnAction(this::onLogin);
-
-            // Arrow Up in password -> move back to username
             passwordField.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.UP) {
                     usernameField.requestFocus();
@@ -64,20 +50,14 @@ public class LoginController {
 
         // -------- REGISTER FLOW --------
         if (usernameField != null && passwordField != null && confirmPasswordField != null) {
-            // Enter on username (register screen) -> move to password
             usernameField.setOnAction(e -> passwordField.requestFocus());
-
-            // Arrow down in username -> move to password
             usernameField.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.DOWN) {
                     passwordField.requestFocus();
                 }
             });
 
-            // Enter on password -> move to confirm password
             passwordField.setOnAction(e -> confirmPasswordField.requestFocus());
-
-            // Arrow up/down support for password
             passwordField.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.UP) {
                     usernameField.requestFocus();
@@ -86,10 +66,7 @@ public class LoginController {
                 }
             });
 
-            // Enter on confirm password -> trigger register
             confirmPasswordField.setOnAction(this::onRegister);
-
-            // Arrow up support for confirm password
             confirmPasswordField.setOnKeyPressed(e -> {
                 if (e.getCode() == KeyCode.UP) {
                     passwordField.requestFocus();
@@ -101,12 +78,10 @@ public class LoginController {
         if (authContainer != null) {
             authContainer.sceneProperty().addListener((sObs, oldScene, newScene) -> {
                 if (newScene == null) return;
-                // update padding whenever scene width changes (initial + resizes)
                 newScene.widthProperty().addListener((wObs, oldW, newW) -> {
                     double horizontal = newW.doubleValue() * 0.3;
                     authContainer.setPadding(new javafx.geometry.Insets(20, horizontal, 20, horizontal));
                 });
-                // initial set
                 double initialWidth = newScene.getWidth() > 0 ? newScene.getWidth() : authContainer.getWidth();
                 double horizontal = initialWidth * 0.3;
                 authContainer.setPadding(new javafx.geometry.Insets(20, horizontal, 20, horizontal));
@@ -115,42 +90,19 @@ public class LoginController {
     }
 
     // -------- LOGIN --------
-    /**
-     * Attempts to authenticate the user and opens the dashboard when successful.
-     *
-     * @param event action event fired by hitting the login button or pressing enter
-     */
     @FXML
     private void onLogin(ActionEvent event) {
         String u = usernameField.getText();
         String p = passwordField.getText();
 
+        // Uses AuthService instead of re-querying
         if (auth.authenticate(u, p)) {
-            // Loads user record
-            var repo = new UserRepository();
-            var userOpt = repo.findByUsername(u);
-
-            if (userOpt.isEmpty()) {
-                // Session user check
-                messageLabel.setText("Login succeeded, but user record not found.");
-                return;
-            }
-
-            // Stores basic user info for session
-            UserSession.setCurrentUser(userOpt.get().withoutSensitive());
-
             openMainUI(event);
         } else {
             messageLabel.setText("Invalid credentials");
         }
     }
 
-
-    /**
-     * Navigates to the dashboard scene while retaining the current window.
-     *
-     * @param event source event used to obtain the originating stage
-     */
     private void openMainUI(ActionEvent event) {
         try {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -162,11 +114,6 @@ public class LoginController {
     }
 
     // -------- NAVIGATION --------
-    /**
-     * Switches to the registration screen.
-     *
-     * @param event action event triggered from the login view
-     */
     @FXML
     private void openRegister(ActionEvent event) {
         try {
@@ -177,11 +124,6 @@ public class LoginController {
         }
     }
 
-    /**
-     * Returns the user to the login screen.
-     *
-     * @param event action event triggered from the register view
-     */
     @FXML
     private void openLogin(ActionEvent event) {
         try {
@@ -193,11 +135,6 @@ public class LoginController {
     }
 
     // -------- REGISTER --------
-    /**
-     * Validates registration details, creates an account, and redirects to login.
-     *
-     * @param event action event fired by the registration button
-     */
     @FXML
     private void onRegister(ActionEvent event) {
         String u = usernameField.getText();
@@ -219,6 +156,13 @@ public class LoginController {
 
         boolean ok = auth.register(u, email, fname, lname, p);
 
+        // Added fail message if not unique
+        if (!ok) {
+            messageLabel.setText("Username or email already in use.");
+            return;
+        }
+
+        // Stays on registration screen on fail
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         try {
             App.changeScene(stage,"/com/cab302/eduplanner/login.fxml", "EduPlanner — Login");
@@ -227,6 +171,6 @@ public class LoginController {
             return;
         }
 
-        messageLabel.setText(ok ? "Registered. You can log in now." : "Register failed (exists or invalid).");
+        messageLabel.setText("Registered. You can log in now.");
     }
 }
