@@ -109,6 +109,7 @@ public class DashboardController {
         Thread t = new Thread(() -> {
             try {
                 while (true) {
+                    //noinspection BusyWait (supresses warning)
                     Thread.sleep(60_000);
                     Platform.runLater(this::tickClock);
                 }
