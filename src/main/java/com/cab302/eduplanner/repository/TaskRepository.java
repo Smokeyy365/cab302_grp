@@ -137,13 +137,14 @@ public class TaskRepository {
         t.setTitle(rs.getString("title"));
         t.setDueDate(DateUtil.parseIsoDateOrNull(rs.getString("due_date")));
         t.setNotes(rs.getString("notes"));
-        t.setWeight((Integer) rs.getObject("weight")); // nullable
-        t.setAchievedMark((Double) rs.getObject("achieved_mark"));
-        t.setMaxMark((Double) rs.getObject("max_mark"));
+        t.setWeight(getNullableInt(rs, "weight"));
+        t.setAchievedMark(getNullableDouble(rs, "achieved_mark"));
+        t.setMaxMark(getNullableDouble(rs, "max_mark"));
         t.setCreatedAt(DateUtil.parseIsoDateTimeOrNull(rs.getString("created_at")));
         t.setUpdatedAt(DateUtil.parseIsoDateTimeOrNull(rs.getString("updated_at")));
         return t;
     }
+
 
     private static void setNullableInt(PreparedStatement ps, int idx, Integer v) throws SQLException {
         if (v == null) ps.setNull(idx, Types.INTEGER); else ps.setInt(idx, v);
@@ -152,4 +153,14 @@ public class TaskRepository {
         if (v == null) ps.setNull(idx, Types.REAL); else ps.setDouble(idx, v);
     }
     private static String nullIfBlank(String s) { return (s == null || s.isBlank()) ? null : s.trim(); }
+
+    private static Integer getNullableInt(ResultSet rs, String col) throws SQLException {
+        int v = rs.getInt(col);
+        return rs.wasNull() ? null : v;
+    }
+
+    private static Double getNullableDouble(ResultSet rs, String col) throws SQLException {
+        double v = rs.getDouble(col);
+        return rs.wasNull() ? null : v;
+    }
 }
