@@ -12,7 +12,9 @@ import java.io.File;
 
 import com.cab302.eduplanner.App;
 
-// rubric controller for analaysis of an assignment's rubric and grading
+/**
+ * Handles rubric uploads and user-facing feedback for the analysis workflow.
+ */
 public class RubricController {
 
     @FXML
@@ -30,6 +32,9 @@ public class RubricController {
     @FXML
     private Label statusLabel;
 
+    /**
+     * Pre-populates the view with default feedback text and resets status indicators.
+     */
     @FXML
     private void initialize() {
         // Initialize any necessary data or state here
@@ -38,6 +43,9 @@ public class RubricController {
         statusLabel.setText("");
     }
 
+    /**
+     * Prompts the user to select an assignment document and updates the status label.
+     */
     @FXML
     private void handleUploadAssignment() {
         FileChooser fileChooser = new FileChooser();
@@ -53,6 +61,9 @@ public class RubricController {
         }
     }
 
+    /**
+     * Prompts the user to select a rubric document and updates the status label.
+     */
     @FXML
     private void handleUploadRubric() {
         FileChooser fileChooser = new FileChooser();
@@ -69,10 +80,10 @@ public class RubricController {
         }
     }
 
+    /**
+     * Handles rubric submission by updating the user-visible status message.
+     */
     @FXML
-    
-
-
     private void handleSubmitButtonAction() {
         // Handle the submit button action here
         statusLabel.setText("Rubric analysis submitted.");
