@@ -44,6 +44,7 @@ public class DashboardController {
     @FXML private Label emptyLabel;
 
     // Widgets panel
+    @FXML private Label widgetsHeader;
     @FXML private Button flashcardsTile;
     @FXML private Button notesTile;
     @FXML private Button pomodoroTile;
