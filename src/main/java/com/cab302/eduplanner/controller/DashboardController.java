@@ -102,7 +102,7 @@ public class DashboardController {
     }
 
     /**
-     * Starts a background daemon thread that ticks the clock once per minute.
+     * Starts a background thread that ticks the clock once per minute.
      */
     private void startMinuteTicker() {
         Thread t = new Thread(() -> {

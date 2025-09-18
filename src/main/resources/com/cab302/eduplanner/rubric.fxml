@@ -29,8 +29,8 @@
                <TextArea fx:id="feedbackTextArea" prefHeight="240.0" prefWidth="720.0" promptText="Feedback will appear here once both documents are processed." wrapText="true" />
                <HBox spacing="10.0" styleClass="rubric-actions">
                   <children>
-                     <Button fx:id="backButton" mnemonicParsing="false" styleClass="secondary" text="Back" />
-                     <Button fx:id="submitButton" mnemonicParsing="false" onAction="#handleSubmitButtonAction" styleClass="primary" text="Submit" />
+                      <Button fx:id="dashboardButton" mnemonicParsing="false" onAction="#handleDashboardButtonAction" styleClass="secondary" text="Dashboard" />
+                      <Button fx:id="submitButton" mnemonicParsing="false" onAction="#handleSubmitButtonAction" styleClass="primary" text="Submit" />
                   </children>
                </HBox>
             </VBox>
