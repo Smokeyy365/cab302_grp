@@ -43,6 +43,11 @@ public class DatabaseConnection {
         }
     }
 
+    public static void initialise(Connection conn) throws SQLException {
+        enableForeignKeys(conn);
+        initSchema(conn);
+    }
+
     private static void enableForeignKeys(Connection conn) throws SQLException {
         try (Statement st = conn.createStatement()) {
             st.execute("PRAGMA foreign_keys = ON;");
