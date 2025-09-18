@@ -18,6 +18,13 @@ public class DatabaseConnection {
     /** Enables foreign key once per connection */
     public static Connection getConnection() throws SQLException {
         Connection conn = DriverManager.getConnection(DB_URL);
+
+    public static void initialise(Connection conn) throws SQLException {
+        enableForeignKeys(conn);
+        initSchema(conn);
+    }
+
+    private static void enableForeignKeys(Connection conn) throws SQLException {
         try (Statement st = conn.createStatement()) {
             st.execute("PRAGMA foreign_keys = ON;");
         }
