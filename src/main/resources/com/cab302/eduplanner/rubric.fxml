@@ -11,7 +11,7 @@
          <children>
             <VBox spacing="16.0" styleClass="rubric-card" maxWidth="820.0" prefWidth="820.0">
                <Label text="Rubric Analysis" styleClass="section-title" />
-               <Label fx:id="statusLabel" text="" />
+               <Label fx:id="statusLabel" />
                <HBox spacing="12.0" styleClass="rubric-upload-row">
                   <children>
                      <Button fx:id="uploadAssignmentButton" mnemonicParsing="false" onAction="#handleUploadAssignment" styleClass="primary" text="Upload Assignment" />
