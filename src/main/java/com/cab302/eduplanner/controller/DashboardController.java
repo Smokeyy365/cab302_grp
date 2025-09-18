@@ -117,6 +117,9 @@ public class DashboardController {
         t.start();
     }
 
+    // Date Formatter
+    private static final DateTimeFormatter DUE_FMT = DateTimeFormatter.ofPattern("dd MMM");
+
     /**
      * Cycles the current sort mode in the order: DUE_DATE → ALPHA → GROUPED_SUBJECT → DUE_DATE.
      */
@@ -168,7 +171,7 @@ public class DashboardController {
         Label title = new Label(safeTitle(t));
         Label due = new Label(t.getDueDate() == null
                 ? "No due date"
-                : "Due: " + t.getDueDate().format(java.time.format.DateTimeFormatter.ofPattern("dd MMM")));
+                : "Due: " + t.getDueDate().format(DUE_FMT));
         due.getStyleClass().add("task-due");
 
         Pane spacer = new Pane();
@@ -199,7 +202,7 @@ public class DashboardController {
         Label title = new Label(safeTitle(t));
         Label due = new Label(t.getDueDate() == null
                 ? "No due date"
-                : "Due: " + t.getDueDate().format(java.time.format.DateTimeFormatter.ofPattern("dd MMM")));
+                : "Due: " + t.getDueDate().format(DUE_FMT));
         due.getStyleClass().add("task-due");
 
         Pane spacer = new Pane();
