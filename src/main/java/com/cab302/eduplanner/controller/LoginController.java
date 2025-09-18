@@ -2,7 +2,6 @@ package com.cab302.eduplanner.controller;
 
 import com.cab302.eduplanner.service.AuthService;
 import com.cab302.eduplanner.App;
-import com.cab302.eduplanner.appcontext.UserSession;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
