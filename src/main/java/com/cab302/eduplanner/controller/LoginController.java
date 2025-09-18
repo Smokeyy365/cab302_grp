@@ -98,7 +98,6 @@ public class LoginController {
 
         // Uses AuthService instead of re-querying
         if (auth.authenticate(u, p)) {
-            UserSession.setCurrentUser(auth.getCurrentUser());
             openMainUI(event);
         } else {
             messageLabel.setText("Invalid credentials");
