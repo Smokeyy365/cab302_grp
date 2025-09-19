@@ -62,6 +62,21 @@ JavaFX 21 libraries are pulled automatically by Maven; no manual SDK setup is re
 ```
 Replace `AuthServiceTest` with the class you want to execute.
 
+## Database & Login Setup
+
+The application uses an embedded **SQLite database** (`eduplanner_database.db`) included in the project root. The schema is automatically created on first run via `DatabaseConnection.initSchema()`.
+
+Two test accounts are pre-seeded with separate tasks for demonstration:
+
+- **Username:** `test`  
+  **Password:** `test`
+
+- **Username:** `Rahul`  
+  **Password:** `123`
+
+These accounts can be used to log in directly after launching the app. Tasks created while logged in are persisted to the database and associated with the current user.
+
+
 ### Troubleshooting
 - If Maven reports that it cannot find Java, verify `JAVA_HOME` and your `PATH` include JDK 21.
 - Delete the `target` folder (`mvnw.cmd clean` or `./mvnw clean`) if stale compiled classes cause inconsistent results.
