@@ -19,7 +19,7 @@
 - [ ] Weekly planner & timetable system  
 - [ ] Assignment breakdown by hours per week 
 - [ ] Progression bar & tracking  
-- [ ] Dashboard with task/project overview  
+- [x] Dashboard with task/project overview  
 - [ ] Rubric comparison & progress scoring  
 - [ ] Score tally + grade prediction  
 
@@ -37,9 +37,9 @@
 - [ ] Email notifications for due dates  
 
 ### 🧾 Notes & Resources
-- [ ] Flashcard system (study/revision aid)  
-- [ ] Quick resource access (attach lecture notes, links)  
-- [ ] Note-taking per task (e.g., “Refer to my notes from Week 4”)  
+- [x] Flashcard system (study/revision aid)  
+- [x] Quick resource access (attach lecture notes, links)  
+- [x] Note-taking per task (e.g., “Refer to my notes from Week 4”)  
 
 ---
 
