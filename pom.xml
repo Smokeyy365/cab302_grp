@@ -146,7 +146,7 @@
                 </configuration>
             </plugin>
 
-            <!-- JavaFX run config -->
+            <!-- JavaFX  -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>

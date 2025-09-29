@@ -35,12 +35,11 @@ build/
 ### Mac OS ###
 .DS_Store
 
-### Google OAuth (DO NOT COMMIT) ###
-# Real client credentials and local token cache
+### Google OAuth ###
+# Test Credentials (Personal)
 src/main/resources/credentials.json
 tokens/
 **/credentials.json
 **/tokens/
 
-# Optional: keep a fake template in Git
-!src/main/resources/credentials.sample.json
+
