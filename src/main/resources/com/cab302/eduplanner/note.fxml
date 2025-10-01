@@ -10,6 +10,20 @@
             fx:controller="com.cab302.eduplanner.controller.NoteController">
 
 
+    <!-- Page header -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+
+            <Label text="NOTES" styleClass="app-title"/>
+            <HBox spacing="8">
+                <Button fx:id="dashboardButton" text="Dashboard" styleClass="secondary"/>
+            </HBox>
+        </HBox>
+    </top>
+
     <!-- Sidebar: folders + notes -->
     <left>
         <VBox spacing="10" style="-fx-background-color: #f4f4f4;" prefWidth="220">
