@@ -47,18 +47,18 @@
 
     <!-- Main editor -->
     <center>
-        <VBox spacing="10">
+        <VBox spacing="10" styleClass="note-editor">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets top="18" right="18" bottom="18" left="18"/>
             </padding>
 
             <TextField fx:id="titleField" promptText="Note Title"
-                       style="-fx-font-size: 16; -fx-font-weight: bold;" />
+                       styleClass="note-title-field"/>
             <TextArea fx:id="contentArea" promptText="Write your note here..."
-                      wrapText="true" prefHeight="400" />
+                      wrapText="true" VBox.vgrow="ALWAYS"/>
             <HBox spacing="10">
-                <Button fx:id="saveButton" text="Save" />
-                <Button fx:id="cancelButton" text="Cancel" />
+                <Button fx:id="saveButton" text="Save" styleClass="primary"/>
+                <Button fx:id="cancelButton" text="Cancel" styleClass="secondary"/>
             </HBox>
         </VBox>
     </center>
