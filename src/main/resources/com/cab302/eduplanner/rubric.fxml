@@ -33,14 +33,12 @@
                 <Label text="Upload Files" styleClass="section-title"/>
                 <Label fx:id="statusLabel"/>
                 <HBox spacing="12.0" styleClass="rubric-upload-row">
-                    <children>
-                        <Button fx:id="uploadAssignmentButton" mnemonicParsing="false"
-                                onAction="#handleUploadAssignment" styleClass="primary"
-                                text="Upload Assignment"/>
-                        <Button fx:id="uploadRubricButton" mnemonicParsing="false"
-                                onAction="#handleUploadRubric" styleClass="secondary"
-                                text="Upload Rubric"/>
-                    </children>
+                    <Button fx:id="uploadAssignmentButton" mnemonicParsing="false"
+                            onAction="#handleUploadAssignment" styleClass="primary"
+                            text="Upload Assignment"/>
+                    <Button fx:id="uploadRubricButton" mnemonicParsing="false"
+                            onAction="#handleUploadRubric" styleClass="secondary"
+                            text="Upload Rubric"/>
                 </HBox>
             </VBox>
             <VBox spacing="18.0" styleClass="rubric-card" maxWidth="820.0" prefWidth="820.0">
