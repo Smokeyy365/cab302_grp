@@ -26,22 +26,22 @@
 
     <!-- Sidebar: folders + notes -->
     <left>
-        <VBox spacing="10" style="-fx-background-color: #f4f4f4;" prefWidth="220">
+        <VBox spacing="12" prefWidth="260" styleClass="note-sidebar">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets top="14" right="14" bottom="14" left="14"/>
             </padding>
 
-            <Label text="Folders &amp; Notes" style="-fx-font-weight: bold; -fx-font-size: 14;" />
-            <TreeView fx:id="folderTree" prefHeight="400" prefWidth="200"/>
-            <HBox spacing="5">
-                <Button fx:id="addFolderButton" text="Add Folder" />
-                <Button fx:id="addNoteButton" text="Add Note" />
+            <Label text="FOLDERS &amp; NOTES" styleClass="app-title"/>
+            <TreeView fx:id="folderTree" prefHeight="400" VBox.vgrow="ALWAYS"/>
+
+            <HBox spacing="8">
+                <Button fx:id="addFolderButton" text="Add Folder" styleClass="primary"/>
+                <Button fx:id="addNoteButton" text="Add Note" styleClass="primary"/>
             </HBox>
-            <HBox spacing="5">
-                <Button fx:id="renameButton" text="Rename" />
-                <Button fx:id="deleteButton" text="Delete" />
+            <HBox spacing="8">
+                <Button fx:id="renameButton" text="Rename" styleClass="secondary"/>
+                <Button fx:id="deleteButton" text="Delete" styleClass="secondary"/>
             </HBox>
-            <Button fx:id="dashboardButton" text="Back to Dashboard" />
         </VBox>
     </left>
 
