@@ -1,6 +1,5 @@
 /* Global application styles for EduPlanner */
 
-/* Root theme tokens (looked-up colors) */
 .root {
     -color-primary: #265C4B; /* dark teal green */
     -color-accent: #3B82F6;  /* blue-600 */
@@ -10,16 +9,7 @@
 
     -fx-font-family: "Segoe UI", "Inter", Arial, sans-serif;
     -fx-text-fill: -color-text;
-    -fx-background-color: #FAF9F6; /* app background */
-}
-
-/* Containers */
-.auth-container {
-    /* Optional card-like look; comment out if undesired */
-    -fx-background-color: transparent;
-    /* You can set spacing/padding here if you want layout via CSS */
-    /* -fx-spacing: 12; */
-    /* -fx-padding: 20 20 20 20; */
+    -fx-background-color: #FAF9F6; /* light beige used on flashcards */
 }
 
 /* Typography */
@@ -30,6 +20,12 @@
 .label.app-title {
     -fx-font-size: 24px;
     -fx-font-weight: 700;
+    -fx-text-fill: -color-primary;
+}
+
+.label.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 600;
     -fx-text-fill: -color-primary;
 }
 
@@ -58,7 +54,6 @@
     -fx-padding: 10;
 }
 
-
 /* Buttons */
 .button {
     -fx-background-radius: 6;
@@ -72,7 +67,7 @@
 }
 
 .button.primary:hover {
-    -fx-background-color: derive(-color-primary, 10%);
+    -fx-background-color: derive(-color-primary, -10%);
 }
 
 .button.secondary {
@@ -83,8 +78,9 @@
 }
 
 .button.secondary:hover {
-    -fx-background-color: rgba(37,99,235,0.06);
+    -fx-background-color: rgba(38, 92, 75, 0.08);
 }
+
 /* ================= */
 /* Notes page layout */
 /* ================= */
@@ -134,6 +130,9 @@
     -fx-text-fill: white;
 }
 
+/* ===================== */
+/* Rubric analysis page  */
+/* ===================== */
 
 .rubric-root {
     -fx-alignment: center;
@@ -149,31 +148,12 @@
     -fx-effect: dropshadow(gaussian, rgba(17,24,39,0.08), 18, 0.22, 0, 6);
 }
 
-
-.rubric-upload-row, .rubric-actions {
+.rubric-upload-row,
+.rubric-actions {
     -fx-alignment: center;
     -fx-spacing: 12;
 }
 
 .rubric-actions {
     -fx-alignment: center-right;
-}
-
-.text-area {
-    -fx-background-color: #f3f4f6;
-    -fx-background-insets: 0;
-    -fx-background-radius: 6;
-    -fx-border-color: derive(-color-muted, 30%);
-    -fx-border-radius: 6;
-    -fx-border-width: 1;
-}
-
-.text-area:focused {
-    -fx-border-color: -color-primary;
-    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.2), 6, 0.1, 0, 1);
-}
-
-.text-area .content {
-    -fx-background-color: transparent;
-    -fx-padding: 10;
 }
