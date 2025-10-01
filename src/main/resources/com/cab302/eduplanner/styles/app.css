@@ -85,23 +85,55 @@
 .button.secondary:hover {
     -fx-background-color: rgba(37,99,235,0.06);
 }
+/* ================= */
+/* Notes page layout */
+/* ================= */
 
-/* Messages */
-.error-text {
-    -fx-text-fill: -color-danger;
+.note-sidebar {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-background-radius: 14;
+    -fx-spacing: 12;
+}
+
+.note-sidebar .button {
+    -fx-pref-width: 110;
+}
+
+.note-editor {
+    -fx-background-color: rgba(255, 255, 255, 0.92);
+    -fx-background-radius: 14;
+    -fx-spacing: 12;
+}
+
+.note-title-field {
+    -fx-font-size: 18px;
     -fx-font-weight: 600;
 }
 
-/* Layout helpers */
-.actions-row {
-    -fx-padding: 10 0 0 0;
+#folderTree {
+    -fx-background-color: #FAF9F6;
+    -fx-border-color: -color-primary;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 6;
 }
-/* Rubric analysis layout */
-.section-title {
-    -fx-font-size: 20px;
-    -fx-font-weight: 600;
-    -fx-text-fill: -color-primary;
+
+#folderTree .tree-cell {
+    -fx-background-color: #FAF9F6;
+    -fx-text-fill: -color-text;
+    -fx-padding: 6 8;
+    -fx-font-size: 13px;
 }
+
+#folderTree .tree-cell:hover {
+    -fx-background-color: rgba(38, 92, 75, 0.08);
+}
+
+#folderTree .tree-cell:filled:selected {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: white;
+}
+
 
 .rubric-root {
     -fx-alignment: center;
