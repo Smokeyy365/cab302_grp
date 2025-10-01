@@ -154,12 +154,22 @@ public class LoginController {
             return;
         }
 
-        boolean ok = auth.register(u, email, fname, lname, p);
-
-        // Added fail message if not unique
-        if (!ok) {
-            messageLabel.setText("Username or email already in use.");
-            return;
+        AuthService.RegisterResult result = auth.registerWithResult(u, email, fname, lname, p);
+        switch (result) {
+            case SUCCESS:
+                break; // continue to login screen
+            case INVALID_INPUT:
+                messageLabel.setText("All fields are required.");
+                return;
+            case USERNAME_TAKEN:
+                messageLabel.setText("Username already in use.");
+                return;
+            case EMAIL_TAKEN:
+                messageLabel.setText("Email already in use.");
+                return;
+            default:
+                messageLabel.setText("Registration failed due to an internal error.");
+                return;
         }
 
         // Stays on registration screen on fail
