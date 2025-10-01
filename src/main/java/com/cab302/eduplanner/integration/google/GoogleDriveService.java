@@ -27,7 +27,6 @@ public class GoogleDriveService {
     // App title display
     private static final String appTitle = "EduPlanner";
 
-
     // Converts between json and java
     private static final JsonFactory jsonConverter = GsonFactory.getDefaultInstance();
 
@@ -40,6 +39,15 @@ public class GoogleDriveService {
 
     //Google credentials file location
     private static final String credPath = "/credentials.json";
+
+    // OAuth server port
+    private static final int authPort = 8888;
+
+    // Default page size for listing files
+    private static final int pageSize = 10;
+
+    // MIME type for binary files
+    private static final String mimeType = "application/octet-stream";
 
     // Drive connection
     private Drive driveService;
@@ -83,7 +91,7 @@ public class GoogleDriveService {
 
         // Set up a local web server to receive the login response
         // Port 8888 is the local host
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(authPort).build();
 
 
         // Check if save tokens are present
@@ -119,7 +127,7 @@ public class GoogleDriveService {
         java.io.File file = new java.io.File(filePath);
 
         //Wrap it in a format Google Drive understands
-        FileContent mediaContent = new FileContent("application/octet-stream", file);
+        FileContent mediaContent = new FileContent(mimeType, file);
 
         //Upload
         File uploadedFile = driveService.files().create(fileMetadata, mediaContent)
@@ -130,13 +138,13 @@ public class GoogleDriveService {
         return uploadedFile.getId();
     }
 
-// Displays files with IDs,names,date of creation  and has a maximum number of files displayed
+    // Displays files with IDs,names,date of creation  and has a maximum number of files displayed
 // Via method chaining
     public List<File> listFiles() throws IOException {
 
         // Ask Google Drive for a list of files
         FileList result = driveService.files().list()
-                .setPageSize(10) // maximum files returned
+                .setPageSize(pageSize) // maximum files returned
                 .setFields("files(id, name, createdTime)")
                 .execute();
 
@@ -158,7 +166,7 @@ public class GoogleDriveService {
         outputStream.close();
     }
 
-   // Delete file from google drive
+    // Delete file from google drive
     public void deleteFile(String fileId) throws IOException {
         driveService.files().delete(fileId).execute();
     }
