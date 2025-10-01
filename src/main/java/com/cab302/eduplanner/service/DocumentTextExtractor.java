@@ -1,6 +1,7 @@
 package com.cab302.eduplanner.service;
 
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -52,7 +53,7 @@ public class DocumentTextExtractor {
 
     private String prepareFromPdf(Path path) throws IOException {
         try (InputStream inputStream = Files.newInputStream(path);
-             org.apache.pdfbox.pdmodel.PDDocument document = Loader.loadPDF(inputStream)) {
+             org.apache.pdfbox.pdmodel.PDDocument document = Loader.loadPDF((RandomAccessRead) inputStream)) {
             PDFTextStripper stripper = new PDFTextStripper();
             return prepareText(stripper.getText(document));
         }

@@ -6,12 +6,13 @@ import com.cab302.eduplanner.model.RubricCategoryEvaluation;
 import com.cab302.eduplanner.service.RubricAnalysisService;
 import javafx.concurrent.Task;
 
+import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.IOException;
-import com.cab302.eduplanner.App;
+import java.util.Locale;
 
 
 /**
@@ -34,6 +35,10 @@ public class RubricController {
     @FXML
     private Label statusLabel;
 
+    private final RubricAnalysisService analysisService = new RubricAnalysisService();
+    private File assignmentFile;
+    private File rubricFile;
+
     /**
      * Pre-populates the view with default feedback text and resets status indicators.
      */
@@ -42,6 +47,7 @@ public class RubricController {
         // Initialize any necessary data or state here
         feedbackTextArea.setText("No feedback can be provided until documents are submitted.");
         progressIndicator.setProgress(0);
+        progressIndicator.setVisible(false);
         statusLabel.setText("");
     }
 
@@ -59,6 +65,7 @@ public class RubricController {
         File file = fileChooser.showOpenDialog(uploadAssignmentButton.getScene().getWindow());
         if (file != null) {
             // Handle the file upload
+            rubricFile = file;
             statusLabel.setText("Assignment uploaded: " + file.getName());
         }
     }
@@ -88,7 +95,66 @@ public class RubricController {
     @FXML
     private void handleSubmitButtonAction() {
         // Handle the submit button action here
-        statusLabel.setText("Rubric analysis submitted.");
+        if (assignmentFile == null || rubricFile == null) {
+            statusLabel.setText("Upload both an assignment and a rubric before requesting analysis.");
+            return;
+        }
+
+        progressIndicator.setVisible(true);
+        progressIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+        submitButton.setDisable(true);
+        statusLabel.setText("Analysing submission with OpenAI rubric grader...");
+
+        Task<RubricAnalysisResult> analysisTask = new Task<>() {
+            @Override
+            protected RubricAnalysisResult call() throws Exception {
+                return analysisService.analyse(assignmentFile.toPath(), rubricFile.toPath());
+            }
+        };
+
+        analysisTask.setOnSucceeded(event -> {
+            RubricAnalysisResult result = analysisTask.getValue();
+            feedbackTextArea.setText(formatResult(result));
+            statusLabel.setText("Rubric analysis completed.");
+            progressIndicator.setVisible(false);
+            progressIndicator.setProgress(1);
+            submitButton.setDisable(false);
+        });
+
+        analysisTask.setOnFailed(event -> {
+            Throwable error = analysisTask.getException();
+            if (error != null) {
+                error.printStackTrace();
+            }
+            feedbackTextArea.setText("An error occurred while running the rubric analysis.");
+            if (error instanceof IllegalStateException) {
+                statusLabel.setText(error.getMessage());
+            } else {
+                statusLabel.setText("Failed to analyse rubric. Check the application logs for details.");
+            }
+            progressIndicator.setVisible(false);
+            progressIndicator.setProgress(0);
+            submitButton.setDisable(false);
+        });
+
+        Thread worker = new Thread(analysisTask, "rubric-analysis-worker");
+        worker.setDaemon(true);
+        worker.start();
+    }
+
+    private String formatResult(RubricAnalysisResult result) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format(Locale.US, "Overall GPA: %.2f%n%n", result.getOverallGpa()));
+        if (result.getCategories().isEmpty()) {
+            builder.append("No category level feedback was returned by the AI grader.");
+            return builder.toString();
+        }
+        for (RubricCategoryEvaluation category : result.getCategories()) {
+            builder.append(category.getName()).append(System.lineSeparator());
+            builder.append(String.format(Locale.US, "  GPA: %.2f%n", category.getGpa()));
+            builder.append("  Evidence: ").append(category.getEvidence()).append(System.lineSeparator()).append(System.lineSeparator());
+        }
+        return builder.toString().trim();
     }
 
     /**
