@@ -1,10 +1,14 @@
 package com.cab302.eduplanner.controller;
 
+import com.cab302.eduplanner.App;
+import com.cab302.eduplanner.model.RubricAnalysisResult;
+import com.cab302.eduplanner.model.RubricCategoryEvaluation;
+import com.cab302.eduplanner.service.RubricAnalysisService;
+import javafx.concurrent.Task;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.ProgressIndicator;
 import javafx.stage.FileChooser;
-import java.io.File;
 import javafx.stage.Stage;
 import java.io.IOException;
 import com.cab302.eduplanner.App;
