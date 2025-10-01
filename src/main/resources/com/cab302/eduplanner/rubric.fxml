@@ -43,21 +43,17 @@
             </VBox>
             <VBox spacing="18.0" styleClass="rubric-card" maxWidth="820.0" prefWidth="820.0">
                 <HBox spacing="10.0" alignment="CENTER_LEFT">
-                    <children>
-                        <Label text="Feedback" styleClass="section-title"/>
-                        <ProgressIndicator fx:id="progressIndicator" prefHeight="40.0" prefWidth="40.0"
-                                           progress="0.0"/>
-                    </children>
+                    <Label text="Feedback" styleClass="section-title"/>
+                    <ProgressIndicator fx:id="progressIndicator" prefHeight="40.0" prefWidth="40.0"
+                                       progress="0.0"/>
                 </HBox>
                 <TextArea fx:id="feedbackTextArea" prefHeight="240.0" prefWidth="720.0"
                           promptText="Feedback will appear here once both documents are processed."
                           wrapText="true"/>
                 <HBox spacing="10.0" styleClass="rubric-actions" alignment="CENTER_RIGHT">
-                    <children>
-                        <Button fx:id="submitButton" mnemonicParsing="false"
-                                onAction="#handleSubmitButtonAction" styleClass="primary"
-                                text="Submit"/>
-                    </children>
+                    <Button fx:id="submitButton" mnemonicParsing="false"
+                            onAction="#handleSubmitButtonAction" styleClass="primary"
+                            text="Submit"/>
                 </HBox>
             </VBox>
         </VBox>
