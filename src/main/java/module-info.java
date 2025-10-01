@@ -1,12 +1,8 @@
 module com.cab302.eduplanner {
+
     requires javafx.controls;
     requires javafx.fxml;
-
-    requires net.synedra.validatorfx;
-    requires org.kordamp.bootstrapfx.core;
-    requires jbcrypt;
     requires java.sql;
-    requires org.xerial.sqlitejdbc;
 
     // for reflection access by FXML
     opens com.cab302.eduplanner.controller to javafx.fxml;
@@ -17,4 +13,7 @@ module com.cab302.eduplanner {
     exports com.cab302.eduplanner;
     exports com.cab302.eduplanner.controller;
     exports com.cab302.eduplanner.model;
+
+    // Google Integration
+    exports com.cab302.eduplanner.integration.google;
 }
