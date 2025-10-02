@@ -13,20 +13,38 @@ import javafx.event.ActionEvent;
 
 import java.io.IOException;
 
+/**
+ * Controller for handling login and registration UI logic.
+ * Manages authentication, navigation, and user input validation.
+ */
 public class LoginController {
+    /** Username input field. */
     @FXML private TextField usernameField;
+    /** Password input field. */
     @FXML private PasswordField passwordField;
+    /** Confirm password input field (for registration). */
     @FXML private PasswordField confirmPasswordField;
+    /** Email input field (for registration). */
     @FXML private TextField emailField;
+    /** First name input field (for registration). */
     @FXML private TextField firstNameField;
+    /** Last name input field (for registration). */
     @FXML private TextField lastNameField;
+    /** Login button. */
     @FXML private Button loginButton;
+    /** Register button. */
     @FXML private Button registerButton;
+    /** Label for displaying messages to the user. */
     @FXML private Label messageLabel;
+    /** Container for authentication UI. */
     @FXML private VBox authContainer;
 
+    /** Service for authentication and registration logic. */
     private final AuthService auth = new AuthService();
 
+    /**
+     * Initializes the controller, sets up event handlers and UI bindings.
+     */
     @FXML
     private void initialize() {
         messageLabel.setText("");
@@ -89,7 +107,10 @@ public class LoginController {
         }
     }
 
-    // -------- LOGIN --------
+    /**
+     * Handles login button action. Authenticates the user.
+     * @param event the action event
+     */
     @FXML
     private void onLogin(ActionEvent event) {
         String u = usernameField.getText();
@@ -103,6 +124,10 @@ public class LoginController {
         }
     }
 
+    /**
+     * Opens the main UI after successful login.
+     * @param event the action event
+     */
     private void openMainUI(ActionEvent event) {
         try {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -113,7 +138,10 @@ public class LoginController {
         }
     }
 
-    // -------- NAVIGATION --------
+    /**
+     * Navigates to the registration screen.
+     * @param event the action event
+     */
     @FXML
     private void openRegister(ActionEvent event) {
         try {
@@ -124,6 +152,10 @@ public class LoginController {
         }
     }
 
+    /**
+     * Navigates to the login screen.
+     * @param event the action event
+     */
     @FXML
     private void openLogin(ActionEvent event) {
         try {
@@ -134,7 +166,10 @@ public class LoginController {
         }
     }
 
-    // -------- REGISTER --------
+    /**
+     * Handles registration button action. Registers a new user.
+     * @param event the action event
+     */
     @FXML
     private void onRegister(ActionEvent event) {
         String u = usernameField.getText();
