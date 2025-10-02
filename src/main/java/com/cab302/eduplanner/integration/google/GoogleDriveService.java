@@ -50,7 +50,7 @@ public class GoogleDriveService {
     private static final String mimeType = "application/octet-stream";
 
     // Drive connection
-    private Drive driveService;
+    private final Drive driveService;
 
 
     // Run when creating new Google Drive service
