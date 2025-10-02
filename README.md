@@ -1,86 +1,87 @@
-# 🎓 EduPlanner — Smart Educational Task & Assessment Planner.
+# EduPlanner
 
-**EduPlanner** is a smart, integrated education-focused app that helps students plan, track, and manage their academic workloads. With a strong focus on usability, integration, and clarity, the app enables students to break down assignments, track progress via rubrics, and manage time efficiently.
+EduPlanner is a JavaFX desktop application that helps students plan assessments, track study progress, and keep their resources organised. The app combines task management, rubric tracking, flashcards, and note-taking so students can stay on top of their workload from a single workspace.
 
----
+## Project Resources
+- `src/main/java/com/cab302/eduplanner/App.java` � JavaFX entry point and application bootstrap.
+- `src/main/java/com/cab302/eduplanner/controller` � View controllers that connect FXML layouts to business logic.
+- `src/main/java/com/cab302/eduplanner/service` � Core services (authentication, rubric operations, schedulers).
+- `src/main/java/com/cab302/eduplanner/repository` � SQLite-backed repositories handling persistence.
+- `src/main/resources/com/cab302/eduplanner` � FXML layouts and CSS that define the UI.
+- `src/test/java/com/cab302/eduplanner` � Unit tests for models, repositories, controllers, and services.
+- `eduplanner_database.db` � Local SQLite database used for development data.
+- `.github/workflows/build.yml` � GitHub Actions workflow that runs the automated test suite.
 
-## 📌 Core Objectives
-- 📚 Focus on education (assessment tracking, workload planning)
-- 🔌 Incorporate APIs (Google Calendar, Google Drive, OneDrive)
-- 🤖 Incorporate AI features (minimal use: rubric breakdown, recommendations)
-- 🗓 Timetable + Weekly Planner functionality
-- 🔐 Authentication via Google Sign-In
+## Feature Checklist
 
----
+### Core Experience
+- [x] Email/password authentication with hashed credentials (`AuthService`, `UserRepository`).
+- [x] Dashboard overview for tasks and progress (`DashboardController`, `dashboard.fxml`).
+- [x] Flashcard creation and study flows (`FlashcardController`, `flashcard.fxml`, `add-flashcard.fxml`).
+- [x] Rubric management and scoring interface (`RubricController`, `rubric.fxml`).
+- [x] Notes module with per-task annotations (`NoteController`, `note.fxml`).
+- [ ] Automated weekly workload recommendations.
+- [ ] Planner timetable and drag-and-drop scheduling.
 
-## 🧠 Brainstormed Features
+### Integrations & Automation
+- [ ] Google Calendar export.
+- [ ] Google Drive / OneDrive resource sync.
+- [ ] OCR ingestion for rubric files.
+- [ ] Smart notifications and reminders.
 
-### ✅ Planning & Tracking
-- [ ] Weekly planner & timetable system  
-- [ ] Assignment breakdown by hours per week 
-- [ ] Progression bar & tracking  
-- [ ] Dashboard with task/project overview  
-- [ ] Rubric comparison & progress scoring  
-- [ ] Score tally + grade prediction  
+### Quality & Delivery
+- [x] SQLite persistence layer with repositories and services.
+- [x] JUnit 5 unit tests for auth, flashcards, folders, dashboard, and rubrics.
+- [x] GitHub Actions CI running the Maven wrapper on pull requests to `main`.
+- [ ] UI / integration test suite.
+- [ ] Automated packaging & release pipeline.
 
-### 📂 Integration
-- [ ] Sign in with Google  
-- [ ] Connect to OneDrive / Google Drive  
-- [ ] Export deadlines to Google Calendar  
-- [ ] OCR support for rubric/note input  
+## Project Management & CI
+- Work is tracked on the GitHub Projects board (backlog -> in progress -> review -> done) to keep priorities and ownership clear.
+- Issues and pull requests are linked to the project board so progress updates automatically as cards move through the workflow.
+- Continuous Integration is handled by GitHub Actions (`.github/workflows/build.yml`). Every pull request to `main` runs `./mvnw test` on any OS with Coretto JDK 21. Builds must be green before merging.
 
-### 🔄 Time & Productivity
-- [ ] Smart recommendations: "How many hours can you do?"  
-- [ ] Weekly check-ins: Are you ahead or behind?  
-- [ ] Reschedule & adjust workload automatically  
-- [ ] Built-in Pomodoro timer  
-- [ ] Email notifications for due dates  
+## Running the Application
+- **With the Maven wrapper:** `./mvnw clean javafx:run` (macOS / Linux) or `mvnw.cmd clean javafx:run` (Windows PowerShell or Command Prompt).
+- **Inside IntelliJ IDEA:** use the JavaFX run configuration pointing to `com.cab302.eduplanner.AppLauncher`.
 
-### 🧾 Notes & Resources
-- [ ] Flashcard system (study/revision aid)  
-- [ ] Quick resource access (attach lecture notes, links)  
-- [ ] Note-taking per task (e.g., “Refer to my notes from Week 4”)  
+JavaFX 21 libraries are pulled automatically by Maven; no manual SDK setup is required beyond installing JDK 21.
 
----
+## Running Unit Tests
 
-## 🛠 Tech Stack (Proposed)
-- **Frontend:** React / Next.js  
-- **Backend:** Firebase / Node.js  
-- **AI (lightweight use):** OpenAI (for rubric parsing, study advice)  
-- **Calendar API:** Google Calendar API  
-- **Cloud Storage:** Google Drive / OneDrive API  
-- **OCR Tool:** Tesseract.js (Open Source)  
-- **Auth:** Google OAuth 2.0  
-- **Version Control:** GitHub  
+1. Ensure JDK 21 is installed and `JAVA_HOME` points to it.
+2. From the project root, run the Maven wrapper:
+   - Windows PowerShell / CMD: `mvnw.cmd test`
+   - macOS / Linux / Git Bash: `./mvnw test`
+3. Maven downloads dependencies on the first run and executes all tests under `src/test/java` via the Surefire plugin.
+4. Review the summary in the terminal or open `target/surefire-reports/*.txt` for detailed results.
 
----
+### Running a single test class
+```
+./mvnw -Dtest=AuthServiceTest test
+```
+Replace `AuthServiceTest` with the class you want to execute.
 
-## 🗂 Project Management Tool Options
-We will evaluate and justify the selection of a project management tool:
+## Database & Login Setup
 
-| Tool        | Pros                                 | Cons                                |
-|-------------|--------------------------------------|-------------------------------------|
-| **Monday**  | Easy Kanban, checklist integration   | Limited reporting                   |
+The application uses an embedded **SQLite database** (`eduplanner_database.db`) included in the project root. The schema is automatically created on first run via `DatabaseConnection.initSchema()`.
 
-✅ **Selection Justification:** *We chose `Monday` for simplicity, collaboration features, and visual workflow clarity. However, we remain open to switching as the project scales.*
+Two test accounts are pre-seeded with separate tasks for demonstration:
 
----
+- **Username:** `test`  
+  **Password:** `test`
 
-## 📈 Stretch Goals
-- [ ] Gamification elements (study streaks, achievements)  
-- [ ] Peer collaboration on tasks or rubric planning  
-- [ ] Reflective journaling interface (mood, stress check-ins)  
-- [ ] Templates for common assessment types  
+- **Username:** `Rahul`  
+  **Password:** `123`
 
----
+These accounts can be used to log in directly after launching the app. Tasks created while logged in are persisted to the database and associated with the current user.
 
-## ✅ Next Steps
-- [x] Set up GitHub repo and branch structure  
-- [x] Choose final project management tool  
-- [x] Begin prototyping core UI (planner + dashboard)  
-- [ ] Implement Google Sign-In and Calendar Sync
-- [ ] Complete Initial Research Survey  
 
----
+### Troubleshooting
+- If Maven reports that it cannot find Java, verify `JAVA_HOME` and your `PATH` include JDK 21.
+- Delete the `target` folder (`mvnw.cmd clean` or `./mvnw clean`) if stale compiled classes cause inconsistent results.
 
-> 🔎 *“Plan smarter. Study better.” — EduPlanner Team*
+## Contributing
+- Create a feature branch from `main` for each change set.
+- Keep pull requests small, reference the related GitHub Project card, and include screenshots or screen recordings for UI updates when possible.
+- Update or add tests alongside code changes so the GitHub Actions workflow remains green.

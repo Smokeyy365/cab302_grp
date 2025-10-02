@@ -20,10 +20,11 @@ public class App extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
-        // Loads flashcard.fxml from resources/com/cab302/eduplanner/
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("login.fxml"));
+        DatabaseConnection.initSchema();
+
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/com/cab302/eduplanner/login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 854, 480);
-        scene.getStylesheets().add(App.class.getResource("styles/app.css").toExternalForm());
+        scene.getStylesheets().add(App.class.getResource("/com/cab302/eduplanner/styles/app.css").toExternalForm());
         stage.setTitle("EduPlanner — Login");
         stage.setScene(scene);
         stage.setResizable(false);
@@ -52,7 +53,7 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
         Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
 
-        scene.getStylesheets().add(App.class.getResource("styles/app.css").toExternalForm());
+        scene.getStylesheets().add(App.class.getResource("/com/cab302/eduplanner/styles/app.css").toExternalForm());
         stage.setTitle(title);
         stage.setScene(scene);
         stage.setResizable(false);

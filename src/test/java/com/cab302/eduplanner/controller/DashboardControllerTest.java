@@ -1,88 +1,95 @@
 package com.cab302.eduplanner.controller;
 
+import com.cab302.eduplanner.model.Task;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for the DashboardController class.
- *
- * These tests verify that:
- * 1. The sort mode cycles through all values in the expected order.
- * 2. A tempTask object can be created and its fields behave as expected.
+ * Basic unit tests for DashboardController.
+ * - Sort mode cycles correctly
+ * - safeSubject / safeTitle handle null, blank, and trimming
  */
 class DashboardControllerTest {
 
-    // --- helpers for reflection ---
-    private static Object get(Object target, String field) throws Exception {
-        Field f = target.getClass().getDeclaredField(field);
+    // ---- tiny reflection helpers ----
+    private static String sortModeName(DashboardController c) throws Exception {
+        Field f = DashboardController.class.getDeclaredField("sortMode");
         f.setAccessible(true);
-        return f.get(target);
+        return ((Enum<?>) f.get(c)).name();
     }
 
-    private static void invokeNoArg(Object target, String method) throws Exception {
-        Method m = target.getClass().getDeclaredMethod(method);
+    private static void cycle(DashboardController c) throws Exception {
+        Method m = DashboardController.class.getDeclaredMethod("cycleSort");
         m.setAccessible(true);
-        m.invoke(target);
+        m.invoke(c);
+    }
+
+    private static String callSafe(String method, Task t) throws Exception {
+        Method m = DashboardController.class.getDeclaredMethod(method, Task.class);
+        m.setAccessible(true);
+        return (String) m.invoke(null, t); // static helper
+    }
+
+    // ---- sort mode tests (2) ----
+
+    @Test
+    void sortMode_startsAtDueDate_andCyclesToAlpha() throws Exception {
+        DashboardController c = new DashboardController();
+        assertEquals("DUE_DATE", sortModeName(c));
+        cycle(c);
+        assertEquals("ALPHA", sortModeName(c));
     }
 
     @Test
-    void sortModeCyclesThroughAllValues() throws Exception {
-        DashboardController controller = new DashboardController();
+    void sortMode_cyclesBackToDueDate_afterThreeSteps() throws Exception {
+        DashboardController c = new DashboardController();
+        cycle(c); // DUE_DATE -> ALPHA
+        cycle(c); // ALPHA -> GROUPED_SUBJECT
+        cycle(c); // GROUPED_SUBJECT -> DUE_DATE
+        assertEquals("DUE_DATE", sortModeName(c));
+    }
 
-        // Default sort mode
-        assertEquals("DUE_DATE", ((Enum<?>) get(controller, "sortMode")).name());
+    // ---- safeSubject tests (3) ----
 
-        invokeNoArg(controller, "cycleSort");
-        assertEquals("ALPHA", ((Enum<?>) get(controller, "sortMode")).name());
-
-        invokeNoArg(controller, "cycleSort");
-        assertEquals("GROUPED_SUBJECT", ((Enum<?>) get(controller, "sortMode")).name());
-
-        invokeNoArg(controller, "cycleSort");
-        assertEquals("DUE_DATE", ((Enum<?>) get(controller, "sortMode")).name());
+    @Test
+    void safeSubject_returnsPlaceholder_whenNull() throws Exception {
+        Task t = new Task(1L, null, "T", null, null, null, null, null);
+        assertEquals("(No Subject)", callSafe("safeSubject", t));
     }
 
     @Test
-    void tempTaskCanBeCreatedAndArchived() throws Exception {
-        // Locate the inner tempTask class
-        Class<?> tempTaskClass = null;
-        for (Class<?> cls : DashboardController.class.getDeclaredClasses()) {
-            if (cls.getSimpleName().equals("tempTask")) {
-                tempTaskClass = cls;
-                break;
-            }
-        }
-        assertNotNull(tempTaskClass);
+    void safeSubject_returnsPlaceholder_whenBlank() throws Exception {
+        Task t = new Task(1L, "   ", "T", null, null, null, null, null);
+        assertEquals("(No Subject)", callSafe("safeSubject", t));
+    }
 
-        // Create a new tempTask
-        Constructor<?> ctor = tempTaskClass.getDeclaredConstructor(String.class, String.class, LocalDate.class);
-        ctor.setAccessible(true);
-        LocalDate due = LocalDate.now().plusDays(1);
-        Object temp = ctor.newInstance("Homework", "CAB302", due);
+    @Test
+    void safeSubject_trimsWhitespace() throws Exception {
+        Task t = new Task(1L, "  CAB302  ", "T", null, null, null, null, null);
+        assertEquals("CAB302", callSafe("safeSubject", t));
+    }
 
-        // Access fields
-        Field titleF = tempTaskClass.getDeclaredField("title");
-        Field subjectF = tempTaskClass.getDeclaredField("subject");
-        Field dueF = tempTaskClass.getDeclaredField("due");
-        Field archivedF = tempTaskClass.getDeclaredField("archived");
-        titleF.setAccessible(true);
-        subjectF.setAccessible(true);
-        dueF.setAccessible(true);
-        archivedF.setAccessible(true);
+    // ---- safeTitle tests (3) ----
 
-        assertEquals("Homework", titleF.get(temp));
-        assertEquals("CAB302", subjectF.get(temp));
-        assertEquals(due, dueF.get(temp));
-        assertFalse((boolean) archivedF.get(temp));
+    @Test
+    void safeTitle_returnsPlaceholder_whenNull() throws Exception {
+        Task t = new Task(1L, "S", null, null, null, null, null, null);
+        assertEquals("(Untitled Task)", callSafe("safeTitle", t));
+    }
 
-        // Change archived flag
-        archivedF.set(temp, true);
-        assertTrue((boolean) archivedF.get(temp));
+    @Test
+    void safeTitle_returnsPlaceholder_whenBlank() throws Exception {
+        Task t = new Task(1L, "S", "   ", null, null, null, null, null);
+        assertEquals("(Untitled Task)", callSafe("safeTitle", t));
+    }
+
+    @Test
+    void safeTitle_trimsWhitespace() throws Exception {
+        Task t = new Task(1L, "S", "  Report  ", null, null, null, null, null);
+        assertEquals("Report", callSafe("safeTitle", t));
     }
 }

@@ -70,30 +70,12 @@
                         GridPane.columnIndex="0" GridPane.rowIndex="1">
                 <content>
                     <VBox fx:id="cardsBox" spacing="6">
-                        <!-- placeholder cards for sizing (optional) -->
-                        <HBox spacing="10" styleClass="task-card">
-                            <children>
-                                <Label text="COMP201 Essay"/>
-                                <Label text="Due: 24 Sep"/>
-                                <Pane HBox.hgrow="ALWAYS"/>
-                                <CheckBox/>
-                            </children>
-                        </HBox>
-
-                        <HBox spacing="10" styleClass="task-card">
-                            <children>
-                                <Label text="MATH101 Report"/>
-                                <Label text="Due: 27 Sep"/>
-                                <Pane HBox.hgrow="ALWAYS"/>
-                                <CheckBox/>
-                            </children>
-                        </HBox>
-
                         <!-- Empty-state label inside scrollable area -->
                         <Label fx:id="emptyLabel" text="No tasks" visible="false"/>
                     </VBox>
                 </content>
             </ScrollPane>
+
 
 
             <!-- RIGHT COL: Widgets header (row 0) -->
@@ -107,8 +89,8 @@
                         <children>
                             <Button fx:id="flashcardsTile" text="Flashcards" prefWidth="220.0" prefHeight="160.0" styleClass="widget-button"/>
                             <Button fx:id="notesTile" text="Notes" prefWidth="220.0" prefHeight="160.0" styleClass="widget-button"/>
+                            <Button fx:id="rubricTile" text="Rubric" prefWidth="220.0" prefHeight="160.0" styleClass="widget-button"/>
                             <Button fx:id="pomodoroTile" text="Pomodoro" prefWidth="220.0" prefHeight="160.0" disable="true" styleClass="widget-button"/>
-                            <Button fx:id="rubricTile" text="Rubric" prefWidth="180.0" prefHeight="120.0"/>
                             <Button fx:id="darkTile" text="Dark Mode" prefWidth="220.0" prefHeight="160.0" disable="true" styleClass="widget-button"/>
                         </children>
                     </VBox>

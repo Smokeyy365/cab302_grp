@@ -5,64 +5,68 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
 
-/**
- * Handles user sign-up, sign-in, and session state backed by {@link UserRepository}.
- */
+// CHANGE: Use UserSession as the single source of truth for logged-in state.
+import com.cab302.eduplanner.appcontext.UserSession; // CHANGE: new import
+
 public class AuthService {
     private final UserRepository repo = new UserRepository();
-    private UserRepository.User currentUser;
 
-    // synchronized means only one thread can access this method at a time
-    /**
-     * Validates input and creates a user account with a hashed password.
-     *
-     * @param username unique username requested by the user
-     * @param email contact email for the account
-     * @param firstName given name used in greetings
-     * @param lastName family name used in greetings
-     * @param password plain text password to hash
-     * @return {@code true} when the account is created successfully
-     */
-    public synchronized boolean register(String username, String email, String firstName, String lastName, String password) {
-        if (username == null || email == null || firstName == null || lastName == null || password == null ||
-                username.isBlank() || email.isBlank() || firstName.isBlank() || lastName.isBlank() || password.isBlank()) {
-            return false;
-        }
-        String hash = BCrypt.hashpw(password, BCrypt.gensalt());
-        return repo.createUser(username, email, firstName, lastName, hash);
+    public enum RegisterResult {
+        SUCCESS,
+        INVALID_INPUT,
+        USERNAME_TAKEN,
+        EMAIL_TAKEN,
+        INTERNAL_ERROR
     }
 
-    /**
-     * Checks the supplied credentials against the stored hash and records the session user.
-     *
-     * @param username account identifier to look up
-     * @param password plain text password to verify
-     * @return {@code true} when authentication succeeds
-     */
+    // Method can only have one thread at a time
+    public synchronized boolean register(String username, String email, String firstName, String lastName, String password) {
+        return registerWithResult(username, email, firstName, lastName, password) == RegisterResult.SUCCESS;
+    }
+
+    public synchronized RegisterResult registerWithResult(String username, String email, String firstName, String lastName, String password) {
+        if (username == null || email == null || firstName == null || lastName == null || password == null ||
+                username.isBlank() || email.isBlank() || firstName.isBlank() || lastName.isBlank() || password.isBlank()) {
+            return RegisterResult.INVALID_INPUT;
+        }
+
+        try {
+            if (repo.existsByUsername(username)) return RegisterResult.USERNAME_TAKEN;
+            if (repo.existsByEmail(email)) return RegisterResult.EMAIL_TAKEN;
+
+            String hash = BCrypt.hashpw(password, BCrypt.gensalt());
+            try {
+                boolean created = repo.createUserOrThrow(username, email, firstName, lastName, hash);
+                return created ? RegisterResult.SUCCESS : RegisterResult.INTERNAL_ERROR;
+            } catch (UserRepository.UserCreationException ex) {
+                String field = ex.getConstraintField();
+                if ("username".equals(field)) return RegisterResult.USERNAME_TAKEN;
+                if ("email".equals(field)) return RegisterResult.EMAIL_TAKEN;
+                return RegisterResult.INTERNAL_ERROR;
+            }
+        } catch (Exception e) {
+            return RegisterResult.INTERNAL_ERROR;
+        }
+    }
+
     public synchronized boolean authenticate(String username, String password) {
         Optional<UserRepository.User> u = repo.findByUsername(username);
         if (u.isEmpty()) return false;
         String storedHash = u.get().getPasswordHash();
         if (storedHash == null || storedHash.isBlank()) return false;
         boolean ok = BCrypt.checkpw(password, storedHash);
-        if (ok) currentUser = u.get().withoutSensitive();
+        if (ok) {
+            // Removed local state
+            UserSession.setCurrentUser(u.get().withoutSensitive());
+        }
         return ok;
     }
 
-    /**
-     * Returns the currently authenticated user, if any.
-     *
-     * @return authenticated user without sensitive fields, or {@code null} if no session exists
-     */
     public UserRepository.User getCurrentUser() {
-        return currentUser;
+        return UserSession.getCurrentUser();
     }
 
-    /**
-     * Clears any active session.
-     */
     public void logout() {
-        currentUser = null;
+        UserSession.clear();
     }
 }
-
