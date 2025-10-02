@@ -11,22 +11,32 @@ import java.time.LocalDateTime;
 public class Task {
     private Long taskId;              // tasks.task_id
     private Long userId;              // tasks.user_id
-
     private String subject;           // tasks.subject
     private String title;             // tasks.title   (required)
     private LocalDate dueDate;        // tasks.due_date
     private String notes;             // tasks.notes
-
     private Integer weight;           // tasks.weight
     private Double achievedMark;      // tasks.achieved_mark
     private Double maxMark;           // tasks.max_mark
-
     private LocalDateTime createdAt;  // tasks.created_at TEXT
     private LocalDateTime updatedAt;  // tasks.updated_at TEXT
 
+    /**
+     * Default constructor for Task.
+     */
     public Task() {}
 
-    // New flow constructor
+    /**
+     * Constructs a new Task with the given parameters.
+     * @param userId the user ID
+     * @param subject the subject
+     * @param title the title
+     * @param dueDate the due date
+     * @param notes the notes
+     * @param weight the weight
+     * @param achievedMark the achieved mark
+     * @param maxMark the maximum mark
+     */
     public Task(Long userId, String subject, String title, LocalDate dueDate,
                 String notes, Integer weight, Double achievedMark, Double maxMark) {
         this.userId = userId;
