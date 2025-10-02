@@ -8,9 +8,15 @@ import java.util.Optional;
 // CHANGE: Use UserSession as the single source of truth for logged-in state.
 import com.cab302.eduplanner.appcontext.UserSession; // CHANGE: new import
 
+/**
+ * Provides authentication and registration logic for users.
+ */
 public class AuthService {
     private final UserRepository repo = new UserRepository();
 
+    /**
+     * Registration result status codes.
+     */
     public enum RegisterResult {
         SUCCESS,
         INVALID_INPUT,
@@ -19,11 +25,29 @@ public class AuthService {
         INTERNAL_ERROR
     }
 
+    /**
+     * Registers a new user with the given details.
+     * @param username the username
+     * @param email the email
+     * @param firstName the first name
+     * @param lastName the last name
+     * @param password the password
+     * @return true if registration succeeded, false otherwise
+     */
     // Method can only have one thread at a time
     public synchronized boolean register(String username, String email, String firstName, String lastName, String password) {
         return registerWithResult(username, email, firstName, lastName, password) == RegisterResult.SUCCESS;
     }
 
+    /**
+     * Registers a new user and returns a result code.
+     * @param username the username
+     * @param email the email
+     * @param firstName the first name
+     * @param lastName the last name
+     * @param password the password
+     * @return the registration result
+     */
     public synchronized RegisterResult registerWithResult(String username, String email, String firstName, String lastName, String password) {
         if (username == null || email == null || firstName == null || lastName == null || password == null ||
                 username.isBlank() || email.isBlank() || firstName.isBlank() || lastName.isBlank() || password.isBlank()) {
