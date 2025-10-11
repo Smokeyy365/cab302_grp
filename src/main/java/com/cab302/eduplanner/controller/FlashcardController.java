@@ -17,6 +17,11 @@ import com.cab302.eduplanner.repository.FlashcardRepository;
 import java.io.IOException;
 import java.util.*;
 
+// Google Integration
+import com.cab302.eduplanner.integration.google.GoogleDriveService;
+import com.cab302.eduplanner.repository.FlashcardFileHelper;
+import java.io.File;
+
 public class FlashcardController {
 
     // ==== UI Elements (linked from flashcard.fxml) ====
@@ -226,19 +231,70 @@ public class FlashcardController {
             }
         });
 
-        uploadButton.setOnAction(e -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Upload Flashcards");
-            alert.setHeaderText(null);
-            alert.setContentText("Upload functionality not yet implemented");
-            alert.showAndWait();
-        });
+        // Google Upload Button
+        uploadButton.setOnAction(e -> uploadFlashcardsToDrive());
 
         // CRUD operations
         addButton.setOnAction(e -> openAddFlashcardDialog());       // Create
         editButton.setOnAction(e -> openEditFlashcardDialog());     // Update
         deleteButton.setOnAction(e -> deleteFlashcard());           // Delete
     }
+
+    // ==== Upload Flash Cards to Google Drive Method ====
+
+    // Upload flashcards to google drive
+    private void uploadFlashcardsToDrive() {
+        // Show messages that google drive works
+        Alert workingAlert = new Alert(Alert.AlertType.INFORMATION);
+        workingAlert.setTitle("Uploading...");
+        workingAlert.setHeaderText(null);
+        workingAlert.setContentText("Connecting to Google Drive...");
+        workingAlert.show();
+
+        // Run upload in background
+        new Thread(() -> {
+            try {
+                // Convert flashcards to text files
+                File tempFile = FlashcardFileHelper.saveToFile(folders);
+
+                // Connect to google drive service
+                GoogleDriveService driveService = new GoogleDriveService();
+
+                // Upload file into google drive
+                String fileName = "EduPlanner-Flashcards-Backup.txt";
+                String fileId = driveService.uploadFile(fileName, tempFile);
+
+                // Clean up
+                tempFile.delete();
+
+                //Shows Success messages
+                javafx.application.Platform.runLater(() -> {
+                    workingAlert.close();
+                    Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                    successAlert.setTitle("Upload Successful");
+                    successAlert.setHeaderText("Flashcards backed up to Google Drive");
+                    successAlert.setContentText("File: " + fileName + "\n" +
+                            "File ID: " + fileId + "\n\n" +
+                            "Your flashcards are now safely backed up!");
+                    successAlert.showAndWait();
+                });
+
+                // if upload fails
+            } catch (Exception ex) {
+                // Display error messages
+                javafx.application.Platform.runLater(() -> {
+                    workingAlert.close();
+                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                    errorAlert.setTitle("Upload Failed");
+                    errorAlert.setHeaderText("Could not upload to Google Drive");
+                    errorAlert.setContentText("Error: " + ex.getMessage() + "\n\n" +
+                            "Make sure you have set up Google Drive credentials.");
+                    errorAlert.showAndWait();
+                });
+            }
+        }).start();
+    }
+
 
     // ==== Flashcard navigation logic ====
     private void updateFlashcardView() {

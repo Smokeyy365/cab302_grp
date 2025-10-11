@@ -16,6 +16,7 @@ module com.cab302.eduplanner {
 
     // Google Integration
     exports com.cab302.eduplanner.integration.google;
+    exports com.cab302.eduplanner.repository;
 
     // Required for Google OAuth
     requires jdk.httpserver;

@@ -17,7 +17,9 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.client.http.FileContent;
 import java.io.*;
-import java.util.Collections;
+
+import java.util.Arrays;
+
 import java.util.List;
 
 
@@ -35,8 +37,15 @@ public class GoogleDriveService {
     private static final String tokens = "tokens";
 
     //Permissions asked
-    //DRIVE_FIlE is the files created
-    private static final List<String> scopes = Collections.singletonList(DriveScopes.DRIVE_FILE);
+
+    //DRIVE_FILE is the files created
+
+    // Request for calendar and drive
+    private static final List<String> scopes = Arrays.asList(
+            DriveScopes.DRIVE_FILE,
+            "https://www.googleapis.com/auth/calendar"
+    );
+
 
     //Google credentials file location
     private static final String credPath = "/credentials.json";
@@ -88,7 +97,7 @@ public class GoogleDriveService {
 
         // Check if save tokens are present
         // open browser if not
-        //Save tokens when we get it
+        //Save tokens when received
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
@@ -129,8 +138,7 @@ public class GoogleDriveService {
         // Return the file's unique ID
         return uploadedFile.getId();
     }
-
-// Displays files with IDs,names,date of creation  and has a maximum number of files displayed
+    // Displays files with IDs,names,date of creation  and has a maximum number of files displayed
 // Via method chaining
     public List<File> listFiles() throws IOException {
 
@@ -149,7 +157,7 @@ public class GoogleDriveService {
         return driveService;
     }
 
-    // Additional Methods
+
 
     //Download file from google drive
     public void downloadFile(String fileId, String savePath) throws IOException {
@@ -158,8 +166,32 @@ public class GoogleDriveService {
         outputStream.close();
     }
 
-   // Delete file from google drive
+    // Delete file from google drive
     public void deleteFile(String fileId) throws IOException {
         driveService.files().delete(fileId).execute();
     }
+
+    // ========================================================================
+    // ← GOOGLE INTEGRATION: NEW METHOD ADDED FOR FLASHCARD UPLOAD FEATURE
+    // ========================================================================
+    // Overloaded version of uploadFile that accepts a File object directly
+    // This is used by FlashcardController to upload the temporary flashcard file
+    // The original uploadFile(String, String) method above remains unchanged
+    public String uploadFile(String fileName, java.io.File fileToUpload) throws IOException {
+        // Create "metadata" - info on file
+        File fileMetadata = new File();
+        fileMetadata.setName(fileName);  // name on drive
+
+        // Wrap the file in a format Google Drive understands
+        FileContent mediaContent = new FileContent("text/plain", fileToUpload);
+
+        // Upload
+        File uploadedFile = driveService.files().create(fileMetadata, mediaContent)
+                .setFields("id, name")
+                .execute();
+
+        // Return the file's unique ID
+        return uploadedFile.getId();
+    }
+    // ← GOOGLE INTEGRATION: END OF NEW METHOD
 }
