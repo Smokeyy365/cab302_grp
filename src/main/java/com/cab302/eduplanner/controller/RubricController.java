@@ -65,7 +65,7 @@ public class RubricController {
         File file = fileChooser.showOpenDialog(uploadAssignmentButton.getScene().getWindow());
         if (file != null) {
             // Handle the file upload
-            rubricFile = file;
+            assignmentFile = file;
             statusLabel.setText("Assignment uploaded: " + file.getName());
         }
     }
@@ -85,6 +85,7 @@ public class RubricController {
         File file = fileChooser.showOpenDialog(uploadRubricButton.getScene().getWindow());
         if (file != null) {
             // Handle the file upload
+            rubricFile = file;
             statusLabel.setText("Rubric uploaded: " + file.getName());
         }
     }
