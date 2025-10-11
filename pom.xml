@@ -126,13 +126,13 @@
             <version>${google.apis.drive.version}</version>
         </dependency>
 
-        <!-- Uncomment when you need Google Calendar integration
+        <!-- Google Calendar-->
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-calendar</artifactId>
             <version>${google.apis.calendar.version}</version>
         </dependency>
-        -->
+
 
         <!-- JUnit 5 -->
         <dependency>
