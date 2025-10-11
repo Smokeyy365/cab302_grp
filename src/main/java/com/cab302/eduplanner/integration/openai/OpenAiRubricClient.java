@@ -55,10 +55,14 @@ public class OpenAiRubricClient {
                 .build();
 
         try (Response response = httpClient.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("OpenAI API request failed with status " + response.code() + ": " + response.message());
-            }
             String body = response.body() != null ? response.body().string() : "";
+            if (!response.isSuccessful()) {
+                if (response.code() == 401) {
+                    throw new IOException("OpenAI API request failed with status 401 (Unauthorized). Response body: " + body + ". Ensure OPENAI_API_KEY is valid and available to the running process.");
+                }
+                throw new IOException("OpenAI API request failed with status " + response.code() + ": " + body);
+            }
+
             if (body.isBlank()) {
                 throw new IOException("OpenAI API returned an empty response body.");
             }
@@ -101,7 +105,7 @@ public class OpenAiRubricClient {
         }
 
         JsonNode responseNode = root.path("response");
-        if (builder.length() == 0 && responseNode.isTextual()) {
+        if (builder.isEmpty() && responseNode.isTextual()) {
             builder.append(responseNode.asText());
         }
 
@@ -112,28 +116,37 @@ public class OpenAiRubricClient {
         ObjectNode root = objectMapper.createObjectNode();
         root.put("model", model);
 
-        ArrayNode input = root.putArray("input");
-        input.add(createMessage("system", "You are an academic grader. Evaluate assignments using the provided rubric and respond with JSON."));
+        // Create a clear system/context instruction and include it at the top of the input
+        String systemContext = "You are an academic grader. Evaluate assignments using the provided rubric and respond only with JSON that matches the specified schema.";
+        String inputText = systemContext + "\n\nRubric:\n" + rubricText + "\n\nAssignment:\n" + assignmentText;
+        root.put("input", inputText);
 
-        ObjectNode userMessage = objectMapper.createObjectNode();
-        userMessage.put("role", "user");
-        ArrayNode userContent = userMessage.putArray("content");
-        userContent.add(createContent("Rubric:\n" + rubricText));
-        userContent.add(createContent("Assignment:\n" + assignmentText));
-        input.add(userMessage);
+        // Small metadata block for observability (not secret)
+        ObjectNode metadata = root.putObject("metadata");
+        metadata.put("application", "eduplanner");
+        metadata.put("module", "rubric-analysis");
 
-        ObjectNode responseFormat = root.putObject("response_format");
-        responseFormat.put("type", "json_schema");
-        ObjectNode schemaContainer = responseFormat.putObject("json_schema");
-        schemaContainer.put("name", "RubricGrade");
-        ObjectNode schema = schemaContainer.putObject("schema");
+        // Responses API: the format parameter moved under text.format
+        ObjectNode textNode = root.putObject("text");
+        ObjectNode format = textNode.putObject("format");
+        format.put("type", "json_schema");
+        format.put("name", "RubricGrade");
+
+        // json_schema container under text.format -> move schema directly under text.format.schema per API
+        ObjectNode schema = format.putObject("schema");
         schema.put("type", "object");
+        // Responses API requires additionalProperties to be explicitly false for strict schema validation
+        schema.put("additionalProperties", false);
+
         ObjectNode properties = schema.putObject("properties");
         properties.putObject("overallGpa").put("type", "number");
+
         ObjectNode categories = properties.putObject("categories");
         categories.put("type", "array");
         ObjectNode items = categories.putObject("items");
         items.put("type", "object");
+        // items should not allow unspecified additional properties
+        items.put("additionalProperties", false);
         ObjectNode itemProperties = items.putObject("properties");
         itemProperties.putObject("name").put("type", "string");
         itemProperties.putObject("gpa").put("type", "number");
@@ -142,25 +155,11 @@ public class OpenAiRubricClient {
         itemRequired.add("name");
         itemRequired.add("gpa");
         itemRequired.add("evidence");
+
         ArrayNode required = schema.putArray("required");
         required.add("overallGpa");
         required.add("categories");
 
         return root;
-    }
-
-    private ObjectNode createMessage(String role, String text) {
-        ObjectNode message = objectMapper.createObjectNode();
-        message.put("role", role);
-        ArrayNode content = message.putArray("content");
-        content.add(createContent(text));
-        return message;
-    }
-
-    private ObjectNode createContent(String text) {
-        ObjectNode content = objectMapper.createObjectNode();
-        content.put("type", "text");
-        content.put("text", text);
-        return content;
     }
 }

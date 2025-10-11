@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Objects;
 
 /**
@@ -19,7 +20,18 @@ public class RubricAnalysisService {
 
     public RubricAnalysisService() {
         this(new DocumentTextExtractor(),
-                new OpenAiRubricClient(new OkHttpClient(), new ObjectMapper(), System.getenv("OPENAI_API_KEY"), "gpt-4.1-mini"));
+                new OpenAiRubricClient(createDefaultClient(), new ObjectMapper(), System.getenv("OPENAI_API_KEY"), "gpt-5-nano-2025-08-07"));
+    }
+
+    /**
+     * Creates a default OkHttpClient with longer timeouts for API calls.
+     */
+    private static OkHttpClient createDefaultClient() {
+        return new OkHttpClient.Builder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .readTimeout(Duration.ofSeconds(120))
+                .writeTimeout(Duration.ofSeconds(60))
+                .build();
     }
 
     public RubricAnalysisService(DocumentTextExtractor textExtractor, OpenAiRubricClient openAiClient) {
