@@ -427,3 +427,16 @@ class ModelUtilityTest {
                 () -> assertNull(UserSession.getCurrentUser())
         );
     }
+
+    // Setting the current user to null clears the session and login status.
+    @Test
+    void userSessionSettingNullClearsState() {
+        UserRepository.User user = new UserRepository.User("charlie");
+        UserSession.setCurrentUser(user);
+        UserSession.setCurrentUser(null);
+
+        assertAll(
+                () -> assertFalse(UserSession.isLoggedIn()),
+                () -> assertNull(UserSession.getCurrentUser())
+        );
+    }
