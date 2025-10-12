@@ -18,3 +18,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Collection of focused unit tests covering value objects and utilities.
+ */
+class ModelUtilityTest {
+
+    // Reset the UserSession singleton after each test to avoid cross-test contamination.
+    @AfterEach
+    void resetSession() {
+        UserSession.clear();
+    }
