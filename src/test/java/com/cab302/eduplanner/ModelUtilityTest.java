@@ -197,3 +197,16 @@ class ModelUtilityTest {
                 () -> assertNull(task.getUpdatedAt())
         );
     }
+
+    // Task.toString includes key identifiers such as taskId, userId, and title.
+    @Test
+    void taskToStringContainsKeyFields() {
+        Task task = new Task(1L, "CAB302", "Study", LocalDate.of(2024, 5, 1), null, null, null, null);
+        task.setTaskId(5L);
+        String output = task.toString();
+        assertAll(
+                () -> assertTrue(output.contains("taskId=5")),
+                () -> assertTrue(output.contains("userId=1")),
+                () -> assertTrue(output.contains("title='Study'"))
+        );
+    }
