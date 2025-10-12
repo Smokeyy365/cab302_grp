@@ -359,3 +359,15 @@ class ModelUtilityTest {
                 () -> assertEquals("", note.getContent())
         );
     }
+
+    // Note setters replace existing title and content with new text.
+    @Test
+    void noteSettersModifyState() {
+        Note note = new Note("", "");
+        note.setTitle("Updated");
+        note.setContent("Content");
+        assertAll(
+                () -> assertEquals("Updated", note.getTitle()),
+                () -> assertEquals("Content", note.getContent())
+        );
+    }
