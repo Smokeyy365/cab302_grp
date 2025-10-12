@@ -332,3 +332,10 @@ class ModelUtilityTest {
                 () -> assertSame(second, folder.getNotes().get(1))
         );
     }
+
+    // Folder.toString returns the folder name for readable display.
+    @Test
+    void folderToStringReturnsName() {
+        Folder folder = new Folder("Personal");
+        assertEquals("Personal", folder.toString());
+    }
