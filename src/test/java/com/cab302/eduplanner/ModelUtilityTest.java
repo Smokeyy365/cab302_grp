@@ -36,3 +36,9 @@ class ModelUtilityTest {
         LocalDate date = DateUtil.parseIsoDateOrNull("2024-05-18");
         assertEquals(LocalDate.of(2024, 5, 18), date);
     }
+
+    // Non-ISO date formats throw a DateTimeParseException when parsed.
+    @Test
+    void parseIsoDateOrNullThrowsForInvalidFormat() {
+        assertThrows(DateTimeParseException.class, () -> DateUtil.parseIsoDateOrNull("18/05/2024"));
+    }
