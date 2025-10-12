@@ -210,3 +210,13 @@ class ModelUtilityTest {
                 () -> assertTrue(output.contains("title='Study'"))
         );
     }
+
+    // Flashcard constructor accessors return the provided question and answer.
+    @Test
+    void flashcardAccessorsWork() {
+        Flashcard flashcard = new Flashcard("Q?", "A!");
+        assertAll(
+                () -> assertEquals("Q?", flashcard.getQuestion()),
+                () -> assertEquals("A!", flashcard.getAnswer())
+        );
+    }
