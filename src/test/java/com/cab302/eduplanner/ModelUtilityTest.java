@@ -418,3 +418,12 @@ class ModelUtilityTest {
                 () -> assertSame(user, UserSession.getCurrentUser())
         );
     }
+
+    // Fresh sessions start with no current user and report logged-out state.
+    @Test
+    void userSessionInitiallyLoggedOut() {
+        assertAll(
+                () -> assertFalse(UserSession.isLoggedIn()),
+                () -> assertNull(UserSession.getCurrentUser())
+        );
+    }
