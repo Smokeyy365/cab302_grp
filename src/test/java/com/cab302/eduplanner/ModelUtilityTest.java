@@ -290,3 +290,16 @@ class ModelUtilityTest {
         folder.setName("New");
         assertEquals("New", folder.getName());
     }
+
+    // Folder addNote/removeNote manage contained Note instances in place.
+    @Test
+    void folderAddAndRemoveNotes() {
+        Folder folder = new Folder("Work");
+        Note note = new Note("Title", "Content");
+
+        folder.addNote(note);
+        assertEquals(1, folder.getNotes().size());
+
+        folder.removeNote(note);
+        assertTrue(folder.getNotes().isEmpty());
+    }
