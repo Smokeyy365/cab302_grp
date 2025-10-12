@@ -49,3 +49,10 @@ class ModelUtilityTest {
         LocalDate date = DateUtil.parseIsoDateOrNull("2020-02-29");
         assertEquals(LocalDate.of(2020, 2, 29), date);
     }
+
+    // Leading and trailing whitespace is trimmed before parsing ISO dates.
+    @Test
+    void parseIsoDateOrNullTrimsWhitespace() {
+        LocalDate date = DateUtil.parseIsoDateOrNull(" 2023-01-02 ");
+        assertEquals(LocalDate.of(2023, 1, 2), date);
+    }
