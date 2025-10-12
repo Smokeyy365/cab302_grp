@@ -79,3 +79,10 @@ class ModelUtilityTest {
         LocalDateTime dateTime = DateUtil.parseIsoDateTimeOrNull("2023-01-01T01:02:03");
         assertEquals(LocalDateTime.of(2023, 1, 1, 1, 2, 3), dateTime);
     }
+
+    // Whitespace around ISO date-time strings is trimmed before parsing.
+    @Test
+    void parseIsoDateTimeOrNullTrimsWhitespace() {
+        LocalDateTime dateTime = DateUtil.parseIsoDateTimeOrNull(" 2020-12-31 00:00:00 ");
+        assertEquals(LocalDateTime.of(2020, 12, 31, 0, 0, 0), dateTime);
+    }
