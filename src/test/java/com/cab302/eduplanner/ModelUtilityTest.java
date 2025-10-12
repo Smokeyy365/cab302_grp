@@ -93,3 +93,12 @@ class ModelUtilityTest {
         LocalDateTime dateTime = DateUtil.parseIsoDateTimeOrNull("2024-04-04 04:04:04\n");
         assertEquals(LocalDateTime.of(2024, 4, 4, 4, 4, 4), dateTime);
     }
+
+    // Null or blank date-time input returns null rather than throwing errors.
+    @Test
+    void parseIsoDateTimeOrNullReturnsNullForNullOrBlank() {
+        assertAll(
+                () -> assertNull(DateUtil.parseIsoDateTimeOrNull(null)),
+                () -> assertNull(DateUtil.parseIsoDateTimeOrNull(""))
+        );
+    }
