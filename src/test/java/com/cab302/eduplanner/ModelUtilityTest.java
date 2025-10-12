@@ -386,3 +386,13 @@ class ModelUtilityTest {
         note.setTitle("New");
         assertEquals("New", note.toString());
     }
+
+    // RubricItem constructor stores the provided name and points values.
+    @Test
+    void rubricItemStoresValues() {
+        RubricItem item = new RubricItem("Clarity", 5);
+        assertAll(
+                () -> assertEquals("Clarity", item.getName()),
+                () -> assertEquals(5, item.getPoints())
+        );
+    }
