@@ -3,11 +3,18 @@ module com.cab302.eduplanner {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires org.xerial.sqlitejdbc;
+    requires com.fasterxml.jackson.databind;
+    requires okhttp3;
+    requires org.apache.pdfbox;
+    requires org.apache.poi.ooxml;
+    requires org.apache.pdfbox.io;
+    requires org.apache.logging.log4j;
 
     // for reflection access by FXML
     opens com.cab302.eduplanner.controller to javafx.fxml;
     opens com.cab302.eduplanner.controller.components to javafx.fxml;
-    opens com.cab302.eduplanner.model to javafx.fxml;
+    opens com.cab302.eduplanner.model to javafx.fxml, com.fasterxml.jackson.databind;
 
     // normal exports (public API)
     exports com.cab302.eduplanner;
