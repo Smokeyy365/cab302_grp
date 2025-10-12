@@ -65,3 +65,10 @@ class ModelUtilityTest {
                 () -> assertNull(DateUtil.parseIsoDateOrNull("   "))
         );
     }
+
+    // ISO date-times with spaces between date and time parse successfully.
+    @Test
+    void parseIsoDateTimeOrNullHandlesSpaceSeparator() {
+        LocalDateTime dateTime = DateUtil.parseIsoDateTimeOrNull("2024-02-29 23:59:59");
+        assertEquals(LocalDateTime.of(2024, 2, 29, 23, 59, 59), dateTime);
+    }
