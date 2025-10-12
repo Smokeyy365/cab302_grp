@@ -349,3 +349,13 @@ class ModelUtilityTest {
                 () -> assertEquals("Text", note.getContent())
         );
     }
+
+    // Note allows empty strings for title and content without errors.
+    @Test
+    void noteConstructorAllowsEmptyValues() {
+        Note note = new Note("", "");
+        assertAll(
+                () -> assertEquals("", note.getTitle()),
+                () -> assertEquals("", note.getContent())
+        );
+    }
