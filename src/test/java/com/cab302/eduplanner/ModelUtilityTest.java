@@ -56,3 +56,12 @@ class ModelUtilityTest {
         LocalDate date = DateUtil.parseIsoDateOrNull(" 2023-01-02 ");
         assertEquals(LocalDate.of(2023, 1, 2), date);
     }
+
+    // Null or blank inputs produce a null date result instead of throwing.
+    @Test
+    void parseIsoDateOrNullReturnsNullForNullOrBlank() {
+        assertAll(
+                () -> assertNull(DateUtil.parseIsoDateOrNull(null)),
+                () -> assertNull(DateUtil.parseIsoDateOrNull("   "))
+        );
+    }
