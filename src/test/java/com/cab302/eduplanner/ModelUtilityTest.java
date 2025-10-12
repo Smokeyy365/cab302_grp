@@ -124,3 +124,22 @@ class ModelUtilityTest {
         LocalDate date = DateUtil.parseIsoDateOrNull("2021-11-09");
         assertEquals("2021-11-09", DateUtil.toIso(date));
     }
+
+    // Constructing a Task with arguments correctly populates all fields.
+    @Test
+    void taskConstructorPopulatesFields() {
+        LocalDate dueDate = LocalDate.of(2025, 3, 10);
+        Task task = new Task(7L, "CAB302", "Finish assignment", dueDate, "Important", 40, 35.5, 40.0);
+
+        assertAll(
+                () -> assertNull(task.getTaskId()),
+                () -> assertEquals(7L, task.getUserId()),
+                () -> assertEquals("CAB302", task.getSubject()),
+                () -> assertEquals("Finish assignment", task.getTitle()),
+                () -> assertEquals(dueDate, task.getDueDate()),
+                () -> assertEquals("Important", task.getNotes()),
+                () -> assertEquals(40, task.getWeight()),
+                () -> assertEquals(35.5, task.getAchievedMark()),
+                () -> assertEquals(40.0, task.getMaxMark())
+        );
+    }
