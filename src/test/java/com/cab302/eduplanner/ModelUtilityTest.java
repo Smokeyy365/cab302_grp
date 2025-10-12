@@ -220,3 +220,15 @@ class ModelUtilityTest {
                 () -> assertEquals("A!", flashcard.getAnswer())
         );
     }
+
+    // Flashcard mutators allow updating question and answer content.
+    @Test
+    void flashcardSettersModifyState() {
+        Flashcard flashcard = new Flashcard("", "");
+        flashcard.setQuestion("What is Java?");
+        flashcard.setAnswer("A programming language.");
+        assertAll(
+                () -> assertEquals("What is Java?", flashcard.getQuestion()),
+                () -> assertEquals("A programming language.", flashcard.getAnswer())
+        );
+    }
