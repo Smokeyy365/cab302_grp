@@ -178,3 +178,22 @@ class ModelUtilityTest {
                 () -> assertEquals(updated, task.getUpdatedAt())
         );
     }
+
+    // The default Task constructor leaves all fields unset for later assignment.
+    @Test
+    void taskDefaultConstructorLeavesFieldsNull() {
+        Task task = new Task();
+        assertAll(
+                () -> assertNull(task.getTaskId()),
+                () -> assertNull(task.getUserId()),
+                () -> assertNull(task.getSubject()),
+                () -> assertNull(task.getTitle()),
+                () -> assertNull(task.getDueDate()),
+                () -> assertNull(task.getNotes()),
+                () -> assertNull(task.getWeight()),
+                () -> assertNull(task.getAchievedMark()),
+                () -> assertNull(task.getMaxMark()),
+                () -> assertNull(task.getCreatedAt()),
+                () -> assertNull(task.getUpdatedAt())
+        );
+    }
