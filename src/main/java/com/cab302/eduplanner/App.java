@@ -11,7 +11,6 @@ import java.io.IOException;
  * Boots the JavaFX application and provides helpers for scene management.
  */
 public class App extends Application {
-
     /**
      * Displays the login screen and applies the shared stylesheet.
      *

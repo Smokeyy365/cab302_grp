@@ -1,47 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
+<BorderPane prefHeight="720.0" prefWidth="1280.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.cab302.eduplanner.controller.NoteController">
+
+    <!-- Page header -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+
+            <Label text="NOTES" styleClass="app-title"/>
+            <HBox spacing="8">
+                <Button fx:id="dashboardButton" text="Dashboard" styleClass="secondary"/>
+            </HBox>
+        </HBox>
+    </top>
 
     <!-- Sidebar: folders + notes -->
     <left>
-        <VBox spacing="10" style="-fx-background-color: #f4f4f4;" prefWidth="220">
+        <VBox spacing="12" prefWidth="260" styleClass="note-sidebar">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets top="14" right="14" bottom="14" left="14"/>
             </padding>
 
-            <Label text="Folders &amp; Notes" style="-fx-font-weight: bold; -fx-font-size: 14;" />
-            <TreeView fx:id="folderTree" prefHeight="400" prefWidth="200"/>
-            <HBox spacing="5">
-                <Button fx:id="addFolderButton" text="Add Folder" />
-                <Button fx:id="addNoteButton" text="Add Note" />
+            <Label text="FOLDERS &amp; NOTES" styleClass="app-title"/>
+            <TreeView fx:id="folderTree" prefHeight="400" VBox.vgrow="ALWAYS"/>
+
+            <HBox spacing="8">
+                <Button fx:id="addFolderButton" text="Add Folder" styleClass="primary"/>
+                <Button fx:id="addNoteButton" text="Add Note" styleClass="primary"/>
             </HBox>
-            <HBox spacing="5">
-                <Button fx:id="renameButton" text="Rename" />
-                <Button fx:id="deleteButton" text="Delete" />
+            <HBox spacing="8">
+                <Button fx:id="renameButton" text="Rename" styleClass="secondary"/>
+                <Button fx:id="deleteButton" text="Delete" styleClass="secondary"/>
             </HBox>
-            <Button fx:id="dashboardButton" text="Back to Dashboard" />
         </VBox>
     </left>
 
     <!-- Main editor -->
     <center>
-        <VBox spacing="10">
+        <VBox spacing="10" styleClass="note-editor">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets top="18" right="18" bottom="18" left="18"/>
             </padding>
 
             <TextField fx:id="titleField" promptText="Note Title"
-                       style="-fx-font-size: 16; -fx-font-weight: bold;" />
+                       styleClass="note-title-field"/>
             <TextArea fx:id="contentArea" promptText="Write your note here..."
-                      wrapText="true" prefHeight="400" />
+                      wrapText="true" VBox.vgrow="ALWAYS"/>
             <HBox spacing="10">
-                <Button fx:id="saveButton" text="Save" />
-                <Button fx:id="cancelButton" text="Cancel" />
+                <Button fx:id="saveButton" text="Save" styleClass="primary"/>
+                <Button fx:id="cancelButton" text="Cancel" styleClass="secondary"/>
             </HBox>
         </VBox>
     </center>
