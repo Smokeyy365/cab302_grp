@@ -303,3 +303,17 @@ class ModelUtilityTest {
         folder.removeNote(note);
         assertTrue(folder.getNotes().isEmpty());
     }
+
+    // Removing an unmatched Note leaves existing folder notes unaffected.
+    @Test
+    void folderRemoveMissingNoteKeepsExistingOnes() {
+        Folder folder = new Folder("Work");
+        Note first = new Note("First", "A");
+        Note second = new Note("Second", "B");
+        folder.addNote(first);
+        folder.addNote(second);
+
+        folder.removeNote(new Note("Second", "B"));
+
+        assertEquals(2, folder.getNotes().size());
+    }
