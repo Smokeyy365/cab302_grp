@@ -16,9 +16,16 @@
                 <Insets top="18" right="18" bottom="18" left="18"/>
             </padding>
 
+            <!-- Left title -->
             <Label text="NOTES" styleClass="app-title"/>
+
+            <!-- Right-side actions -->
             <HBox spacing="8">
+                <!-- Dashboard first (left) -->
                 <Button fx:id="dashboardButton" text="Dashboard" styleClass="secondary"/>
+
+                <!-- Upload second (right) -->
+                <Button fx:id="uploadButton" text="Upload" styleClass="secondary"/>
             </HBox>
         </HBox>
     </top>

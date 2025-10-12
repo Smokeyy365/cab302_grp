@@ -67,30 +67,36 @@ public class LoginController {
         }
 
         // -------- REGISTER FLOW --------
-        if (usernameField != null && passwordField != null && confirmPasswordField != null) {
-            usernameField.setOnAction(e -> passwordField.requestFocus());
-            usernameField.setOnKeyPressed(e -> {
-                if (e.getCode() == KeyCode.DOWN) {
-                    passwordField.requestFocus();
-                }
-            });
+        if (firstNameField != null && lastNameField != null && emailField != null
+                && usernameField != null && passwordField != null && confirmPasswordField != null) {
 
-            passwordField.setOnAction(e -> confirmPasswordField.requestFocus());
-            passwordField.setOnKeyPressed(e -> {
-                if (e.getCode() == KeyCode.UP) {
-                    usernameField.requestFocus();
-                } else if (e.getCode() == KeyCode.DOWN) {
-                    confirmPasswordField.requestFocus();
-                }
-            });
+            // On-screen order (top → bottom)
+            TextField[] fields = {
+                    firstNameField, lastNameField, emailField,
+                    usernameField, passwordField, confirmPasswordField
+            };
 
-            confirmPasswordField.setOnAction(this::onRegister);
-            confirmPasswordField.setOnKeyPressed(e -> {
-                if (e.getCode() == KeyCode.UP) {
-                    passwordField.requestFocus();
-                }
-            });
+            for (int i = 0; i < fields.length; i++) {
+                final int index = i;
+                fields[i].setOnKeyPressed(e -> {
+                    switch (e.getCode()) {
+                        case DOWN, ENTER -> {
+                            if (index < fields.length - 1) {
+                                fields[index + 1].requestFocus();  // Move to next field
+                            } else {
+                                registerButton.fire(); // Last field → submit
+                            }
+                        }
+                        case UP -> {
+                            if (index > 0) {
+                                fields[index - 1].requestFocus();  // Move up
+                            }
+                        }
+                    }
+                });
+            }
         }
+
 
         // If we have the authContainer (register screen), bind left/right padding to 30% of scene width
         if (authContainer != null) {
