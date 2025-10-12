@@ -72,3 +72,10 @@ class ModelUtilityTest {
         LocalDateTime dateTime = DateUtil.parseIsoDateTimeOrNull("2024-02-29 23:59:59");
         assertEquals(LocalDateTime.of(2024, 2, 29, 23, 59, 59), dateTime);
     }
+
+    // ISO date-times using the T separator are handled correctly.
+    @Test
+    void parseIsoDateTimeOrNullAcceptsTSeparator() {
+        LocalDateTime dateTime = DateUtil.parseIsoDateTimeOrNull("2023-01-01T01:02:03");
+        assertEquals(LocalDateTime.of(2023, 1, 1, 1, 2, 3), dateTime);
+    }
