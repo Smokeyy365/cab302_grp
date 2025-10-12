@@ -406,3 +406,15 @@ class ModelUtilityTest {
                 () -> assertEquals(0, item.getPoints())
         );
     }
+
+    // UserSession reports logged-in status when a user is set in the session.
+    @Test
+    void userSessionTracksLoginState() {
+        UserRepository.User user = new UserRepository.User("alice");
+        UserSession.setCurrentUser(user);
+
+        assertAll(
+                () -> assertTrue(UserSession.isLoggedIn()),
+                () -> assertSame(user, UserSession.getCurrentUser())
+        );
+    }
