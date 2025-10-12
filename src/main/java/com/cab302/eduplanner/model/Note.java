@@ -18,7 +18,7 @@ public class Note {
     }
 
     public void setTitle(String string) {
-        this.title = title;
+        this.title = string;
     }
 
     public void setContent(String content) {

@@ -26,6 +26,10 @@ public class OpenAiRubricClient {
     private final String apiKey;
     private final String model;
 
+    static final String TYPESTRING = "string";
+    static final String TYPENUMBER = "number";
+    static final String TYPEARRAY = "array";
+
     public OpenAiRubricClient(OkHttpClient httpClient, ObjectMapper objectMapper, String apiKey, String model) {
         this.httpClient = Objects.requireNonNull(httpClient, "httpClient");
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper");
@@ -82,31 +86,34 @@ public class OpenAiRubricClient {
     private String extractContent(JsonNode root) {
         StringBuilder builder = new StringBuilder();
 
+        // Try extracting from "output" array
         JsonNode outputArray = root.path("output");
         if (outputArray.isArray()) {
-            for (JsonNode outputEntry : outputArray) {
+            outputArray.forEach(outputEntry -> {
                 JsonNode contentArray = outputEntry.path("content");
                 if (contentArray.isArray()) {
-                    for (JsonNode content : contentArray) {
+                    contentArray.forEach(content -> {
                         String type = content.path("type").asText();
                         if ("output_text".equals(type) || "text".equals(type)) {
                             builder.append(content.path("text").asText());
                         }
-                    }
+                    });
                 }
-            }
+            });
         }
 
+        // Try extracting from "output_text" array
         JsonNode outputText = root.path("output_text");
         if (outputText.isArray()) {
-            for (JsonNode node : outputText) {
-                builder.append(node.asText());
-            }
+            outputText.forEach(node -> builder.append(node.asText()));
         }
 
-        JsonNode responseNode = root.path("response");
-        if (builder.isEmpty() && responseNode.isTextual()) {
-            builder.append(responseNode.asText());
+        // Fallback to "response" field if nothing found
+        if (builder.isEmpty()) {
+            JsonNode responseNode = root.path("response");
+            if (responseNode.isTextual()) {
+                builder.append(responseNode.asText());
+            }
         }
 
         return builder.toString().trim();
@@ -116,10 +123,10 @@ public class OpenAiRubricClient {
         ObjectNode root = objectMapper.createObjectNode();
         root.put("model", model);
 
-        // Create a clear system/context instruction and include it at the top of the input
-        String systemContext = "You are an academic grader. Evaluate assignments using the provided rubric and respond only with JSON that matches the specified schema.";
-        String inputText = systemContext + "\n\nRubric:\n" + rubricText + "\n\nAssignment:\n" + assignmentText;
-        root.put("input", inputText);
+    // Create a clear system/context instruction and include it at the top of the input
+    String systemContext = "You are a high level academic grader. Evaluate assignments using the provided rubric and respond only with JSON that matches the specified schema. For each rubric category, return: name, score (earned), maxScore (possible), evidence (short quote or pointer), and improvementSteps (array of 3-6 concise actionable steps). If a value is unknown, return 0 for numeric fields and an empty string/array for others.";
+    String inputText = systemContext + "\n\nRubric:\n" + rubricText + "\n\nAssignment:\n" + assignmentText;
+    root.put("input", inputText);
 
         // Small metadata block for observability (not secret)
         ObjectNode metadata = root.putObject("metadata");
@@ -139,26 +146,36 @@ public class OpenAiRubricClient {
         schema.put("additionalProperties", false);
 
         ObjectNode properties = schema.putObject("properties");
-        properties.putObject("overallGpa").put("type", "number");
+    properties.putObject("overallScore").put("type", TYPENUMBER);
+    properties.putObject("overallMaxScore").put("type", TYPENUMBER);
 
-        ObjectNode categories = properties.putObject("categories");
-        categories.put("type", "array");
-        ObjectNode items = categories.putObject("items");
-        items.put("type", "object");
-        // items should not allow unspecified additional properties
-        items.put("additionalProperties", false);
-        ObjectNode itemProperties = items.putObject("properties");
-        itemProperties.putObject("name").put("type", "string");
-        itemProperties.putObject("gpa").put("type", "number");
-        itemProperties.putObject("evidence").put("type", "string");
-        ArrayNode itemRequired = items.putArray("required");
-        itemRequired.add("name");
-        itemRequired.add("gpa");
-        itemRequired.add("evidence");
+    ObjectNode categories = properties.putObject("categories");
+    categories.put("type", TYPEARRAY);
+    ObjectNode items = categories.putObject("items");
+    items.put("type", "object");
+    // items should not allow unspecified additional properties
+    items.put("additionalProperties", false);
+    ObjectNode itemProperties = items.putObject("properties");
 
-        ArrayNode required = schema.putArray("required");
-        required.add("overallGpa");
-        required.add("categories");
+    itemProperties.putObject("name").put("type", TYPESTRING);
+    itemProperties.putObject("score").put("type", TYPENUMBER);
+    itemProperties.putObject("maxScore").put("type", TYPENUMBER);
+    itemProperties.putObject("evidence").put("type", TYPESTRING);
+    itemProperties.putObject("improvementSteps")
+        .put("type", TYPEARRAY)
+        .putObject("items").put("type", TYPESTRING);
+    ArrayNode itemRequired = items.putArray("required");
+    itemRequired.add("name");
+    itemRequired.add("score");
+    itemRequired.add("maxScore");
+    itemRequired.add("evidence");
+    // Responses API requires that 'required' include every key in properties when additionalProperties=false
+    itemRequired.add("improvementSteps");
+
+    ArrayNode required = schema.putArray("required");
+    required.add("overallScore");
+    required.add("overallMaxScore");
+    required.add("categories");
 
         return root;
     }

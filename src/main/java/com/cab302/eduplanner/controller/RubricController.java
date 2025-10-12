@@ -11,15 +11,18 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.util.Locale;
-
 
 /**
  * Handles rubric uploads and user-facing feedback for the analysis workflow.
  */
 public class RubricController {
 
+    private static final Logger log = LogManager.getLogger(RubricController.class);
     @FXML
     private TextArea feedbackTextArea;
 
@@ -30,7 +33,11 @@ public class RubricController {
     private Button submitButton;
 
     @FXML
-    private Button dashboardButton, uploadAssignmentButton, uploadRubricButton;
+    private Button dashboardButton;
+    @FXML
+    private Button uploadAssignmentButton;
+    @FXML
+    private Button uploadRubricButton;
 
     @FXML
     private Label statusLabel;
@@ -40,7 +47,8 @@ public class RubricController {
     private File rubricFile;
 
     /**
-     * Pre-populates the view with default feedback text and resets status indicators.
+     * Pre-populates the view with default feedback text and resets status
+     * indicators.
      */
     @FXML
     private void initialize() {
@@ -52,16 +60,15 @@ public class RubricController {
     }
 
     /**
-     * Prompts the user to select an assignment document and updates the status label.
+     * Prompts the user to select an assignment document and updates the status
+     * label.
      */
     @FXML
     private void handleUploadAssignment() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Assignment");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("PDF Files", "*.pdf"),
-                new FileChooser.ExtensionFilter("Word Documents", "*.docx"),
-                new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Supported Document Types", "*.pdf", "*.docx", "*.txt"));
         File file = fileChooser.showOpenDialog(uploadAssignmentButton.getScene().getWindow());
         if (file != null) {
             // Handle the file upload
@@ -77,16 +84,13 @@ public class RubricController {
     private void handleUploadRubric() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Rubric");
-        fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("PDF Files", "*.pdf"),
-            new FileChooser.ExtensionFilter("Word Documents", "*.docx"),
-            new FileChooser.ExtensionFilter("Text Files", "*.txt")
-        );
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Supported Document Types", "*.pdf", "*.docx", "*.txt"));
         File file = fileChooser.showOpenDialog(uploadRubricButton.getScene().getWindow());
         if (file != null) {
             // Handle the file upload
             rubricFile = file;
-            statusLabel.setText("Rubric uploaded: " + file.getName());
+            statusLabel.setText("Success! Rubric uploaded: " + file.getName());
         }
     }
 
@@ -145,15 +149,24 @@ public class RubricController {
 
     private String formatResult(RubricAnalysisResult result) {
         StringBuilder builder = new StringBuilder();
-        builder.append(String.format(Locale.US, "Overall GPA: %.2f%n%n", result.getOverallGpa()));
+        builder.append(String.format(Locale.US, "Overall Score: %.2f / %.2f%n%n", result.getOverallScore(),
+                result.getOverallMaxScore()));
         if (result.getCategories().isEmpty()) {
             builder.append("No category level feedback was returned by the AI grader.");
             return builder.toString();
         }
         for (RubricCategoryEvaluation category : result.getCategories()) {
             builder.append(category.getName()).append(System.lineSeparator());
-            builder.append(String.format(Locale.US, "  GPA: %.2f%n", category.getGpa()));
-            builder.append("  Evidence: ").append(category.getEvidence()).append(System.lineSeparator()).append(System.lineSeparator());
+            builder.append(
+                    String.format(Locale.US, "  Score: %.2f / %.2f%n", category.getScore(), category.getMaxScore()));
+            builder.append("  Evidence: ").append(category.getEvidence()).append(System.lineSeparator());
+            if (!category.getImprovementSteps().isEmpty()) {
+                builder.append("  Improvements:\n");
+                for (String step : category.getImprovementSteps()) {
+                    builder.append("    • ").append(step).append(System.lineSeparator());
+                }
+            }
+            builder.append(System.lineSeparator());
         }
         return builder.toString().trim();
     }
@@ -167,7 +180,7 @@ public class RubricController {
             Stage stage = (Stage) dashboardButton.getScene().getWindow();
             App.changeScene(stage, "/com/cab302/eduplanner/dashboard.fxml", "EduPlanner — Dashboard");
         } catch (IOException ex) {
-            System.err.println("Failed to switch to Dashboard scene: " + ex.getMessage());
+            log.error("Failed to switch to Dashboard scene: {}", ex.getMessage());
             statusLabel.setText("Failed to return to dashboard.");
         }
     }

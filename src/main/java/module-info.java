@@ -12,6 +12,7 @@ module com.cab302.eduplanner {
     requires org.apache.pdfbox;
     requires org.apache.poi.ooxml;
     requires org.apache.pdfbox.io;
+    requires org.apache.logging.log4j;
 
     // for reflection access by FXML
     opens com.cab302.eduplanner.controller to javafx.fxml;

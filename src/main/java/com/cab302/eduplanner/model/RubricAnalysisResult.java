@@ -11,19 +11,26 @@ import java.util.List;
  */
 public class RubricAnalysisResult {
 
-    private final double overallGpa;
+    private final double overallScore;
+    private final double overallMaxScore;
     private final List<RubricCategoryEvaluation> categories;
 
     @JsonCreator
     public RubricAnalysisResult(
-            @JsonProperty(value = "overallGpa", required = true) double overallGpa,
-            @JsonProperty(value = "categories", required = true) List<RubricCategoryEvaluation> categories) {
-        this.overallGpa = overallGpa;
+            @JsonProperty(value = "overallScore", required = false) Double overallScore,
+            @JsonProperty(value = "overallMaxScore", required = false) Double overallMaxScore,
+            @JsonProperty(value = "categories", required = false) List<RubricCategoryEvaluation> categories) {
+        this.overallScore = overallScore == null ? 0.0 : overallScore.doubleValue();
+        this.overallMaxScore = overallMaxScore == null ? 0.0 : overallMaxScore.doubleValue();
         this.categories = categories == null ? List.of() : List.copyOf(categories);
     }
 
-    public double getOverallGpa() {
-        return overallGpa;
+    public double getOverallScore() {
+        return overallScore;
+    }
+
+    public double getOverallMaxScore() {
+        return overallMaxScore;
     }
 
     public List<RubricCategoryEvaluation> getCategories() {
