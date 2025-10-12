@@ -29,3 +29,10 @@ class ModelUtilityTest {
     void resetSession() {
         UserSession.clear();
     }
+
+    // Valid ISO date strings parse into matching LocalDate instances.
+    @Test
+    void parseIsoDateOrNullReturnsDateForValidInput() {
+        LocalDate date = DateUtil.parseIsoDateOrNull("2024-05-18");
+        assertEquals(LocalDate.of(2024, 5, 18), date);
+    }
