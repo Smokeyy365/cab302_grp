@@ -30,7 +30,7 @@ public class RubricController {
     private ProgressIndicator progressIndicator;
 
     @FXML
-    private Button submitButton;
+    private Button generateButton;
 
     @FXML
     private Button dashboardButton;
@@ -57,6 +57,10 @@ public class RubricController {
         progressIndicator.setProgress(0);
         progressIndicator.setVisible(false);
         statusLabel.setText("");
+        // Ensure the generate button is disabled until both files are uploaded
+        if (generateButton != null) {
+            generateButton.setDisable(true);
+        }
     }
 
     /**
@@ -74,6 +78,7 @@ public class RubricController {
             // Handle the file upload
             assignmentFile = file;
             statusLabel.setText("Assignment uploaded: " + file.getName());
+            refreshSubmitState();
         }
     }
 
@@ -91,6 +96,18 @@ public class RubricController {
             // Handle the file upload
             rubricFile = file;
             statusLabel.setText("Success! Rubric uploaded: " + file.getName());
+            refreshSubmitState();
+        }
+    }
+
+    /**
+     * Refreshes the enabled/disabled state of the submit button based on
+     * whether both required files have been uploaded.
+     */
+    private void refreshSubmitState() {
+        boolean ready = assignmentFile != null && rubricFile != null;
+        if (generateButton != null) {
+            generateButton.setDisable(!ready);
         }
     }
 
@@ -107,7 +124,7 @@ public class RubricController {
 
         progressIndicator.setVisible(true);
         progressIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-        submitButton.setDisable(true);
+    generateButton.setDisable(true);
         statusLabel.setText("Analysing submission with OpenAI rubric grader...");
 
         Task<RubricAnalysisResult> analysisTask = new Task<>() {
@@ -123,7 +140,7 @@ public class RubricController {
             statusLabel.setText("Rubric analysis completed.");
             progressIndicator.setVisible(false);
             progressIndicator.setProgress(1);
-            submitButton.setDisable(false);
+            generateButton.setDisable(false);
         });
 
         analysisTask.setOnFailed(event -> {
@@ -139,7 +156,7 @@ public class RubricController {
             }
             progressIndicator.setVisible(false);
             progressIndicator.setProgress(0);
-            submitButton.setDisable(false);
+            generateButton.setDisable(false);
         });
 
         Thread worker = new Thread(analysisTask, "rubric-analysis-worker");

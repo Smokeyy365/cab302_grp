@@ -32,14 +32,18 @@
             <VBox spacing="16.0" styleClass="rubric-card" maxWidth="820.0" prefWidth="820.0">
                 <Label text="Upload Files" styleClass="section-title"/>
                 <Label fx:id="statusLabel"/>
-                <HBox spacing="12.0" styleClass="rubric-upload-row">
-                    <Button fx:id="uploadAssignmentButton" mnemonicParsing="false"
-                            onAction="#handleUploadAssignment" styleClass="primary"
-                            text="Upload Assignment"/>
-                    <Button fx:id="uploadRubricButton" mnemonicParsing="false"
-                            onAction="#handleUploadRubric" styleClass="secondary"
-                            text="Upload Rubric"/>
-                </HBox>
+        <HBox spacing="12.0" styleClass="rubric-upload-row">
+            <Button fx:id="uploadAssignmentButton" mnemonicParsing="false"
+                onAction="#handleUploadAssignment" styleClass="primary"
+                text="Upload Assignment"/>
+            <Button fx:id="uploadRubricButton" mnemonicParsing="false"
+                onAction="#handleUploadRubric" styleClass="secondary"
+                text="Upload Rubric"/>
+            <!-- Single action button placed with upload controls. Use fx:id generateButton -->
+            <Button fx:id="generateButton" mnemonicParsing="false"
+                onAction="#handleSubmitButtonAction" styleClass="primary"
+                text="Generate Feedback" disable="true"/>
+        </HBox>
             </VBox>
             <VBox spacing="18.0" styleClass="rubric-card" maxWidth="820.0" prefWidth="820.0">
                 <HBox spacing="10.0" alignment="CENTER_LEFT">
@@ -51,9 +55,6 @@
                           promptText="Feedback will appear here once both documents are processed."
                           wrapText="true"/>
                 <HBox spacing="10.0" styleClass="rubric-actions" alignment="CENTER_RIGHT">
-                    <Button fx:id="submitButton" mnemonicParsing="false"
-                            onAction="#handleSubmitButtonAction" styleClass="primary"
-                            text="Submit"/>
                 </HBox>
             </VBox>
         </VBox>
