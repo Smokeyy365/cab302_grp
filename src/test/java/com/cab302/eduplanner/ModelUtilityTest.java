@@ -143,3 +143,38 @@ class ModelUtilityTest {
                 () -> assertEquals(40.0, task.getMaxMark())
         );
     }
+
+    // Using Task setters updates each value and timestamp field as expected.
+    @Test
+    void taskSettersUpdateValues() {
+        Task task = new Task();
+        LocalDate dueDate = LocalDate.of(2030, 1, 1);
+        LocalDateTime created = LocalDateTime.of(2024, 1, 1, 12, 0);
+        LocalDateTime updated = LocalDateTime.of(2024, 2, 2, 12, 0);
+
+        task.setTaskId(10L);
+        task.setUserId(3L);
+        task.setSubject("Math");
+        task.setTitle("Test");
+        task.setDueDate(dueDate);
+        task.setNotes("Revise chapters");
+        task.setWeight(20);
+        task.setAchievedMark(18.0);
+        task.setMaxMark(20.0);
+        task.setCreatedAt(created);
+        task.setUpdatedAt(updated);
+
+        assertAll(
+                () -> assertEquals(10L, task.getTaskId()),
+                () -> assertEquals(3L, task.getUserId()),
+                () -> assertEquals("Math", task.getSubject()),
+                () -> assertEquals("Test", task.getTitle()),
+                () -> assertEquals(dueDate, task.getDueDate()),
+                () -> assertEquals("Revise chapters", task.getNotes()),
+                () -> assertEquals(20, task.getWeight()),
+                () -> assertEquals(18.0, task.getAchievedMark()),
+                () -> assertEquals(20.0, task.getMaxMark()),
+                () -> assertEquals(created, task.getCreatedAt()),
+                () -> assertEquals(updated, task.getUpdatedAt())
+        );
+    }
