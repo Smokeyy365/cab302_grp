@@ -10,6 +10,9 @@ module com.cab302.eduplanner {
     requires org.apache.poi.ooxml;
     requires org.apache.pdfbox.io;
     requires org.apache.logging.log4j;
+    requires net.synedra.validatorfx;
+    requires org.kordamp.bootstrapfx.core;
+    requires jbcrypt;
 
     // for reflection access by FXML
     opens com.cab302.eduplanner.controller to javafx.fxml;
