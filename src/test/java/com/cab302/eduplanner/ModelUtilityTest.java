@@ -396,3 +396,13 @@ class ModelUtilityTest {
                 () -> assertEquals(5, item.getPoints())
         );
     }
+
+    // RubricItem supports zero-point entries used for optional rubric criteria.
+    @Test
+    void rubricItemAllowsZeroPoints() {
+        RubricItem item = new RubricItem("Participation", 0);
+        assertAll(
+                () -> assertEquals("Participation", item.getName()),
+                () -> assertEquals(0, item.getPoints())
+        );
+    }
