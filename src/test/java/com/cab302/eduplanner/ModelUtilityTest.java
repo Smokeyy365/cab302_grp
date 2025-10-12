@@ -261,3 +261,17 @@ class ModelUtilityTest {
         deck.setName("New");
         assertEquals("New", deck.getName());
     }
+
+    // FlashcardFolder retains inserted decks and exposes them through its list.
+    @Test
+    void flashcardFolderMaintainsDeckList() {
+        FlashcardFolder folder = new FlashcardFolder("Folder");
+        FlashcardDeck deck = new FlashcardDeck("Deck");
+        folder.getDecks().add(deck);
+
+        assertAll(
+                () -> assertEquals("Folder", folder.getName()),
+                () -> assertEquals(1, folder.getDecks().size()),
+                () -> assertSame(deck, folder.getDecks().getFirst())
+        );
+    }
