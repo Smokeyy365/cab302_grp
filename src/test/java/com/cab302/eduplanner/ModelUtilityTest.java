@@ -451,4 +451,4 @@ class ModelUtilityTest {
                 () -> assertNull(UserSession.getCurrentUser())
         );
     }
-
+}
