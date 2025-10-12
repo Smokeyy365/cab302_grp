@@ -317,3 +317,18 @@ class ModelUtilityTest {
 
         assertEquals(2, folder.getNotes().size());
     }
+
+    // Folder maintains insertion order when retrieving notes from the list.
+    @Test
+    void folderNotesMaintainInsertionOrder() {
+        Folder folder = new Folder("Work");
+        Note first = new Note("First", "A");
+        Note second = new Note("Second", "B");
+        folder.addNote(first);
+        folder.addNote(second);
+
+        assertAll(
+                () -> assertSame(first, folder.getNotes().get(0)),
+                () -> assertSame(second, folder.getNotes().get(1))
+        );
+    }
