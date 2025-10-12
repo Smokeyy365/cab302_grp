@@ -42,3 +42,10 @@ class ModelUtilityTest {
     void parseIsoDateOrNullThrowsForInvalidFormat() {
         assertThrows(DateTimeParseException.class, () -> DateUtil.parseIsoDateOrNull("18/05/2024"));
     }
+
+    // Leap-day ISO dates are accepted and produce the expected LocalDate.
+    @Test
+    void parseIsoDateOrNullHandlesLeapDay() {
+        LocalDate date = DateUtil.parseIsoDateOrNull("2020-02-29");
+        assertEquals(LocalDate.of(2020, 2, 29), date);
+    }
