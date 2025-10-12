@@ -339,3 +339,13 @@ class ModelUtilityTest {
         Folder folder = new Folder("Personal");
         assertEquals("Personal", folder.toString());
     }
+
+    // Note constructor getters return the provided title and content.
+    @Test
+    void noteAccessorsWork() {
+        Note note = new Note("Initial", "Text");
+        assertAll(
+                () -> assertEquals("Initial", note.getTitle()),
+                () -> assertEquals("Text", note.getContent())
+        );
+    }
