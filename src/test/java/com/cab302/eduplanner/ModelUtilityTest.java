@@ -86,3 +86,10 @@ class ModelUtilityTest {
         LocalDateTime dateTime = DateUtil.parseIsoDateTimeOrNull(" 2020-12-31 00:00:00 ");
         assertEquals(LocalDateTime.of(2020, 12, 31, 0, 0, 0), dateTime);
     }
+
+    // Trailing newline characters are ignored when parsing ISO date-times.
+    @Test
+    void parseIsoDateTimeOrNullTrimsTrailingNewline() {
+        LocalDateTime dateTime = DateUtil.parseIsoDateTimeOrNull("2024-04-04 04:04:04\n");
+        assertEquals(LocalDateTime.of(2024, 4, 4, 4, 4, 4), dateTime);
+    }
