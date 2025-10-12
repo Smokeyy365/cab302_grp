@@ -18,6 +18,19 @@ public class UserRepository {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // matches datetime
 
     public boolean createUser(String username, String email, String firstName, String lastName, String passwordHash) {
+        try {
+            return createUserOrThrow(username, email, firstName, lastName, passwordHash);
+        } catch (UserCreationException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Attempts to create a user and throws UserCreationException when a constraint prevents creation
+     * (e.g., UNIQUE constraint on username or email). This lets callers distinguish reasons for failure
+     * while keeping the older createUser(...) method for compatibility.
+     */
+    public boolean createUserOrThrow(String username, String email, String firstName, String lastName, String passwordHash) throws UserCreationException {
         final String sql = "INSERT INTO users (username, email, first_name, last_name, password_hash) VALUES (?,?,?,?,?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -27,6 +40,40 @@ public class UserRepository {
             ps.setString(4, lastName);
             ps.setString(5, passwordHash);
             return ps.executeUpdate() == 1;
+        } catch (SQLException e) {
+            String msg = e.getMessage() == null ? "" : e.getMessage();
+            // SQLite produces messages like: "UNIQUE constraint failed: users.username"
+            if (msg.contains("UNIQUE constraint failed") && msg.contains("users.username")) {
+                throw new UserCreationException("username", "username already exists", e);
+            }
+            if (msg.contains("UNIQUE constraint failed") && msg.contains("users.email")) {
+                throw new UserCreationException("email", "email already exists", e);
+            }
+            throw new UserCreationException(null, "internal", e);
+        }
+    }
+
+    public boolean existsByUsername(String username) {
+        final String sql = "SELECT 1 FROM users WHERE username = ? LIMIT 1";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    public boolean existsByEmail(String email) {
+        final String sql = "SELECT 1 FROM users WHERE email = ? LIMIT 1";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         } catch (SQLException e) {
             return false;
         }
@@ -104,5 +151,16 @@ public class UserRepository {
         public String getLastName() { return lastName; }
         public String getPasswordHash() { return passwordHash; }
         public LocalDateTime getCreatedAt() { return createdAt; }
+    }
+
+    public static class UserCreationException extends Exception {
+        private final String constraintField; // e.g., "username" or "email"
+
+        public UserCreationException(String constraintField, String message, Throwable cause) {
+            super(message, cause);
+            this.constraintField = constraintField;
+        }
+
+        public String getConstraintField() { return constraintField; }
     }
 }

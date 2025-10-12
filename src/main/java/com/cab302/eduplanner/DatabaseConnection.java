@@ -27,7 +27,9 @@ public class DatabaseConnection {
         return conn;
     }
 
-    /** Creates/ensures all tables & indexes exist. Call once at app startup. */
+    /**
+     * Creates or ensures all tables and indexes exist. Call once at app startup.
+     */
     public static void initSchema() {
         final String createUsers = """
             CREATE TABLE IF NOT EXISTS users (
