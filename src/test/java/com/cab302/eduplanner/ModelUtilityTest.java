@@ -282,3 +282,11 @@ class ModelUtilityTest {
         FlashcardFolder folder = new FlashcardFolder("Folder");
         assertTrue(folder.getDecks().isEmpty());
     }
+
+    // FlashcardFolder.setName updates the folder label appropriately.
+    @Test
+    void flashcardFolderSetNameUpdatesName() {
+        FlashcardFolder folder = new FlashcardFolder("Old");
+        folder.setName("New");
+        assertEquals("New", folder.getName());
+    }
