@@ -440,3 +440,15 @@ class ModelUtilityTest {
                 () -> assertNull(UserSession.getCurrentUser())
         );
     }
+
+    // Invoking UserSession.clear removes stored users and resets login flags.
+    @Test
+    void userSessionClearResetsState() {
+        UserSession.setCurrentUser(new UserRepository.User("bob"));
+        UserSession.clear();
+        assertAll(
+                () -> assertFalse(UserSession.isLoggedIn()),
+                () -> assertNull(UserSession.getCurrentUser())
+        );
+    }
+
