@@ -108,3 +108,12 @@ class ModelUtilityTest {
     void parseIsoDateTimeOrNullThrowsForInvalidInput() {
         assertThrows(DateTimeParseException.class, () -> DateUtil.parseIsoDateTimeOrNull("invalid"));
     }
+
+    // Formatting LocalDate values to ISO strings preserves content and handles null.
+    @Test
+    void toIsoHandlesValuesAndNull() {
+        assertAll(
+                () -> assertEquals("2022-08-15", DateUtil.toIso(LocalDate.of(2022, 8, 15))),
+                () -> assertNull(DateUtil.toIso(null))
+        );
+    }
