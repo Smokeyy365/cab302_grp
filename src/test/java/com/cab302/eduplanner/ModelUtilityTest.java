@@ -246,3 +246,10 @@ class ModelUtilityTest {
                 () -> assertSame(card, deck.getFlashcards().getFirst())
         );
     }
+
+    // New FlashcardDeck instances start with an empty flashcard collection.
+    @Test
+    void flashcardDeckInitiallyEmpty() {
+        FlashcardDeck deck = new FlashcardDeck("Empty");
+        assertTrue(deck.getFlashcards().isEmpty());
+    }
