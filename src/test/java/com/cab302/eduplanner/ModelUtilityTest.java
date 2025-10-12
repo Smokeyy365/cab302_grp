@@ -102,3 +102,9 @@ class ModelUtilityTest {
                 () -> assertNull(DateUtil.parseIsoDateTimeOrNull(""))
         );
     }
+
+    // Non-date strings trigger a DateTimeParseException for date-time parsing.
+    @Test
+    void parseIsoDateTimeOrNullThrowsForInvalidInput() {
+        assertThrows(DateTimeParseException.class, () -> DateUtil.parseIsoDateTimeOrNull("invalid"));
+    }
