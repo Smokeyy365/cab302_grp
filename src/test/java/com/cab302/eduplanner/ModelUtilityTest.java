@@ -378,3 +378,11 @@ class ModelUtilityTest {
         Note note = new Note("Summary", "Body");
         assertEquals("Summary", note.toString());
     }
+
+    // Updating a Note title changes the toString output accordingly.
+    @Test
+    void noteToStringReflectsUpdatedTitle() {
+        Note note = new Note("Old", "Body");
+        note.setTitle("New");
+        assertEquals("New", note.toString());
+    }
