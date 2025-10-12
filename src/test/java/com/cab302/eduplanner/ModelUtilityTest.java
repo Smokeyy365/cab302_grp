@@ -232,3 +232,17 @@ class ModelUtilityTest {
                 () -> assertEquals("A programming language.", flashcard.getAnswer())
         );
     }
+
+    // FlashcardDeck stores its name and retains added card references.
+    @Test
+    void flashcardDeckStoresNameAndCards() {
+        FlashcardDeck deck = new FlashcardDeck("Basics");
+        Flashcard card = new Flashcard("Q", "A");
+        deck.getFlashcards().add(card);
+
+        assertAll(
+                () -> assertEquals("Basics", deck.getName()),
+                () -> assertEquals(1, deck.getFlashcards().size()),
+                () -> assertSame(card, deck.getFlashcards().getFirst())
+        );
+    }
