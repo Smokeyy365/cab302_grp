@@ -117,3 +117,10 @@ class ModelUtilityTest {
                 () -> assertNull(DateUtil.toIso(null))
         );
     }
+
+    // ISO strings round-trip through parsing and formatting without changes.
+    @Test
+    void toIsoRoundTripsWithParse() {
+        LocalDate date = DateUtil.parseIsoDateOrNull("2021-11-09");
+        assertEquals("2021-11-09", DateUtil.toIso(date));
+    }
