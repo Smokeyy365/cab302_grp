@@ -253,3 +253,11 @@ class ModelUtilityTest {
         FlashcardDeck deck = new FlashcardDeck("Empty");
         assertTrue(deck.getFlashcards().isEmpty());
     }
+
+    // FlashcardDeck.setName replaces the stored deck name value.
+    @Test
+    void flashcardDeckSetNameUpdatesName() {
+        FlashcardDeck deck = new FlashcardDeck("Old");
+        deck.setName("New");
+        assertEquals("New", deck.getName());
+    }
