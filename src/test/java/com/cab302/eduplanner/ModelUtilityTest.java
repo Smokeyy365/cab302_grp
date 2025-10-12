@@ -275,3 +275,10 @@ class ModelUtilityTest {
                 () -> assertSame(deck, folder.getDecks().getFirst())
         );
     }
+
+    // Newly created FlashcardFolder instances expose an empty deck list.
+    @Test
+    void flashcardFolderInitiallyEmpty() {
+        FlashcardFolder folder = new FlashcardFolder("Folder");
+        assertTrue(folder.getDecks().isEmpty());
+    }
