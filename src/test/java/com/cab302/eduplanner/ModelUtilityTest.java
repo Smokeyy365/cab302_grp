@@ -371,3 +371,10 @@ class ModelUtilityTest {
                 () -> assertEquals("Content", note.getContent())
         );
     }
+
+    // Note.toString surfaces the current title value for display purposes.
+    @Test
+    void noteToStringReturnsTitle() {
+        Note note = new Note("Summary", "Body");
+        assertEquals("Summary", note.toString());
+    }
