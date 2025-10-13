@@ -44,7 +44,7 @@ public class App extends Application {
      * Utility for swapping the current scene while keeping window configuration consistent.
      *
      * @param stage window whose scene should change
-     * @param fxml path to the FXML resource to display
+     * @param fxml path to the FXML resource to display=
      * @param title window title to display after the switch
      * @throws IOException if the requested FXML cannot be loaded
      */
