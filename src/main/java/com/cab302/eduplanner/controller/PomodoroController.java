@@ -2,19 +2,23 @@ package com.cab302.eduplanner.controller;
 
 import com.cab302.eduplanner.App;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.Circle;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Controller for the Pomodoro widget: setup, run, and phase transitions.
+ * Controller for the Pomodoro widget: setup, run, phase transitions, and pie display.
  */
 public class PomodoroController {
 
@@ -33,6 +37,11 @@ public class PomodoroController {
     @FXML private Button finishButton;
     @FXML private Button nextPhaseButton;
     @FXML private Button stopButton;
+
+    // Pie
+    @FXML private Pane piePane;
+    @FXML private Circle trackCircle;
+    @FXML private Arc progressArc;
 
     private ToggleGroup studyGroup;
     private ToggleGroup breakGroup;
@@ -66,8 +75,45 @@ public class PomodoroController {
         nextPhaseButton.setVisible(false);
         nextPhaseButton.setManaged(false);
 
+        initPieBindings();
+
         showSetup();
         updateTimeLabel(0);
+
+    }
+
+    // Pie bindings
+    private void initPieBindings() {
+        DoubleBinding halfW = piePane.widthProperty().divide(2.0);
+        DoubleBinding halfH = piePane.heightProperty().divide(2.0);
+        DoubleBinding radius = Bindings.createDoubleBinding(
+                () -> Math.max(0, Math.min(piePane.getWidth(), piePane.getHeight()) / 2.0 - 2.0),
+                piePane.widthProperty(), piePane.heightProperty());
+
+        trackCircle.centerXProperty().bind(halfW);
+        trackCircle.centerYProperty().bind(halfH);
+        trackCircle.radiusProperty().bind(radius);
+
+        progressArc.centerXProperty().bind(halfW);
+        progressArc.centerYProperty().bind(halfH);
+        progressArc.radiusXProperty().bind(radius);
+        progressArc.radiusYProperty().bind(radius);
+
+        progressArc.lengthProperty().bind(
+                Bindings.when(totalSeconds.greaterThan(0))
+                        .then(remainingSeconds.multiply(-360.0).divide(totalSeconds))
+                        .otherwise(0)
+        );
+
+        String primary = "#265C4B";
+        currentPhase.addListener((obs, oldV, newV) ->
+                progressArc.setFill(javafx.scene.paint.Color.web(primary))
+        );
+        progressArc.setFill(javafx.scene.paint.Color.web(primary));
+        trackCircle.setFill(javafx.scene.paint.Color.web("#265C4B", 0.50));
+
+
+
     }
 
     private HBox getRowHBox(VBox setup, int whichRow) {
@@ -166,11 +212,6 @@ public class PomodoroController {
         updateTimeLabel(remaining);
     }
 
-    /**
-     * Phase end handler.
-     * Auto-swap ON: start next phase immediately.
-     * Auto-swap OFF: stay on running pane and show "Start Next Phase".
-     */
     private void onFinished(boolean willAutoSwap, boolean swappedToBreak) {
         if (!willAutoSwap) {
             Phase next = (currentPhase.get() == Phase.STUDY) ? Phase.BREAK : Phase.STUDY;
@@ -199,6 +240,7 @@ public class PomodoroController {
 
     private void updatePhaseLabel() {
         phaseLabel.setText("Phase: " + (currentPhase.get() == Phase.STUDY ? "STUDY" : "BREAK"));
+        phaseLabel.setStyle("-fx-text-fill: -color-primary;");
     }
 
     private void updateTimeLabel(int seconds) {
