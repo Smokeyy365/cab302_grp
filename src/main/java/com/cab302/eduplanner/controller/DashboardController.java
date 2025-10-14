@@ -18,6 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.Desktop;
+import java.net.URI;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -80,7 +82,7 @@ public class DashboardController {
         // Button handlers
         sortButton.setOnAction(e -> { cycleSort(); render(); });
         newButton.setOnAction(e -> openCreateForm());
-        calendarButton.setOnAction(e -> info("Tasks Calendar view TBD"));
+        calendarButton.setOnAction(e -> handleOpenGoogleCalendar()); // <-- changed
         detailButton.setOnAction(e -> info("Tasks detailed view TBD"));
 
         flashcardsTile.setOnAction(e -> navigate("/com/cab302/eduplanner/flashcard.fxml", "EduPlanner — Flashcards"));
@@ -375,4 +377,25 @@ public class DashboardController {
     private void info(String msg) {
         System.out.println(msg);
     }
+
+    // Google calendar URL
+    @FXML
+    private void handleOpenGoogleCalendar() {
+        try {
+            String url = "https://calendar.google.com/calendar/u/0/r?tab=mc";
+            if (java.awt.Desktop.isDesktopSupported()) {
+                java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
+            } else {
+                new Alert(Alert.AlertType.INFORMATION,
+                        "Could not open a browser automatically. Copy this URL:\n" + url
+                ).showAndWait();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            new Alert(Alert.AlertType.ERROR,
+                    "Failed to open Google Calendar:\n" + ex.getMessage()
+            ).showAndWait();
+        }
+    }
 }
+

@@ -59,7 +59,9 @@
                     <Pane HBox.hgrow="ALWAYS"/>
                     <Button fx:id="sortButton" text="[Sort: Due Date]" styleClass="task-header-button"/>
                     <Button fx:id="newButton" text="+ New" styleClass="task-header-button"/>
-                    <Button fx:id="calendarButton" text="Calendar View" styleClass="task-header-button"/>
+                    <!-- Added Calendar action -->
+                    <Button fx:id="calendarButton" text="Calendar View" styleClass="task-header-button"
+                            onAction="#handleOpenGoogleCalendar"/>
                     <Button fx:id="detailButton" text="Detail View" styleClass="task-header-button"/>
                 </children>
             </HBox>
@@ -100,3 +102,4 @@
         </GridPane>
     </center>
 </BorderPane>
+
