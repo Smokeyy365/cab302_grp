@@ -5,8 +5,6 @@ import com.cab302.eduplanner.model.RubricAnalysisResult;
 import com.cab302.eduplanner.model.RubricCategoryEvaluation;
 import com.cab302.eduplanner.service.RubricAnalysisService;
 import javafx.concurrent.Task;
-
-import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
@@ -14,7 +12,14 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
@@ -23,50 +28,40 @@ import java.util.Locale;
 public class RubricController {
 
     private static final Logger log = LogManager.getLogger(RubricController.class);
-    @FXML
-    private TextArea feedbackTextArea;
 
-    @FXML
-    private ProgressIndicator progressIndicator;
+    @FXML private TextArea feedbackTextArea;
+    @FXML private ProgressIndicator progressIndicator;
+    @FXML private Button generateButton;
 
-    @FXML
-    private Button generateButton;
+    @FXML private Button dashboardButton;
+    @FXML private Button uploadAssignmentButton;
+    @FXML private Button uploadRubricButton;
 
-    @FXML
-    private Button dashboardButton;
-    @FXML
-    private Button uploadAssignmentButton;
-    @FXML
-    private Button uploadRubricButton;
+    @FXML private Label statusLabel;
 
-    @FXML
-    private Label statusLabel;
+    // Bottom-row buttons
+    @FXML private Button uploadToCalendarButton;
+    @FXML private Button openPlanInGoogleButton;
 
     private final RubricAnalysisService analysisService = new RubricAnalysisService();
     private File assignmentFile;
     private File rubricFile;
 
-    /**
-     * Pre-populates the view with default feedback text and resets status
-     * indicators.
-     */
     @FXML
     private void initialize() {
-        // Initialize any necessary data or state here
         feedbackTextArea.setText("No feedback can be provided until documents are submitted.");
         progressIndicator.setProgress(0);
         progressIndicator.setVisible(false);
         statusLabel.setText("");
-        // Ensure the generate button is disabled until both files are uploaded
-        if (generateButton != null) {
-            generateButton.setDisable(true);
-        }
+
+        if (generateButton != null) generateButton.setDisable(true);
+
+        // Open Plan in Google is ALWAYS enabled
+        if (openPlanInGoogleButton != null) openPlanInGoogleButton.setDisable(false);
+        // Keep upload-to-calendar gated until we have feedback
+        if (uploadToCalendarButton != null) uploadToCalendarButton.setDisable(true);
     }
 
-    /**
-     * Prompts the user to select an assignment document and updates the status
-     * label.
-     */
     @FXML
     private void handleUploadAssignment() {
         FileChooser fileChooser = new FileChooser();
@@ -75,16 +70,12 @@ public class RubricController {
                 new FileChooser.ExtensionFilter("Supported Document Types", "*.pdf", "*.docx", "*.txt"));
         File file = fileChooser.showOpenDialog(uploadAssignmentButton.getScene().getWindow());
         if (file != null) {
-            // Handle the file upload
             assignmentFile = file;
             statusLabel.setText("Assignment uploaded: " + file.getName());
             refreshSubmitState();
         }
     }
 
-    /**
-     * Prompts the user to select a rubric document and updates the status label.
-     */
     @FXML
     private void handleUploadRubric() {
         FileChooser fileChooser = new FileChooser();
@@ -93,30 +84,20 @@ public class RubricController {
                 new FileChooser.ExtensionFilter("Supported Document Types", "*.pdf", "*.docx", "*.txt"));
         File file = fileChooser.showOpenDialog(uploadRubricButton.getScene().getWindow());
         if (file != null) {
-            // Handle the file upload
             rubricFile = file;
             statusLabel.setText("Success! Rubric uploaded: " + file.getName());
             refreshSubmitState();
         }
     }
 
-    /**
-     * Refreshes the enabled/disabled state of the submit button based on
-     * whether both required files have been uploaded.
-     */
     private void refreshSubmitState() {
         boolean ready = assignmentFile != null && rubricFile != null;
-        if (generateButton != null) {
-            generateButton.setDisable(!ready);
-        }
+        if (generateButton != null) generateButton.setDisable(!ready);
+        // Leave bottom buttons alone (Open always on; Upload gated by result)
     }
 
-    /**
-     * Handles rubric submission by updating the user-visible status message.
-     */
     @FXML
     private void handleSubmitButtonAction() {
-        // Handle the submit button action here
         if (assignmentFile == null || rubricFile == null) {
             statusLabel.setText("Upload both an assignment and a rubric before requesting analysis.");
             return;
@@ -124,7 +105,7 @@ public class RubricController {
 
         progressIndicator.setVisible(true);
         progressIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-    generateButton.setDisable(true);
+        generateButton.setDisable(true);
         statusLabel.setText("Analysing submission with OpenAI rubric grader...");
 
         Task<RubricAnalysisResult> analysisTask = new Task<>() {
@@ -141,13 +122,15 @@ public class RubricController {
             progressIndicator.setVisible(false);
             progressIndicator.setProgress(1);
             generateButton.setDisable(false);
+
+            // Enable Upload-to-Calendar now that we have content
+            if (uploadToCalendarButton != null) uploadToCalendarButton.setDisable(false);
+            // Open button stays enabled regardless
         });
 
         analysisTask.setOnFailed(event -> {
             Throwable error = analysisTask.getException();
-            if (error != null) {
-                error.printStackTrace();
-            }
+            if (error != null) error.printStackTrace();
             feedbackTextArea.setText("An error occurred while running the rubric analysis.");
             if (error instanceof IllegalStateException) {
                 statusLabel.setText(error.getMessage());
@@ -157,6 +140,9 @@ public class RubricController {
             progressIndicator.setVisible(false);
             progressIndicator.setProgress(0);
             generateButton.setDisable(false);
+
+            // Keep upload-to-calendar disabled on failure; keep Open enabled
+            if (uploadToCalendarButton != null) uploadToCalendarButton.setDisable(true);
         });
 
         Thread worker = new Thread(analysisTask, "rubric-analysis-worker");
@@ -166,16 +152,16 @@ public class RubricController {
 
     private String formatResult(RubricAnalysisResult result) {
         StringBuilder builder = new StringBuilder();
-        builder.append(String.format(Locale.US, "Overall Score: %.2f / %.2f%n%n", result.getOverallScore(),
-                result.getOverallMaxScore()));
+        builder.append(String.format(Locale.US, "Overall Score: %.2f / %.2f%n%n",
+                result.getOverallScore(), result.getOverallMaxScore()));
         if (result.getCategories().isEmpty()) {
             builder.append("No category level feedback was returned by the AI grader.");
             return builder.toString();
         }
         for (RubricCategoryEvaluation category : result.getCategories()) {
             builder.append(category.getName()).append(System.lineSeparator());
-            builder.append(
-                    String.format(Locale.US, "  Score: %.2f / %.2f%n", category.getScore(), category.getMaxScore()));
+            builder.append(String.format(Locale.US, "  Score: %.2f / %.2f%n",
+                    category.getScore(), category.getMaxScore()));
             builder.append("  Evidence: ").append(category.getEvidence()).append(System.lineSeparator());
             if (!category.getImprovementSteps().isEmpty()) {
                 builder.append("  Improvements:\n");
@@ -188,9 +174,6 @@ public class RubricController {
         return builder.toString().trim();
     }
 
-    /**
-     * Handles navigation back to the dashboard view.
-     */
     @FXML
     private void handleDashboardButtonAction() {
         try {
@@ -202,4 +185,59 @@ public class RubricController {
         }
     }
 
+    // ---------------------
+    // Bottom row actions
+    // ---------------------
+
+    @FXML
+    private void handleUploadToCalendar() {
+        String title = "Study Plan";
+        String details = feedbackTextArea.getText() == null ? "" : feedbackTextArea.getText();
+        LocalDateTime start = LocalDateTime.now().plusDays(1).withHour(9).withMinute(0).withSecond(0).withNano(0);
+        String url = buildGoogleCalendarUrl(title, details, start, start.plusHours(1));
+        openInBrowser(url);
+    }
+
+    @FXML
+    private void handleOpenPlanInGoogle() {
+        // Open even if feedback is empty
+        String title = "Study Plan";
+        String details = feedbackTextArea.getText() == null ? "" : feedbackTextArea.getText();
+        LocalDateTime start = LocalDateTime.now().plusDays(1).withHour(9).withMinute(0).withSecond(0).withNano(0);
+        String url = buildGoogleCalendarUrl(title, details, start, start.plusHours(1));
+        openInBrowser(url);
+    }
+
+    private String buildGoogleCalendarUrl(String title, String description,
+                                          LocalDateTime start, LocalDateTime end) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
+        String s = start.format(fmt);
+        String e = end.format(fmt);
+
+        StringBuilder url = new StringBuilder("https://calendar.google.com/calendar/render?action=TEMPLATE");
+        url.append("&text=").append(encode(title));
+        url.append("&dates=").append(s).append("/").append(e);
+        if (description != null && !description.isBlank()) {
+            url.append("&details=").append(encode(description));
+        }
+        return url.toString();
+    }
+
+    private static String encode(String s) {
+        return URLEncoder.encode(s == null ? "" : s, StandardCharsets.UTF_8);
+    }
+
+    private void openInBrowser(String url) {
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                new Alert(Alert.AlertType.INFORMATION,
+                        "Copy this link into your browser:\n" + url).showAndWait();
+            }
+        } catch (Exception e) {
+            new Alert(Alert.AlertType.ERROR, "Failed to open browser:\n" + e.getMessage()).showAndWait();
+        }
+    }
 }
+

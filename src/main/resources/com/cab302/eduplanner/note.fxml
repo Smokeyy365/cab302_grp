@@ -16,16 +16,19 @@
                 <Insets top="18" right="18" bottom="18" left="18"/>
             </padding>
 
-            <!-- Left title -->
             <Label text="NOTES" styleClass="app-title"/>
 
-            <!-- Right-side actions -->
-            <HBox spacing="8">
-                <!-- Dashboard first (left) -->
+            <!-- Actions (Quick Export removed) -->
+            <HBox spacing="12">
                 <Button fx:id="dashboardButton" text="Dashboard" styleClass="secondary"/>
 
-                <!-- Upload second (right) -->
-                <Button fx:id="uploadButton" text="Upload" styleClass="secondary"/>
+                <Button fx:id="setupDriveButton" text="Setup Drive Sync" styleClass="secondary"/>
+                <Button fx:id="openDriveButton" text="Open Drive Folder" styleClass="secondary"/>
+                <Button fx:id="forgetDriveButton" text="Forget Drive Sync" styleClass="secondary"/>
+
+                <Button fx:id="exportCsvButton" text="Export CSV" styleClass="secondary" disable="true"/>
+                <Button fx:id="exportPdfButton" text="Export as PDF" styleClass="secondary" disable="true"/>
+                <Button fx:id="exportDriveButton" text="Export to Drive" styleClass="secondary" disable="true"/>
             </HBox>
         </HBox>
     </top>
@@ -58,10 +61,9 @@
                 <Insets top="18" right="18" bottom="18" left="18"/>
             </padding>
 
-            <TextField fx:id="titleField" promptText="Note Title"
-                       styleClass="note-title-field"/>
-            <TextArea fx:id="contentArea" promptText="Write your note here..."
-                      wrapText="true" VBox.vgrow="ALWAYS"/>
+            <TextField fx:id="titleField" promptText="Note Title" styleClass="note-title-field"/>
+            <TextArea fx:id="contentArea" promptText="Write your note here..." wrapText="true" VBox.vgrow="ALWAYS"/>
+
             <HBox spacing="10">
                 <Button fx:id="saveButton" text="Save" styleClass="primary"/>
                 <Button fx:id="cancelButton" text="Cancel" styleClass="secondary"/>
@@ -69,3 +71,4 @@
         </VBox>
     </center>
 </BorderPane>
+

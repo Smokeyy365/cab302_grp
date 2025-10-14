@@ -9,18 +9,33 @@ module com.cab302.eduplanner {
     requires org.xerial.sqlitejdbc;
     requires com.fasterxml.jackson.databind;
     requires okhttp3;
-    requires org.apache.pdfbox;
-    requires org.apache.poi.ooxml;
-    requires org.apache.pdfbox.io;
-    requires org.apache.logging.log4j;
 
-    // for reflection access by FXML
+    // PDF export (PDFBox 3.x)
+    requires org.apache.pdfbox;
+    requires org.apache.pdfbox.io;
+
+    // Optional Office (you already had it)
+    requires org.apache.poi.ooxml;
+
+    // Logging
+    requires org.apache.logging.log4j;
+    // If you added log4j-core to silence warnings:
+    // requires org.apache.logging.log4j.core;
+
+    // AWT / file choosers & Desktop
+    requires java.desktop;
+
+    // Preferences API for remembering Drive folder
+    requires java.prefs;
+
+    // FXML reflection access
     opens com.cab302.eduplanner.controller to javafx.fxml;
     opens com.cab302.eduplanner.controller.components to javafx.fxml;
     opens com.cab302.eduplanner.model to javafx.fxml, com.fasterxml.jackson.databind;
 
-    // normal exports (public API)
+    // API exports
     exports com.cab302.eduplanner;
     exports com.cab302.eduplanner.controller;
     exports com.cab302.eduplanner.model;
 }
+

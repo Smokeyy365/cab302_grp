@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ProgressIndicator;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import com.cab302.eduplanner.App;
@@ -14,26 +15,34 @@ import com.cab302.eduplanner.model.FlashcardDeck;
 import com.cab302.eduplanner.model.FlashcardFolder;
 import com.cab302.eduplanner.repository.FlashcardRepository;
 
+import com.cab302.eduplanner.service.GoogleDriveService;
+import com.cab302.eduplanner.service.FlashcardExportService;
+import com.cab302.eduplanner.service.FlashcardExportService.Card;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 public class FlashcardController {
 
-    // ==== UI Elements (linked from flashcard.fxml) ====
-    @FXML private Button dashboardButton, uploadButton;
-    @FXML private Button prevButton, nextButton;
-    @FXML private Button shuffleButton, flipButton;
-    @FXML private Button resetButton, finishButton;
-    @FXML private Button addButton, editButton, deleteButton;
+    // Toolbar (no Upload, no Quick Export)
+    @FXML private Button dashboardButton;
+    @FXML private Button setupDriveButton, openDriveButton, forgetDriveButton;
+    @FXML private Button exportDeckCsvButton, exportDeckPdfButton, exportDeckDriveButton;
+
+    // Sidebar + canvas
+    @FXML private TreeView<String> folderTree;
     @FXML private Button newFolderButton, newDeckButton, renameButton, deleteFolderDeckButton;
 
-    @FXML private TreeView<String> folderTree;
+    // Card area
     @FXML private Label flashcardText, progressLabel;
     @FXML private ProgressBar progressBar;
+    @FXML private Button prevButton, nextButton;
+    @FXML private Button shuffleButton, flipButton, resetButton, finishButton;
+    @FXML private Button addButton, editButton, deleteButton;
 
-    // ==== Data ====
+    // Data
     private final List<FlashcardFolder> folders = FlashcardRepository.getFolders();
-
     private FlashcardDeck currentDeck;
     private int currentIndex = 0;
     private boolean showingQuestion = true;
@@ -42,7 +51,10 @@ public class FlashcardController {
     private Stage addFlashcardStage;
     private Stage editFlashcardStage;
 
-    // Default sample card text
+    // Services
+    private final GoogleDriveService driveService = new GoogleDriveService();
+    private final FlashcardExportService cardExport = new FlashcardExportService();
+
     private static final String SAMPLE_TEXT = "Sample Flashcard\nCreate or select a folder & deck to begin.";
 
     @FXML
@@ -50,29 +62,25 @@ public class FlashcardController {
         setupSidebar();
         setupButtons();
 
-        // Add one default folder and deck if nothing exists yet
         if (folders.isEmpty()) {
             FlashcardFolder defaultFolder = new FlashcardFolder("Folder");
             FlashcardDeck defaultDeck = new FlashcardDeck("Deck");
-            defaultDeck.getFlashcards().add(
-                    new Flashcard("Question", "Answer")
-            );
+            defaultDeck.getFlashcards().add(new Flashcard("Question", "Answer"));
             defaultFolder.getDecks().add(defaultDeck);
             folders.add(defaultFolder);
         }
 
         refreshTree();
 
-        // Show sample card by default
         flashcardText.setText(SAMPLE_TEXT);
         progressLabel.setText("Progress: 0/0");
         progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
 
-        // Disable buttons until valid deck selected
         setButtonsDisabled(true);
+        updateDriveButtonsState();
     }
 
-    // ==== Sidebar logic ====
+    // Sidebar logic
     private void setupSidebar() {
         folderTree.setShowRoot(false);
 
@@ -102,17 +110,11 @@ public class FlashcardController {
             TreeItem<String> selected = folderTree.getSelectionModel().getSelectedItem();
 
             if (selected == null) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Create Deck");
-                alert.setHeaderText(null);
-                alert.setContentText("To create a deck, please create or select a folder first.");
-                alert.showAndWait();
+                new Alert(Alert.AlertType.INFORMATION, "To create a deck, please create or select a folder first.").showAndWait();
                 return;
             }
 
-            TreeItem<String> folderItem = (selected.getParent() == folderTree.getRoot())
-                    ? selected
-                    : selected.getParent();
+            TreeItem<String> folderItem = (selected.getParent() == folderTree.getRoot()) ? selected : selected.getParent();
 
             if (folderItem != null && folderItem.getParent() == folderTree.getRoot()) {
                 TextInputDialog dialog = new TextInputDialog("New Deck");
@@ -125,11 +127,7 @@ public class FlashcardController {
                     }
                 });
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Create Deck");
-                alert.setHeaderText(null);
-                alert.setContentText("Decks can only be created inside folders.");
-                alert.showAndWait();
+                new Alert(Alert.AlertType.INFORMATION, "Decks can only be created inside folders.").showAndWait();
             }
         });
 
@@ -170,7 +168,7 @@ public class FlashcardController {
         });
     }
 
-    // ==== Button setup ====
+    // Buttons
     private void setupButtons() {
         nextButton.setOnAction(e -> nextFlashcard());
         prevButton.setOnAction(e -> prevFlashcard());
@@ -188,20 +186,12 @@ public class FlashcardController {
             }
         });
 
-        uploadButton.setOnAction(e -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Upload Flashcards");
-            alert.setHeaderText(null);
-            alert.setContentText("Upload functionality not yet implemented.");
-            alert.showAndWait();
-        });
-
         addButton.setOnAction(e -> openAddFlashcardDialog());
         editButton.setOnAction(e -> openEditFlashcardDialog());
         deleteButton.setOnAction(e -> deleteFlashcard());
     }
 
-    // ==== Flashcard logic ====
+    // Card logic
     private void updateFlashcardView() {
         if (currentDeck == null) {
             flashcardText.setText(SAMPLE_TEXT);
@@ -217,7 +207,6 @@ public class FlashcardController {
             progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
             setButtonsDisabled(true);
             addButton.setDisable(false);
-            uploadButton.setDisable(!hasAnyFlashcards());
             return;
         }
 
@@ -235,7 +224,6 @@ public class FlashcardController {
         addButton.setDisable(finished);
         editButton.setDisable(finished);
         deleteButton.setDisable(finished);
-        uploadButton.setDisable(!hasAnyFlashcards());
     }
 
     private void nextFlashcard() {
@@ -292,7 +280,7 @@ public class FlashcardController {
         finished = true;
     }
 
-    // ==== CRUD ====
+    // CRUD dialogs
     private void openAddFlashcardDialog() {
         if (currentDeck == null) return;
         try {
@@ -317,7 +305,7 @@ public class FlashcardController {
                 addFlashcardStage.toFront();
             }
         } catch (Exception ex) {
-            System.err.println("Error while opening Add Flashcard dialog: " + ex.getMessage());
+            System.err.println("Error opening Add Flashcard dialog: " + ex.getMessage());
         }
     }
 
@@ -349,7 +337,7 @@ public class FlashcardController {
                 editFlashcardStage.toFront();
             }
         } catch (Exception ex) {
-            System.err.println("Error while opening Edit Flashcard dialog: " + ex.getMessage());
+            System.err.println("Error opening Edit Flashcard dialog: " + ex.getMessage());
         }
     }
 
@@ -377,7 +365,7 @@ public class FlashcardController {
         }
     }
 
-    // ==== Helpers ====
+    // Helpers
     private void refreshTree() {
         TreeItem<String> root = new TreeItem<>("Root");
         for (FlashcardFolder folder : folders) {
@@ -400,12 +388,6 @@ public class FlashcardController {
         return folder.getDecks().stream().filter(d -> d.getName().equals(deckName)).findFirst().orElse(null);
     }
 
-    private boolean hasAnyFlashcards() {
-        return folders.stream()
-                .flatMap(f -> f.getDecks().stream())
-                .anyMatch(d -> !d.getFlashcards().isEmpty());
-    }
-
     private void setButtonsDisabled(boolean disabled) {
         prevButton.setDisable(disabled);
         nextButton.setDisable(disabled);
@@ -416,6 +398,120 @@ public class FlashcardController {
         addButton.setDisable(disabled);
         editButton.setDisable(disabled);
         deleteButton.setDisable(disabled);
-        uploadButton.setDisable(disabled || !hasAnyFlashcards());
+    }
+
+    // Drive + export
+    private void updateDriveButtonsState() {
+        boolean hasDrive = driveService.getSavedDriveFolder() != null;
+        if (openDriveButton != null) openDriveButton.setDisable(!hasDrive);
+        if (forgetDriveButton != null) forgetDriveButton.setDisable(!hasDrive);
+    }
+
+    private static record DeckExport(String name, List<Card> cards) {}
+
+    private DeckExport gatherActiveDeck() {
+        FlashcardDeck deck = currentDeck;
+
+        if (deck == null) {
+            outer:
+            for (FlashcardFolder f : folders) {
+                for (FlashcardDeck d : f.getDecks()) {
+                    if (!d.getFlashcards().isEmpty()) { deck = d; break outer; }
+                }
+            }
+        }
+
+        String name = deck == null ? "Deck" : (deck.getName() == null || deck.getName().isBlank() ? "Deck" : deck.getName());
+        List<Card> cards = new ArrayList<>();
+
+        if (deck != null) {
+            for (Flashcard fc : deck.getFlashcards()) {
+                cards.add(new Card(fc.getQuestion(), fc.getAnswer()));
+            }
+        }
+
+        if (cards.isEmpty()) {
+            cards.add(new Card("What is encapsulation?", "Bundling data with methods that operate on it."));
+            cards.add(new Card("Big-O of binary search?", "O(log n)"));
+        }
+
+        return new DeckExport(name, cards);
+    }
+
+    @FXML private void handleSetupDriveFolder() {
+        var window = (setupDriveButton != null ? setupDriveButton.getScene().getWindow() : null);
+        File base = driveService.pickAndSetupEduPlanner(window);
+        if (base != null) {
+            new Alert(Alert.AlertType.INFORMATION,
+                    "Drive sync folder set:\n" + base.getAbsolutePath() + "\n\nSubfolders created:\n- Notes\n- Flashcards").showAndWait();
+        }
+        updateDriveButtonsState();
+    }
+
+    @FXML private void handleOpenDriveFolder() {
+        var base = driveService.getSavedDriveFolder();
+        if (base == null || !base.isDirectory()) {
+            new Alert(Alert.AlertType.INFORMATION, "No Drive folder set. Click 'Setup Drive Sync'.").showAndWait();
+            return;
+        }
+        try { if (java.awt.Desktop.isDesktopSupported()) java.awt.Desktop.getDesktop().open(base); }
+        catch (Exception e) { new Alert(Alert.AlertType.ERROR, "Couldn't open folder:\n" + e.getMessage()).showAndWait(); }
+    }
+
+    @FXML private void handleForgetDriveFolder() {
+        driveService.clearSavedDriveFolder();
+        new Alert(Alert.AlertType.INFORMATION, "Drive sync folder cleared. Run 'Setup Drive Sync' again.").showAndWait();
+        updateDriveButtonsState();
+    }
+
+    @FXML private void handleExportDeckCsv() {
+        DeckExport deck = gatherActiveDeck();
+
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Choose folder to save CSV");
+        File dir = chooser.showDialog(exportDeckCsvButton != null ? exportDeckCsvButton.getScene().getWindow() : null);
+        if (dir == null) return;
+
+        try {
+            File file = cardExport.exportCsv(deck.name(), deck.cards(), dir);
+            new Alert(Alert.AlertType.INFORMATION, "Saved:\n" + file.getAbsolutePath()).showAndWait();
+        } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, "Export failed: " + ex.getMessage()).showAndWait();
+        }
+    }
+
+    @FXML private void handleExportDeckPdf() {
+        DeckExport deck = gatherActiveDeck();
+
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Choose folder to save PDF");
+        File dir = chooser.showDialog(exportDeckPdfButton != null ? exportDeckPdfButton.getScene().getWindow() : null);
+        if (dir == null) return;
+
+        try {
+            File file = cardExport.exportPdf(deck.name(), deck.cards(), dir);
+            new Alert(Alert.AlertType.INFORMATION, "Saved:\n" + file.getAbsolutePath()).showAndWait();
+        } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, "Export failed: " + ex.getMessage()).showAndWait();
+        }
+    }
+
+    @FXML private void handleExportDeckToDrive() {
+        DeckExport deck = gatherActiveDeck();
+
+        if (driveService.getSavedDriveFolder() == null) {
+            handleSetupDriveFolder();
+            if (driveService.getSavedDriveFolder() == null) return;
+        }
+
+        try {
+            File temp = cardExport.exportPdf(deck.name(), deck.cards(), new File(System.getProperty("java.io.tmpdir")));
+            File fcFolder = driveService.ensureSubfolder("Flashcards");
+            File copied = cardExport.copyToFolder(temp, fcFolder);
+            new Alert(Alert.AlertType.INFORMATION, "Exported to Drive:\n" + copied.getAbsolutePath()).showAndWait();
+            try { if (java.awt.Desktop.isDesktopSupported()) java.awt.Desktop.getDesktop().open(fcFolder); } catch (Exception ignore) {}
+        } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, "Drive export failed:\n" + ex.getMessage()).showAndWait();
+        }
     }
 }

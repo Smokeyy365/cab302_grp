@@ -18,7 +18,7 @@
 
             <Label text="RUBRIC ANALYSIS" styleClass="app-title"/>
             <HBox spacing="8">
-                <Button fx:id="dashboardButton" mnemonicParsing="false"
+                <Button fx:id="dashboardButton"
                         onAction="#handleDashboardButtonAction"
                         styleClass="secondary" text="Dashboard"/>
             </HBox>
@@ -29,34 +29,54 @@
     <center>
         <VBox alignment="TOP_CENTER" spacing="24" styleClass="rubric-root"
               BorderPane.alignment="TOP_CENTER">
+
+            <!-- Upload card -->
             <VBox spacing="16.0" styleClass="rubric-card" maxWidth="820.0" prefWidth="820.0">
                 <Label text="Upload Files" styleClass="section-title"/>
                 <Label fx:id="statusLabel"/>
-        <HBox spacing="12.0" styleClass="rubric-upload-row">
-            <Button fx:id="uploadAssignmentButton" mnemonicParsing="false"
-                onAction="#handleUploadAssignment" styleClass="primary"
-                text="Upload Assignment"/>
-            <Button fx:id="uploadRubricButton" mnemonicParsing="false"
-                onAction="#handleUploadRubric" styleClass="secondary"
-                text="Upload Rubric"/>
-            <!-- Single action button placed with upload controls. Use fx:id generateButton -->
-            <Button fx:id="generateButton" mnemonicParsing="false"
-                onAction="#handleSubmitButtonAction" styleClass="primary"
-                text="Generate Feedback" disable="true"/>
-        </HBox>
+                <HBox spacing="12.0" styleClass="rubric-upload-row">
+                    <Button fx:id="uploadAssignmentButton"
+                            onAction="#handleUploadAssignment"
+                            styleClass="primary"
+                            text="Upload Assignment"/>
+                    <Button fx:id="uploadRubricButton"
+                            onAction="#handleUploadRubric"
+                            styleClass="secondary"
+                            text="Upload Rubric"/>
+                    <Button fx:id="generateButton"
+                            onAction="#handleSubmitButtonAction"
+                            styleClass="secondary"
+                            text="Generate Feedback" disable="true"/>
+                </HBox>
             </VBox>
+
+            <!-- Feedback card -->
             <VBox spacing="18.0" styleClass="rubric-card" maxWidth="820.0" prefWidth="820.0">
                 <HBox spacing="10.0" alignment="CENTER_LEFT">
                     <Label text="Feedback" styleClass="section-title"/>
                     <ProgressIndicator fx:id="progressIndicator" prefHeight="40.0" prefWidth="40.0"
                                        progress="0.0"/>
                 </HBox>
+
                 <TextArea fx:id="feedbackTextArea" prefHeight="240.0" prefWidth="720.0"
                           promptText="Feedback will appear here once both documents are processed."
                           wrapText="true"/>
+
+                <!-- Bottom action row (Open always enabled) -->
                 <HBox spacing="10.0" styleClass="rubric-actions" alignment="CENTER_RIGHT">
+                    <Button fx:id="uploadToCalendarButton"
+                            text="Upload to Calendar"
+                            styleClass="primary"
+                            onAction="#handleUploadToCalendar"
+                            disable="true"/>
+                    <Button fx:id="openPlanInGoogleButton"
+                            text="Open Plan in Google"
+                            styleClass="secondary"
+                            onAction="#handleOpenPlanInGoogle"/>
                 </HBox>
             </VBox>
         </VBox>
     </center>
 </BorderPane>
+
+
