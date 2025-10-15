@@ -24,7 +24,7 @@ import java.util.prefs.Preferences;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// PDFBox 3.x
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -37,14 +37,14 @@ public class NoteController {
     private static final Logger LOG = Logger.getLogger(NoteController.class.getName());
     private static final int WRAP_WIDTH = 90;
 
-    // ----- Sidebar -----
+    // Sidebar
     @FXML private TreeView<Object> folderTree;
     @FXML private Button addFolderButton;
     @FXML private Button addNoteButton;
     @FXML private Button renameButton;
     @FXML private Button deleteButton;
 
-    // ----- Header -----
+    // Header
     @FXML private Button dashboardButton;
 
     // Drive Sync controls
@@ -76,6 +76,7 @@ public class NoteController {
 
     @FXML
     public void initialize() {
+        // Seed example only once for the whole app session
         if (NoteStore.isEmpty()) {
             Folder sample = new Folder("My Folder");
             sample.addNote(new Note("Sample Note", "This is an example note."));
@@ -84,8 +85,10 @@ public class NoteController {
 
         refreshTree();
 
+        // Show folder names/note titles in the tree
         folderTree.setCellFactory(tv -> new TreeCell<>() {
-            @Override protected void updateItem(Object item, boolean empty) {
+            @Override
+            protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) { setText(null); return; }
                 if (item instanceof Folder f) setText(f.getName());
@@ -94,11 +97,12 @@ public class NoteController {
             }
         });
 
-        folderTree.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> {
+        // Selection handler (guarded)
+        folderTree.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (suppressSelectionEvents) return;
-            if (n == null) { clearEditor(); return; }
-            Object v = n.getValue();
-            if (v instanceof Note note) loadNoteIntoEditor(note);
+            if (newVal == null) { clearEditor(); return; }
+            Object value = newVal.getValue();
+            if (value instanceof Note note) loadNoteIntoEditor(note);
             else clearEditor();
         });
 
@@ -382,13 +386,13 @@ public class NoteController {
         exportDriveButton.setDisable(!can || !hasDrive);
     }
 
-    // -------- CRUD + editor --------
+    // --- Tree Management ---
     private void refreshTree() {
         suppressSelectionEvents = true;
 
         Object toReselect = null;
-        TreeItem<Object> sel = folderTree.getSelectionModel().getSelectedItem();
-        if (sel != null) toReselect = sel.getValue();
+        TreeItem<Object> currentSel = folderTree.getSelectionModel().getSelectedItem();
+        if (currentSel != null) toReselect = currentSel.getValue();
 
         TreeItem<Object> root = new TreeItem<>("All Folders");
         root.setExpanded(true);
@@ -404,6 +408,7 @@ public class NoteController {
         folderTree.setRoot(root);
         folderTree.setShowRoot(false);
 
+        // Restore selection if possible
         if (toReselect != null) {
             TreeItem<Object> found = findTreeItem(root, toReselect);
             if (found != null) folderTree.getSelectionModel().select(found);
@@ -416,7 +421,7 @@ public class NoteController {
         folders.add(folder);
         refreshTree();
         selectInTree(folder);
-        renameSelected();
+        renameSelected(); // optional inline rename
     }
 
     private void addNote() {
@@ -467,27 +472,27 @@ public class NoteController {
         Object value = selected.getValue();
 
         if (value instanceof Folder folder) {
-            Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-            a.setTitle("Delete Folder");
-            a.setHeaderText("Are you sure you want to delete this folder?");
-            a.setContentText("Folder: " + folder.getName() + "\nThis will also delete " + folder.getNotes().size() + " notes.");
-            a.showAndWait().ifPresent(res -> {
-                if (res == ButtonType.OK) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete Folder");
+            alert.setHeaderText("Are you sure you want to delete this folder?");
+            alert.setContentText("Folder: " + folder.getName() + "\nThis will also delete " + folder.getNotes().size() + " notes.");
+            alert.showAndWait().ifPresent(result -> {
+                if (result == ButtonType.OK) {
                     folders.remove(folder);
                     refreshTree();
                     clearEditor();
                 }
             });
         } else if (value instanceof Note note) {
-            Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-            a.setTitle("Delete Note");
-            a.setHeaderText("Are you sure you want to delete this note?");
-            a.setContentText("Title: " + (note.getTitle().isBlank() ? "(Untitled Note)" : note.getTitle()));
-            a.showAndWait().ifPresent(res -> {
-                if (res == ButtonType.OK) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete Note");
+            alert.setHeaderText("Are you sure you want to delete this note?");
+            alert.setContentText("Title: " + (note.getTitle().isBlank() ? "(Untitled Note)" : note.getTitle()));
+            alert.showAndWait().ifPresent(result -> {
+                if (result == ButtonType.OK) {
                     TreeItem<Object> parent = selected.getParent();
-                    if (parent != null && parent.getValue() instanceof Folder pf) {
-                        pf.removeNote(note);
+                    if (parent != null && parent.getValue() instanceof Folder parentFolder) {
+                        parentFolder.removeNote(note);
                     }
                     refreshTree();
                     if (currentNote == note) clearEditor();
@@ -500,10 +505,8 @@ public class NoteController {
         currentNote = note;
         titleField.setText(note.getTitle());
         contentArea.setText(note.getContent());
-        dirty = false;
-        saveButton.setDisable(true);
-        cancelButton.setDisable(true);
-        updateExportButtonsState();
+        onEditorChanged();
+
     }
 
     private void saveNote() {
@@ -512,9 +515,9 @@ public class NoteController {
         currentNote.setTitle(titleField.getText().trim());
         currentNote.setContent(contentArea.getText().trim());
 
+        // Mark clean BEFORE any UI refresh to avoid discard dialog
         dirty = false;
-        saveButton.setDisable(true);
-        cancelButton.setDisable(true);
+        onEditorChanged();
 
         suppressSelectionEvents = true;
         refreshTree();
@@ -532,8 +535,10 @@ public class NoteController {
             a.showAndWait().ifPresent(btn -> {
                 if (btn == ButtonType.OK) {
                     if (currentNote != null) loadNoteIntoEditor(currentNote);
-                    else { titleField.clear(); contentArea.clear(); dirty = false; saveButton.setDisable(true); cancelButton.setDisable(true); }
-                    updateExportButtonsState();
+                    else { titleField.clear(); contentArea.clear(); onEditorChanged(); }
+                    dirty = false;
+                    onEditorChanged();
+
                 }
             });
             return;
@@ -541,10 +546,8 @@ public class NoteController {
         currentNote = null;
         titleField.clear();
         contentArea.clear();
-        dirty = false;
-        saveButton.setDisable(true);
-        cancelButton.setDisable(true);
-        updateExportButtonsState();
+        onEditorChanged();
+
     }
 
     private void onEditorChanged() {
@@ -557,7 +560,7 @@ public class NoteController {
         updateExportButtonsState();
     }
 
-    // -------- Utils --------
+    // --- Upload integration scaffold ----
     private void selectInTree(Object target) {
         TreeItem<Object> root = folderTree.getRoot();
         if (root == null) return;
