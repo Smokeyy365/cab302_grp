@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<BorderPane prefHeight="720.0" prefWidth="1280.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cab302.eduplanner.controller.PomodoroController">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <padding>
+                <Insets top="18" right="18" bottom="18" left="18"/>
+            </padding>
+            <Label text="POMODORO" styleClass="app-title"/>
+            <HBox spacing="8">
+                <Button fx:id="dashboardButton"
+                        onAction="#handleDashboardButtonAction"
+                        styleClass="secondary" text="Dashboard"/>
+            </HBox>
+        </HBox>
+    </top>
+
+    <center>
+        <StackPane BorderPane.alignment="CENTER">
+
+            <!-- Setup -->
+            <VBox fx:id="setupPane" spacing="18" alignment="TOP_CENTER">
+                <padding><Insets top="40"/></padding>
+
+                <VBox spacing="8" maxWidth="620">
+                    <Label text="Study time (minutes)" style="-fx-font-size: 14px;"/>
+                    <HBox spacing="8" alignment="CENTER">
+                        <ToggleButton text="15"/>
+                        <ToggleButton text="20"/>
+                        <ToggleButton text="30"/>
+                        <ToggleButton text="45"/>
+                        <ToggleButton text="60"/>
+                        <ToggleButton text="90"/>
+                        <ToggleButton text="120"/>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="8" maxWidth="620">
+                    <Label text="Break time (minutes)" style="-fx-font-size: 14px;"/>
+                    <HBox spacing="8" alignment="CENTER">
+                        <ToggleButton text="3"/>
+                        <ToggleButton text="5"/>
+                        <ToggleButton text="10"/>
+                        <ToggleButton text="15"/>
+                        <ToggleButton text="20"/>
+                    </HBox>
+                </VBox>
+
+                <HBox spacing="10" alignment="CENTER">
+                    <CheckBox fx:id="autoSwapCheck" text="Auto-swap between Study ↔ Break"/>
+                </HBox>
+
+                <Button fx:id="startButton" text="Start" onAction="#handleStart" styleClass="primary"/>
+            </VBox>
+
+            <!-- Running -->
+            <VBox fx:id="runningPane" spacing="16" alignment="TOP_CENTER" visible="false" managed="false">
+                <padding><Insets top="40"/></padding>
+
+                <Label fx:id="phaseLabel" text="Phase: STUDY"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                <!-- Pie container -->
+                <StackPane fx:id="piePane" prefWidth="260" prefHeight="260" maxWidth="260" maxHeight="260">
+                    <Pane StackPane.alignment="CENTER" prefWidth="260" prefHeight="260">
+                        <Circle fx:id="trackCircle" fill="#ECEFF1"/>
+                        <Arc fx:id="progressArc"
+                             startAngle="-90"
+                             length="0"
+                             type="ROUND"
+                             fill="#4CAF50"/>
+                    </Pane>
+                    <!-- Time text overlays the pie -->
+                    <Label fx:id="timeLabel" text="25:00"
+                           style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                </StackPane>
+
+                <HBox spacing="10" alignment="CENTER">
+                    <Button fx:id="finishButton" text="Finish Phase"
+                            onAction="#handleFinishPhase" styleClass="secondary"/>
+                    <Button fx:id="nextPhaseButton" text="Start Next Phase"
+                            onAction="#handleStartNextPhase" styleClass="primary"
+                            visible="false" managed="false"/>
+                    <Button fx:id="stopButton" text="Stop"
+                            onAction="#handleStop" styleClass="secondary"/>
+                </HBox>
+            </VBox>
+        </StackPane>
+    </center>
+</BorderPane>
