@@ -4,30 +4,36 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0"
+<BorderPane prefHeight="400.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/17.0.12"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.cab302.eduplanner.controller.FlashcardController"
             stylesheets="@styles/flashcard.css">
 
-    <!-- Top Header (title + actions) -->
+    <!-- Top Header -->
     <top>
         <HBox spacing="20" alignment="CENTER_LEFT">
             <padding>
-                <Insets top="14" right="18" bottom="14" left="18"/>
+                <Insets bottom="10" left="10" right="10" top="10" />
             </padding>
 
-            <!-- Title styled like your older screen -->
-            <Label text="FLASHCARDS" styleClass="app-title"/>
+            <!-- Title styled like login page -->
+            <Label text="FLASHCARDS" styleClass="app-title" />
 
+            <!-- Buttons -->
             <Pane HBox.hgrow="ALWAYS"/>
 
-            <!-- Keep these actions (as in your current version) -->
             <Button fx:id="dashboardButton"   text="Dashboard"          styleClass="secondary"/>
+
+            <!-- Re-added to match controller fields -->
+            <Separator orientation="VERTICAL"/>
+            <Button fx:id="uploadButton"      text="Upload"             styleClass="secondary"/>
+
             <Separator orientation="VERTICAL"/>
             <Button fx:id="setupDriveButton"  text="Setup Drive Sync"   styleClass="secondary" onAction="#handleSetupDriveFolder"/>
             <Button fx:id="openDriveButton"   text="Open Drive Folder"  styleClass="secondary" onAction="#handleOpenDriveFolder"/>
             <Button fx:id="forgetDriveButton" text="Forget Drive Sync"  styleClass="secondary" onAction="#handleForgetDriveFolder"/>
+
             <Separator orientation="VERTICAL"/>
             <Button fx:id="exportDeckCsvButton"   text="Export CSV"       styleClass="secondary" onAction="#handleExportDeckCsv"/>
             <Button fx:id="exportDeckPdfButton"   text="Export PDF"       styleClass="secondary" onAction="#handleExportDeckPdf"/>
@@ -35,73 +41,72 @@
         </HBox>
     </top>
 
-    <!-- Sidebar: folders + decks (styled like your previous) -->
+    <!-- Sidebar for Folders/Decks -->
     <left>
         <VBox spacing="10" prefWidth="240" style="-fx-background-color: #faf9f6; -fx-padding: 12;">
             <Label text="Subjects" styleClass="app-title"/>
             <TreeView fx:id="folderTree" VBox.vgrow="ALWAYS"/>
 
-            <!-- Folder/Deck controls -->
-            <HBox spacing="6">
+            <!-- Action buttons -->
+            <HBox spacing="5">
                 <Button fx:id="newFolderButton" text="New Folder" styleClass="primary"/>
-                <Button fx:id="newDeckButton"   text="New Deck"   styleClass="primary"/>
+                <Button fx:id="newDeckButton" text="New Deck" styleClass="primary"/>
             </HBox>
-            <HBox spacing="6">
-                <Button fx:id="renameButton"           text="Rename" styleClass="secondary"/>
+            <HBox spacing="5">
+                <Button fx:id="renameButton" text="Rename" styleClass="secondary"/>
                 <Button fx:id="deleteFolderDeckButton" text="Delete" styleClass="secondary"/>
             </HBox>
         </VBox>
     </left>
 
-    <!-- Center area: card flanked by nav arrows, bottom control bar like the old design -->
+    <!-- Center section -->
     <center>
         <BorderPane>
-            <!-- Middle: card with arrows left/right (old layout feel) -->
+            <!-- Flashcard in the middle of space -->
             <center>
-                <HBox alignment="CENTER" spacing="12">
-                    <Button fx:id="prevButton" text="⟨" styleClass="nav-arrow" minWidth="44" minHeight="44"/>
-                    <StackPane prefHeight="380" prefWidth="560"
-                               maxWidth="760"
+                <HBox alignment="CENTER" spacing="10">
+                    <Button fx:id="prevButton" text="⟨" styleClass="nav-arrow"/>
+                    <StackPane
+                               prefHeight="350" prefWidth="500"
+                               maxWidth="700"
                                HBox.hgrow="ALWAYS"
-                               style="-fx-background-color: -color-primary; -fx-border-color: #bbb; -fx-border-radius: 8; -fx-background-radius: 8;">
+                               style="-fx-background-color: -color-primary; -fx-border-color: #bbb; -fx-border-radius: 6; -fx-background-radius: 6;">
                         <Label fx:id="flashcardText"
                                wrapText="true"
-                               maxWidth="740"
+                               maxWidth="700"
                                styleClass="flashcard-text"/>
                     </StackPane>
-                    <Button fx:id="nextButton" text="⟩" styleClass="nav-arrow" minWidth="44" minHeight="44"/>
+                    <Button fx:id="nextButton" text="⟩" styleClass="nav-arrow"/>
                 </HBox>
             </center>
 
-            <!-- Bottom bar: actions + progress (pinned below, like before) -->
+            <!-- Bottom controls pinned below flashcard -->
             <bottom>
                 <VBox alignment="CENTER" spacing="10">
                     <padding>
-                        <Insets top="14" bottom="20"/>
+                        <Insets top="15" bottom="25"/>
                     </padding>
 
-                    <HBox alignment="CENTER" spacing="48">
-                        <!-- Left group: session controls -->
-                        <HBox spacing="6">
+                    <HBox alignment="CENTER" spacing="50">
+                        <!-- Left group -->
+                        <HBox spacing="5">
                             <Button fx:id="shuffleButton" text="Shuffle" styleClass="secondary"/>
-                            <Button fx:id="flipButton"    text="Flip"    styleClass="secondary"/>
-                            <Button fx:id="finishButton"  text="Finish"  styleClass="secondary"/>
-                            <Button fx:id="resetButton"   text="Reset"   styleClass="secondary"/>
+                            <Button fx:id="flipButton" text="Flip" styleClass="secondary"/>
+                            <Button fx:id="finishButton" text="Finish" styleClass="secondary"/>
+                            <Button fx:id="resetButton" text="Reset" styleClass="secondary"/>
                         </HBox>
 
-                        <!-- Right group: CRUD -->
-                        <HBox spacing="6">
-                            <Button fx:id="addButton"    text="Add"    styleClass="primary"/>
-                            <Button fx:id="editButton"   text="Edit"   styleClass="secondary"/>
+                        <!-- Right group -->
+                        <HBox spacing="5">
+                            <Button fx:id="addButton" text="Add" styleClass="secondary"/>
+                            <Button fx:id="editButton" text="Edit" styleClass="secondary"/>
                             <Button fx:id="deleteButton" text="Delete" styleClass="secondary"/>
                         </HBox>
                     </HBox>
 
-                    <!-- Progress -->
-                    <HBox alignment="CENTER" spacing="10">
-                        <ProgressBar fx:id="progressBar" prefWidth="360"/>
-                        <Label fx:id="progressLabel" text="Progress: 0/0"/>
-                    </HBox>
+                    <!-- Progress tracking -->
+                    <ProgressBar fx:id="progressBar" prefWidth="300"/>
+                    <Label fx:id="progressLabel" text="Progress: 0/0"/>
                 </VBox>
             </bottom>
         </BorderPane>
