@@ -91,7 +91,8 @@ public class DashboardController {
 
         flashcardsTile.setOnAction(e -> navigate("/com/cab302/eduplanner/flashcard.fxml", "EduPlanner — Flashcards"));
         notesTile.setOnAction( e -> navigate("/com/cab302/eduplanner/note.fxml", "EduPlanner — Notes"));
-        pomodoroTile.setDisable(true);
+        pomodoroTile.setDisable(false);
+        pomodoroTile.setOnAction(e -> navigate("/com/cab302/eduplanner/pomodoro.fxml", "EduPlanner — Pomodoro"));
         darkTile.setDisable(true);
         rubricTile.setOnAction(e -> navigate("/com/cab302/eduplanner/rubric.fxml", "EduPlanner — Rubric Analysis"));
         rubricTile.setDisable(false);

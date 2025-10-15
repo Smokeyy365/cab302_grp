@@ -30,7 +30,6 @@ module com.cab302.eduplanner {
 
     // FXML reflection access
     opens com.cab302.eduplanner.controller to javafx.fxml;
-    opens com.cab302.eduplanner.controller.components to javafx.fxml;
     opens com.cab302.eduplanner.model to javafx.fxml, com.fasterxml.jackson.databind;
 
     // API exports
