@@ -8,31 +8,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-/** Stores/sets the local Google Drive (desktop) sync base for EduPlanner. */
+/** Stores file in local google drive app*/
 public class GoogleDriveService {
 
-    private static final String PREF_NODE = "eduplanner/drive";
-    private static final String PREF_DRIVE_DIR = "driveBaseDir"; // <My Drive>/EduPlanner
-    private final Preferences prefs = Preferences.userRoot().node(PREF_NODE);
+    private static final String prefNode = "eduplanner/drive";
+    private static final String PrefDriveLocation = "driveBaseDir"; // <My Drive>/EduPlanner
+    private final Preferences prefs = Preferences.userRoot().node(prefNode);
 
     public File getSavedDriveFolder() {
-        String path = prefs.get(PREF_DRIVE_DIR, null);
+        String path = prefs.get(PrefDriveLocation, null);
         return (path != null) ? new File(path) : null;
     }
 
     public void saveDriveFolder(File dir) {
-        if (dir != null) prefs.put(PREF_DRIVE_DIR, dir.getAbsolutePath());
+        if (dir != null) prefs.put(PrefDriveLocation, dir.getAbsolutePath());
     }
 
     public void clearSavedDriveFolder() {
-        prefs.remove(PREF_DRIVE_DIR);
+        prefs.remove(PrefDriveLocation);
     }
 
-    /** Try to find Google Drive locally so the chooser starts close to it. */
+    /** Try to find Google Drive locally  */
     public File guessDriveFolder() {
         String user = System.getProperty("user.name");
 
-        // Stream mode: virtual drive letters with “My Drive”
+        // Stream my drive
         for (char letter = 'D'; letter <= 'L'; letter++) {
             File root = new File(letter + ":\\");
             File myDrive = new File(root, "My Drive");
@@ -41,7 +41,7 @@ public class GoogleDriveService {
             if (alt.isDirectory()) return alt;
         }
 
-        // Legacy mirrored paths
+        // All possible paths
         List<File> candidates = new ArrayList<>();
         candidates.add(new File("C:\\Users\\" + user + "\\Google Drive"));
         candidates.add(new File("C:\\Users\\" + user + "\\Desktop\\Google Drive"));
@@ -52,7 +52,7 @@ public class GoogleDriveService {
         return null;
     }
 
-    /** Ask user for Drive location, ensure EduPlanner/{Notes,Flashcards}, persist path. */
+    /** Ask user for Drive location ensure Edu planner folder has path  */
     public File pickAndSetupEduPlanner(Window ownerWindow) {
         File initial = guessDriveFolder();
 
@@ -85,7 +85,7 @@ public class GoogleDriveService {
         return eduPlanner;
     }
 
-    /** Ensure subfolder exists under saved EduPlanner base (e.g., "Notes"). */
+    /** Ensure subfolder is included  */
     public File ensureSubfolder(String subfolderName) {
         File base = getSavedDriveFolder();
         if (base == null || !base.isDirectory()) return null;
