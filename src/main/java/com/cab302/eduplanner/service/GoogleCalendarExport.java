@@ -10,12 +10,12 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/** Calendar export + Google Calendar link helper (no JavaFX deps). */
+/** Calendar export and Google Calendar*/
 public class GoogleCalendarExport {
 
     private static final DateTimeFormatter ICS = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
 
-    /** Event DTO used for export/link creation. */
+    /** Export Link Creation  */
     public record Event(
             String uid,
             String title,
@@ -25,7 +25,7 @@ public class GoogleCalendarExport {
             String description
     ) {}
 
-    /** Write events to an .ics file (timestamps stored as UTC). */
+    /** Write events to an .ics file calendar file */
     public File exportToIcs(File target, List<Event> events) throws IOException {
         try (BufferedWriter w = new BufferedWriter(new FileWriter(target))) {
             w.write("BEGIN:VCALENDAR\r\n");
@@ -48,7 +48,7 @@ public class GoogleCalendarExport {
         return target;
     }
 
-    /** Build a Google Calendar “Create event” link (no API keys needed). */
+    /** Build a Google Calendar “Create event” */
     public static String createGoogleLink(String title, String description,
                                           ZonedDateTime start, ZonedDateTime end) {
         var fmt = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'");
@@ -63,7 +63,7 @@ public class GoogleCalendarExport {
         return url.toString();
     }
 
-    /** Try to open a URL in the default browser. */
+    /** Open URl using default browser */
     public static void openInBrowser(String url) {
         try {
             if (Desktop.isDesktopSupported()) Desktop.getDesktop().browse(new URI(url));
