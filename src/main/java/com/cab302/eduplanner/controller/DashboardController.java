@@ -112,17 +112,16 @@ public class DashboardController {
         detailButton.setOnAction(e -> info("Tasks detailed view TBD"));
 
         flashcardsTile.setOnAction(e -> navigate("/com/cab302/eduplanner/flashcard.fxml", "EduPlanner — Flashcards"));
-        notesTile.setOnAction(e -> navigate("/com/cab302/eduplanner/note.fxml", "EduPlanner — Notes"));
+        notesTile.setOnAction(
+                e -> navigate("/com/cab302/eduplanner/note.fxml", "EduPlanner — Notes"));
 
-        pomodoroTile.setDisable(false);
-        pomodoroTile.setOnAction(e -> navigate("/com/cab302/eduplanner/pomodoro.fxml", "EduPlanner — Pomodoro"));
-
+        pomodoroTile.setDisable(true);
         darkTile.setDisable(true);
 
         rubricTile.setOnAction(e -> navigate("/com/cab302/eduplanner/rubric.fxml", "EduPlanner — Rubric Analysis"));
         rubricTile.setDisable(false);
 
-        refreshTasks();
+        refreshTasks(); // loads from DB and renders
     }
 
     // Local time helpers
@@ -176,7 +175,6 @@ public class DashboardController {
             cardsBox.getChildren().clear();
             return;
         }
-
         long userId = UserSession.getCurrentUser().getUserId();
         tasks = taskRepo.findByUserId(userId);
         render();
@@ -201,11 +199,12 @@ public class DashboardController {
     }
 
     // Task card builders
-
     private Node cardWithSubject(Task t) {
         Label subj = new Label(safeSubject(t));
         Label title = new Label(safeTitle(t));
-        Label due = new Label(t.getDueDate() == null ? "No due date" : "Due: " + t.getDueDate().format(DUE_FMT));
+        Label due = new Label(t.getDueDate() == null
+                ? "No due date"
+                : "Due: " + t.getDueDate().format(DUE_FMT));
         due.getStyleClass().add("task-due");
 
         Pane spacer = new Pane();
@@ -216,20 +215,14 @@ public class DashboardController {
             e.consume();
             if (confirm("Delete this task?")) {
                 long userId = UserSession.getCurrentUser().getUserId();
-                if (!taskRepo.delete(t.getTaskId(), userId))
-                    info("Delete failed");
+                if (!taskRepo.delete(t.getTaskId(), userId)) info("Delete failed");
                 refreshTasks();
-            } else
-                del.setSelected(false);
+            } else del.setSelected(false);
         });
 
         HBox box = new HBox(10, subj, title, due, spacer, del);
         box.getStyleClass().add("task-card");
-        box.setOnMouseClicked(e -> {
-            if (!(e.getTarget() instanceof CheckBox))
-                openEditForm(t);
-        });
-
+        box.setOnMouseClicked(e -> { if (!(e.getTarget() instanceof CheckBox)) openEditForm(t); });
         return box;
     }
 
@@ -240,7 +233,9 @@ public class DashboardController {
      */
     private Node cardWithoutSubject(Task t) {
         Label title = new Label(safeTitle(t));
-        Label due = new Label(t.getDueDate() == null ? "No due date" : "Due: " + t.getDueDate().format(DUE_FMT));
+        Label due = new Label(t.getDueDate() == null
+                ? "No due date"
+                : "Due: " + t.getDueDate().format(DUE_FMT));
         due.getStyleClass().add("task-due");
 
         Pane spacer = new Pane();
@@ -251,20 +246,14 @@ public class DashboardController {
             e.consume();
             if (confirm("Delete this task?")) {
                 long userId = UserSession.getCurrentUser().getUserId();
-                if (!taskRepo.delete(t.getTaskId(), userId))
-                    info("Delete failed");
+                if (!taskRepo.delete(t.getTaskId(), userId)) info("Delete failed");
                 refreshTasks();
-            } else
-                del.setSelected(false);
+            } else del.setSelected(false);
         });
 
         HBox box = new HBox(10, title, due, spacer, del);
         box.getStyleClass().add("task-card");
-        box.setOnMouseClicked(e -> {
-            if (!(e.getTarget() instanceof CheckBox))
-                openEditForm(t);
-        });
-
+        box.setOnMouseClicked(e -> { if (!(e.getTarget() instanceof CheckBox)) openEditForm(t); });
         return box;
     }
 
@@ -277,13 +266,11 @@ public class DashboardController {
         });
 
         cardsBox.getChildren().clear();
-
         if (tasks == null || tasks.isEmpty()) {
             emptyLabel.setText("No tasks");
             emptyLabel.setVisible(true);
             return;
         }
-
         emptyLabel.setVisible(false);
 
         // Null subject safe render
@@ -292,31 +279,26 @@ public class DashboardController {
                 var view = new java.util.ArrayList<>(tasks);
                 view.sort(
                         java.util.Comparator
-                                .comparing((Task t) -> t.getDueDate(),
-                                        java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder()))
+                                .comparing((Task t) -> t.getDueDate(), java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder()))
                                 .thenComparing(t -> safeTitle(t), String.CASE_INSENSITIVE_ORDER)
                 );
-                for (Task t : view)
-                    cardsBox.getChildren().add(cardWithSubject(t));
+                for (Task t : view) cardsBox.getChildren().add(cardWithSubject(t)); // [Subject][Title][Due]
             }
             case ALPHA -> {
                 var view = new java.util.ArrayList<>(tasks);
                 view.sort(
                         java.util.Comparator
                                 .comparing((Task t) -> safeTitle(t), String.CASE_INSENSITIVE_ORDER)
-                                .thenComparing(t -> t.getDueDate(),
-                                        java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder()))
+                                .thenComparing(t -> t.getDueDate(), java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder()))
                 );
-                for (Task t : view)
-                    cardsBox.getChildren().add(cardWithSubject(t));
+                for (Task t : view) cardsBox.getChildren().add(cardWithSubject(t)); // [Subject][Title][Due]
             }
             case GROUPED_SUBJECT -> {
                 var view = new java.util.ArrayList<>(tasks);
                 view.sort(
                         java.util.Comparator
                                 .comparing((Task t) -> safeSubject(t), String.CASE_INSENSITIVE_ORDER)
-                                .thenComparing(t -> t.getDueDate(),
-                                        java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder()))
+                                .thenComparing(t -> t.getDueDate(), java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder()))
                                 .thenComparing(t -> safeTitle(t), String.CASE_INSENSITIVE_ORDER)
                 );
 
@@ -326,14 +308,15 @@ public class DashboardController {
                     if (!subj.equals(currentHeader)) {
                         currentHeader = subj;
                         Label header = new Label(subj);
-                        header.getStyleClass().add("task-group-header");
+                        header.getStyleClass().add("task-group-header"); // you already use this class
                         cardsBox.getChildren().add(header);
                     }
-                    cardsBox.getChildren().add(cardWithoutSubject(t));
+                    cardsBox.getChildren().add(cardWithoutSubject(t)); // no subject here (header shows it)
                 }
             }
         }
     }
+
 
     /**
      * Opens the modal task creation dialog.
@@ -344,7 +327,6 @@ public class DashboardController {
             FXMLLoader fx = new FXMLLoader(App.class.getResource("/com/cab302/eduplanner/task_flow.fxml"));
             Parent root = fx.load();
             TaskFlowController ctl = fx.getController();
-
             Stage dialog = new Stage();
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(cardsBox.getScene().getWindow());
@@ -354,8 +336,7 @@ public class DashboardController {
             dialog.centerOnScreen();
             dialog.showAndWait();
 
-            if (ctl.isSaved())
-                refreshTasks();
+            if (ctl.isSaved()) refreshTasks();
         } catch (IOException ex) {
             info("Open create form failed: " + ex.getMessage());
         }
@@ -372,8 +353,7 @@ public class DashboardController {
             FXMLLoader fx = new FXMLLoader(App.class.getResource("/com/cab302/eduplanner/task_flow.fxml"));
             Parent root = fx.load();
             TaskFlowController ctl = fx.getController();
-
-            // pass a copy so we don't mutate the list until save succeeds
+            // pass a copy so we don’t mutate the list until save succeeds
             Task copy = new Task(existing.getUserId(), existing.getSubject(), existing.getTitle(),
                     existing.getDueDate(), existing.getNotes(), existing.getWeight(),
                     existing.getAchievedMark(), existing.getMaxMark());
@@ -389,8 +369,7 @@ public class DashboardController {
             dialog.centerOnScreen();
             dialog.showAndWait();
 
-            if (ctl.isSaved())
-                refreshTasks();
+            if (ctl.isSaved()) refreshTasks();
         } catch (IOException ex) {
             info("Open edit form failed: " + ex.getMessage());
         }
@@ -399,7 +378,7 @@ public class DashboardController {
     /**
      * Navigates to another FXML scene hosted by the same stage.
      *
-     * @param fxml classpath to the FXML file
+     * @param fxml  classpath to the FXML file
      * @param title window title to set
      */
     private void navigate(String fxml, String title) {
@@ -428,9 +407,6 @@ public class DashboardController {
         System.out.println(msg);
     }
 
-    /**
-     * Opens Google Calendar in the default browser.
-     */
     @FXML
     private void handleOpenGoogleCalendar() {
         try {
@@ -450,9 +426,6 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Exports all tasks to Google Calendar by opening individual event creation links.
-     */
     @FXML
     private void handleExportTasksToCalendar() {
         if (tasks == null || tasks.isEmpty()) {
@@ -471,9 +444,6 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Exports tasks to an .ics file for import into any calendar application.
-     */
     @FXML
     private void handleExportTasksToICS() {
         if (tasks == null || tasks.isEmpty()) {
@@ -506,11 +476,6 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Converts the current task list to calendar events.
-     *
-     * @return list of calendar events
-     */
     private List<GoogleCalendarExport.Event> convertTasksToEvents() {
         List<GoogleCalendarExport.Event> events = new ArrayList<>();
 
@@ -556,9 +521,6 @@ public class DashboardController {
         return events;
     }
 
-    /**
-     * Opens Google Calendar links for each task in the browser.
-     */
     private void exportTasksToGoogleCalendar() {
         int exported = 0;
 
