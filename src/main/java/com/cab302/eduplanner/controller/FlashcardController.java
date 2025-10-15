@@ -81,7 +81,9 @@ public class FlashcardController {
         if (folders.isEmpty()) {
             FlashcardFolder defaultFolder = new FlashcardFolder("Folder");
             FlashcardDeck defaultDeck = new FlashcardDeck("Deck");
-            defaultDeck.getFlashcards().add(new Flashcard("Question", "Answer"));
+            defaultDeck.getFlashcards().add(
+                    new Flashcard("Question", "Answer")
+            );
             defaultFolder.getDecks().add(defaultDeck);
             folders.add(defaultFolder);
         }
@@ -215,15 +217,13 @@ public class FlashcardController {
             }
         });
 
-        if (uploadButton != null) {
-            uploadButton.setOnAction(e -> {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Upload Flashcards");
-                alert.setHeaderText(null);
-                alert.setContentText("Upload functionality not yet implemented.");
-                alert.showAndWait();
-            });
-        }
+        uploadButton.setOnAction(e -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Upload Flashcards");
+            alert.setHeaderText(null);
+            alert.setContentText("Upload functionality not yet implemented.");
+            alert.showAndWait();
+        });
 
         addButton.setOnAction(e -> openAddFlashcardDialog());
         editButton.setOnAction(e -> openEditFlashcardDialog());
