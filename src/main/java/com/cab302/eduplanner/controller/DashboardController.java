@@ -38,86 +38,62 @@ import java.util.List;
 public class DashboardController {
 
     // User header
-    @FXML
-    private Label greetingLabel;
-    @FXML
-    private Label localTimeLabel;
+    @FXML private Label greetingLabel;
+    @FXML private Label localTimeLabel;
 
     // Tasks panel header
-    @FXML
-    private Button sortButton;
-    @FXML
-    private Button newButton;
-    @FXML
-    private Button detailButton;
+    @FXML private Button sortButton;
+    @FXML private Button newButton;
+    @FXML private Button calendarButton;
+    @FXML private Button detailButton;
 
     // Tasks panel UI
-    @FXML
-    private VBox cardsBox;
-    @FXML
-    private Label emptyLabel;
+    @FXML private VBox cardsBox;
+    @FXML private Label emptyLabel;
 
     // Widgets panel
-    @FXML
-    private Label widgetsHeader;
-    @FXML
-    private Button flashcardsTile;
-    @FXML
-    private Button notesTile;
-    @FXML
-    private Button pomodoroTile;
-    @FXML
-    private Button darkTile;
-    @FXML
-    private Button rubricTile;
+    @FXML private Label widgetsHeader;
+    @FXML private Button flashcardsTile;
+    @FXML private Button notesTile;
+    @FXML private Button pomodoroTile;
+    @FXML private Button darkTile;
+    @FXML private Button rubricTile;
 
     /**
      * Supported sort modes for rendering the task list.
      */
-    private enum SortMode {
-        DUE_DATE, ALPHA, GROUPED_SUBJECT
-    }
-
+    private enum SortMode { DUE_DATE, ALPHA, GROUPED_SUBJECT }
     private SortMode sortMode = SortMode.DUE_DATE;
-    private final TaskRepository taskRepo = new TaskRepository();
 
+    private final TaskRepository taskRepo = new TaskRepository();
     /** Latest fetched tasks used for rendering/editing in this controller lifecycle. */
     private List<Task> tasks;
 
     /**
      * FXML lifecycle hook. Wires UI handlers, starts the clock ticker, and loads tasks for the
      */
-    @FXML
-    public void initialize() {
+    @FXML public void initialize() {
         // Clear any placeholder nodes
         cardsBox.getChildren().clear();
 
         // Greeting from session
         var user = UserSession.getCurrentUser();
         String first = (user != null && user.getFirstName() != null && !user.getFirstName().isBlank())
-                ? user.getFirstName()
-                : "User";
+                ? user.getFirstName() : "User";
         greetingLabel.setText("Welcome back, " + first);
 
         tickClock();
         startMinuteTicker();
 
         // Button handlers
-        sortButton.setOnAction(e -> {
-            cycleSort();
-            render();
-        });
-
+        sortButton.setOnAction(e -> { cycleSort(); render(); });
         newButton.setOnAction(e -> openCreateForm());
         detailButton.setOnAction(e -> info("Tasks detailed view TBD"));
 
         flashcardsTile.setOnAction(e -> navigate("/com/cab302/eduplanner/flashcard.fxml", "EduPlanner — Flashcards"));
-        notesTile.setOnAction(
-                e -> navigate("/com/cab302/eduplanner/note.fxml", "EduPlanner — Notes"));
-
+        notesTile.setOnAction( e -> navigate("/com/cab302/eduplanner/note.fxml", "EduPlanner — Notes"));
         pomodoroTile.setDisable(true);
         darkTile.setDisable(true);
-
         rubricTile.setOnAction(e -> navigate("/com/cab302/eduplanner/rubric.fxml", "EduPlanner — Rubric Analysis"));
         rubricTile.setDisable(false);
 
