@@ -21,19 +21,30 @@
             <Label text="FLASHCARDS" styleClass="app-title" />
 
             <!-- Buttons -->
-            <HBox spacing="5">
-                <Button fx:id="dashboardButton" text="Dashboard" styleClass="secondary"/>
-                <Button fx:id="uploadButton" text="Upload" styleClass="secondary"/>
-            </HBox>
+            <Pane HBox.hgrow="ALWAYS"/>
+
+            <Button fx:id="dashboardButton"   text="Dashboard"          styleClass="secondary"/>
+
+            <!-- Re-added to match controller fields -->
+            <Separator orientation="VERTICAL"/>
+            <Button fx:id="uploadButton"      text="Upload"             styleClass="secondary"/>
+
+            <Separator orientation="VERTICAL"/>
+            <Button fx:id="setupDriveButton"  text="Setup Drive Sync"   styleClass="secondary" onAction="#handleSetupDriveFolder"/>
+            <Button fx:id="openDriveButton"   text="Open Drive Folder"  styleClass="secondary" onAction="#handleOpenDriveFolder"/>
+            <Button fx:id="forgetDriveButton" text="Forget Drive Sync"  styleClass="secondary" onAction="#handleForgetDriveFolder"/>
+
+            <Separator orientation="VERTICAL"/>
+            <Button fx:id="exportDeckCsvButton"   text="Export CSV"       styleClass="secondary" onAction="#handleExportDeckCsv"/>
+            <Button fx:id="exportDeckPdfButton"   text="Export PDF"       styleClass="secondary" onAction="#handleExportDeckPdf"/>
+            <Button fx:id="exportDeckDriveButton" text="Export to Drive"  styleClass="secondary" onAction="#handleExportDeckToDrive"/>
         </HBox>
     </top>
 
     <!-- Sidebar for Folders/Decks -->
     <left>
-        <VBox spacing="10" prefWidth="220" style="-fx-background-color: #faf9f6; -fx-padding: 10;">
+        <VBox spacing="10" prefWidth="240" style="-fx-background-color: #faf9f6; -fx-padding: 12;">
             <Label text="Subjects" styleClass="app-title"/>
-
-            <!-- Folder + Deck tree -->
             <TreeView fx:id="folderTree" VBox.vgrow="ALWAYS"/>
 
             <!-- Action buttons -->

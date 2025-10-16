@@ -4,6 +4,7 @@ import com.cab302.eduplanner.App;
 import com.cab302.eduplanner.appcontext.UserSession;
 import com.cab302.eduplanner.model.Task;
 import com.cab302.eduplanner.repository.TaskRepository;
+import com.cab302.eduplanner.service.GoogleCalendarExport;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,12 +16,19 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.Desktop;
+import java.net.URI;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,7 +88,6 @@ public class DashboardController {
         // Button handlers
         sortButton.setOnAction(e -> { cycleSort(); render(); });
         newButton.setOnAction(e -> openCreateForm());
-        calendarButton.setOnAction(e -> info("Tasks Calendar view TBD"));
         detailButton.setOnAction(e -> info("Tasks detailed view TBD"));
 
         flashcardsTile.setOnAction(e -> navigate("/com/cab302/eduplanner/flashcard.fxml", "EduPlanner — Flashcards"));
@@ -375,5 +382,162 @@ public class DashboardController {
 
     private void info(String msg) {
         System.out.println(msg);
+    }
+
+    @FXML
+    private void handleOpenGoogleCalendar() {
+        try {
+            String url = "https://calendar.google.com/calendar/u/0/r?tab=mc";
+            if (java.awt.Desktop.isDesktopSupported()) {
+                java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
+            } else {
+                new Alert(Alert.AlertType.INFORMATION,
+                        "Could not open a browser automatically. Copy this URL:\n" + url
+                ).showAndWait();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            new Alert(Alert.AlertType.ERROR,
+                    "Failed to open Google Calendar:\n" + ex.getMessage()
+            ).showAndWait();
+        }
+    }
+
+    @FXML
+    private void handleExportTasksToCalendar() {
+        if (tasks == null || tasks.isEmpty()) {
+            new Alert(Alert.AlertType.INFORMATION, "No tasks to export.").showAndWait();
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "This will open " + tasks.size() + " browser tab(s) to create calendar events. Continue?",
+                ButtonType.YES, ButtonType.NO);
+        confirm.setHeaderText("Export Tasks to Google Calendar");
+        var result = confirm.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.YES) {
+            exportTasksToGoogleCalendar();
+        }
+    }
+
+    @FXML
+    private void handleExportTasksToICS() {
+        if (tasks == null || tasks.isEmpty()) {
+            new Alert(Alert.AlertType.INFORMATION, "No tasks to export.").showAndWait();
+            return;
+        }
+
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Calendar Export");
+            fileChooser.setInitialFileName("eduplanner_tasks.ics");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("iCalendar Files", "*.ics"));
+
+            File file = fileChooser.showSaveDialog(cardsBox.getScene().getWindow());
+
+            if (file != null) {
+                GoogleCalendarExport exporter = new GoogleCalendarExport();
+                List<GoogleCalendarExport.Event> events = convertTasksToEvents();
+                exporter.exportToIcs(file, events);
+
+                Alert success = new Alert(Alert.AlertType.INFORMATION,
+                        "Tasks exported to: " + file.getAbsolutePath());
+                success.setHeaderText("Export Successful");
+                success.showAndWait();
+            }
+        } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR,
+                    "Failed to export tasks:\n" + ex.getMessage()).showAndWait();
+        }
+    }
+
+    private List<GoogleCalendarExport.Event> convertTasksToEvents() {
+        List<GoogleCalendarExport.Event> events = new ArrayList<>();
+
+        for (Task task : tasks) {
+            if (task.getDueDate() == null)
+                continue;
+
+            ZonedDateTime start = task.getDueDate()
+                    .atTime(LocalTime.of(9, 0))
+                    .atZone(ZoneId.systemDefault());
+            ZonedDateTime end = start.plusHours(1);
+
+            String title = safeTitle(task);
+            String subject = safeSubject(task);
+
+            StringBuilder desc = new StringBuilder();
+            desc.append("Subject: ").append(subject).append("\n");
+
+            if (task.getNotes() != null && !task.getNotes().isBlank()) {
+                desc.append("\nNotes:\n").append(task.getNotes());
+            }
+
+            if (task.getWeight() != null) {
+                desc.append("\n\nWeight: ").append(task.getWeight()).append("%");
+            }
+
+            if (task.getAchievedMark() != null && task.getMaxMark() != null) {
+                desc.append("\nScore: ").append(task.getAchievedMark())
+                        .append("/").append(task.getMaxMark());
+            }
+
+            GoogleCalendarExport.Event event = new GoogleCalendarExport.Event(
+                    "eduplanner-task-" + task.getTaskId(),
+                    title,
+                    start,
+                    end,
+                    subject,
+                    desc.toString()
+            );
+            events.add(event);
+        }
+
+        return events;
+    }
+
+    private void exportTasksToGoogleCalendar() {
+        int exported = 0;
+
+        for (Task task : tasks) {
+            if (task.getDueDate() == null)
+                continue;
+
+            ZonedDateTime start = task.getDueDate()
+                    .atTime(LocalTime.of(9, 0))
+                    .atZone(ZoneId.systemDefault());
+            ZonedDateTime end = start.plusHours(1);
+
+            String title = safeTitle(task);
+
+            StringBuilder desc = new StringBuilder();
+            desc.append("Subject: ").append(safeSubject(task)).append("\n");
+
+            if (task.getNotes() != null && !task.getNotes().isBlank()) {
+                desc.append("\n").append(task.getNotes());
+            }
+
+            String url = GoogleCalendarExport.createGoogleLink(
+                    title,
+                    desc.toString(),
+                    start,
+                    end);
+
+            GoogleCalendarExport.openInBrowser(url);
+            exported++;
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) {}
+        }
+
+        if (exported > 0) {
+            info("Opened " + exported + " calendar event(s) in browser");
+        } else {
+            new Alert(Alert.AlertType.INFORMATION,
+                    "No tasks with due dates to export.").showAndWait();
+        }
     }
 }

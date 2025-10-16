@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.ProgressIndicator;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import com.cab302.eduplanner.App;
@@ -14,6 +15,11 @@ import com.cab302.eduplanner.model.FlashcardDeck;
 import com.cab302.eduplanner.model.FlashcardFolder;
 import com.cab302.eduplanner.repository.FlashcardRepository;
 
+import com.cab302.eduplanner.service.GoogleDriveService;
+import com.cab302.eduplanner.service.FlashcardExportService;
+import com.cab302.eduplanner.service.FlashcardExportService.Card;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -26,6 +32,8 @@ public class FlashcardController {
     @FXML private Button resetButton, finishButton;
     @FXML private Button addButton, editButton, deleteButton;
     @FXML private Button newFolderButton, newDeckButton, renameButton, deleteFolderDeckButton;
+    @FXML private Button setupDriveButton, openDriveButton, forgetDriveButton;
+    @FXML private Button exportDeckCsvButton, exportDeckPdfButton, exportDeckDriveButton;
 
     @FXML private TreeView<String> folderTree;
     @FXML private Label flashcardText, progressLabel;
@@ -42,11 +50,30 @@ public class FlashcardController {
     private Stage addFlashcardStage;
     private Stage editFlashcardStage;
 
+    // Services (lazy-init to avoid FXMLLoader crashes if deps/OS features are missing)
+    private GoogleDriveService driveService;
+    private FlashcardExportService cardExport;
+
     // Default sample card text
     private static final String SAMPLE_TEXT = "Sample Flashcard\nCreate or select a folder & deck to begin.";
 
     @FXML
     public void initialize() {
+        // Create services safely after FXML injection
+        try {
+            cardExport = new FlashcardExportService();
+        } catch (Throwable t) {
+            System.err.println("[Flashcards] PDF/CSV export disabled: " + t);
+            cardExport = null;
+        }
+        try {
+            driveService = new GoogleDriveService();
+        } catch (Throwable t) {
+            System.err.println("[Flashcards] Drive features disabled: " + t);
+            driveService = null;
+        }
+
+        // Basic setup
         setupSidebar();
         setupButtons();
 
@@ -70,6 +97,7 @@ public class FlashcardController {
 
         // Disable buttons until valid deck selected
         setButtonsDisabled(true);
+        updateDriveButtonsState();
     }
 
     // ==== Sidebar logic ====
@@ -185,6 +213,7 @@ public class FlashcardController {
                 App.changeScene(stage, "/com/cab302/eduplanner/dashboard.fxml", "EduPlanner — Dashboard");
             } catch (IOException ex) {
                 System.err.println("Failed to switch to Dashboard: " + ex.getMessage());
+                ex.printStackTrace();
             }
         });
 
@@ -217,7 +246,7 @@ public class FlashcardController {
             progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
             setButtonsDisabled(true);
             addButton.setDisable(false);
-            uploadButton.setDisable(!hasAnyFlashcards());
+            if (uploadButton != null) uploadButton.setDisable(!hasAnyFlashcards());
             return;
         }
 
@@ -235,7 +264,7 @@ public class FlashcardController {
         addButton.setDisable(finished);
         editButton.setDisable(finished);
         deleteButton.setDisable(finished);
-        uploadButton.setDisable(!hasAnyFlashcards());
+        if (uploadButton != null) uploadButton.setDisable(!hasAnyFlashcards());
     }
 
     private void nextFlashcard() {
@@ -318,6 +347,7 @@ public class FlashcardController {
             }
         } catch (Exception ex) {
             System.err.println("Error while opening Add Flashcard dialog: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -350,6 +380,7 @@ public class FlashcardController {
             }
         } catch (Exception ex) {
             System.err.println("Error while opening Edit Flashcard dialog: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -416,6 +447,157 @@ public class FlashcardController {
         addButton.setDisable(disabled);
         editButton.setDisable(disabled);
         deleteButton.setDisable(disabled);
-        uploadButton.setDisable(disabled || !hasAnyFlashcards());
+        if (uploadButton != null) {
+            uploadButton.setDisable(disabled || !hasAnyFlashcards());
+        }
+    }
+
+    // ==== Google Drive Export Methods ====
+    private void updateDriveButtonsState() {
+        boolean hasDrive = driveService != null && driveService.getSavedDriveFolder() != null;
+        if (openDriveButton != null) openDriveButton.setDisable(!hasDrive);
+        if (forgetDriveButton != null) forgetDriveButton.setDisable(!hasDrive);
+    }
+
+    private static record DeckExport(String name, List<Card> cards) {}
+
+    private DeckExport gatherActiveDeck() {
+        FlashcardDeck deck = currentDeck;
+
+        if (deck == null) {
+            outer:
+            for (FlashcardFolder f : folders) {
+                for (FlashcardDeck d : f.getDecks()) {
+                    if (!d.getFlashcards().isEmpty()) { deck = d; break outer; }
+                }
+            }
+        }
+
+        String name = deck == null ? "Deck" : (deck.getName() == null || deck.getName().isBlank() ? "Deck" : deck.getName());
+        List<Card> cards = new ArrayList<>();
+
+        if (deck != null) {
+            for (Flashcard fc : deck.getFlashcards()) {
+                cards.add(new Card(fc.getQuestion(), fc.getAnswer()));
+            }
+        }
+
+        if (cards.isEmpty()) {
+            cards.add(new Card("What is encapsulation?", "Bundling data with methods that operate on it."));
+            cards.add(new Card("Big-O of binary search?", "O(log n)"));
+        }
+
+        return new DeckExport(name, cards);
+    }
+
+    @FXML
+    private void handleSetupDriveFolder() {
+        if (driveService == null) {
+            new Alert(Alert.AlertType.ERROR, "Drive features unavailable (service failed to initialise).").showAndWait();
+            return;
+        }
+        var window = (setupDriveButton != null ? setupDriveButton.getScene().getWindow() : null);
+        File base = driveService.pickAndSetupEduPlanner(window);
+        if (base != null) {
+            new Alert(Alert.AlertType.INFORMATION,
+                    "Drive sync folder set:\n" + base.getAbsolutePath() + "\n\nSubfolders created:\n- Notes\n- Flashcards").showAndWait();
+        }
+        updateDriveButtonsState();
+    }
+
+    @FXML
+    private void handleOpenDriveFolder() {
+        if (driveService == null) {
+            new Alert(Alert.AlertType.ERROR, "Drive features unavailable.").showAndWait();
+            return;
+        }
+        var base = driveService.getSavedDriveFolder();
+        if (base == null || !base.isDirectory()) {
+            new Alert(Alert.AlertType.INFORMATION, "No Drive folder set. Click 'Setup Drive Sync'.").showAndWait();
+            return;
+        }
+        try { if (java.awt.Desktop.isDesktopSupported()) java.awt.Desktop.getDesktop().open(base); }
+        catch (Exception e) { new Alert(Alert.AlertType.ERROR, "Couldn't open folder:\n" + e.getMessage()).showAndWait(); }
+    }
+
+    @FXML
+    private void handleForgetDriveFolder() {
+        if (driveService == null) {
+            new Alert(Alert.AlertType.ERROR, "Drive features unavailable.").showAndWait();
+            return;
+        }
+        driveService.clearSavedDriveFolder();
+        new Alert(Alert.AlertType.INFORMATION, "Drive sync folder cleared. Run 'Setup Drive Sync' again.").showAndWait();
+        updateDriveButtonsState();
+    }
+
+    @FXML
+    private void handleExportDeckCsv() {
+        if (cardExport == null) {
+            new Alert(Alert.AlertType.ERROR, "Export service unavailable.").showAndWait();
+            return;
+        }
+        DeckExport deck = gatherActiveDeck();
+
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Choose folder to save CSV");
+        File dir = chooser.showDialog(exportDeckCsvButton != null ? exportDeckCsvButton.getScene().getWindow() : null);
+        if (dir == null) return;
+
+        try {
+            File file = cardExport.exportCsv(deck.name(), deck.cards(), dir);
+            new Alert(Alert.AlertType.INFORMATION, "Saved:\n" + file.getAbsolutePath()).showAndWait();
+        } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, "Export failed: " + ex.getMessage()).showAndWait();
+        }
+    }
+
+    @FXML
+    private void handleExportDeckPdf() {
+        if (cardExport == null) {
+            new Alert(Alert.AlertType.ERROR, "Export service unavailable.").showAndWait();
+            return;
+        }
+        DeckExport deck = gatherActiveDeck();
+
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Choose folder to save PDF");
+        File dir = chooser.showDialog(exportDeckPdfButton != null ? exportDeckPdfButton.getScene().getWindow() : null);
+        if (dir == null) return;
+
+        try {
+            File file = cardExport.exportPdf(deck.name(), deck.cards(), dir);
+            new Alert(Alert.AlertType.INFORMATION, "Saved:\n" + file.getAbsolutePath()).showAndWait();
+        } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, "Export failed: " + ex.getMessage()).showAndWait();
+        }
+    }
+
+    @FXML
+    private void handleExportDeckToDrive() {
+        if (cardExport == null) {
+            new Alert(Alert.AlertType.ERROR, "Export service unavailable.").showAndWait();
+            return;
+        }
+        if (driveService == null) {
+            new Alert(Alert.AlertType.ERROR, "Drive features unavailable.").showAndWait();
+            return;
+        }
+        DeckExport deck = gatherActiveDeck();
+
+        if (driveService.getSavedDriveFolder() == null) {
+            handleSetupDriveFolder();
+            if (driveService.getSavedDriveFolder() == null) return;
+        }
+
+        try {
+            File temp = cardExport.exportPdf(deck.name(), deck.cards(), new File(System.getProperty("java.io.tmpdir")));
+            File fcFolder = driveService.ensureSubfolder("Flashcards");
+            File copied = cardExport.copyToFolder(temp, fcFolder);
+            new Alert(Alert.AlertType.INFORMATION, "Exported to Drive:\n" + copied.getAbsolutePath()).showAndWait();
+            try { if (java.awt.Desktop.isDesktopSupported()) java.awt.Desktop.getDesktop().open(fcFolder); } catch (Exception ignore) {}
+        } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, "Drive export failed:\n" + ex.getMessage()).showAndWait();
+        }
     }
 }
