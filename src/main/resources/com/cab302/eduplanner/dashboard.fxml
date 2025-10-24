@@ -63,9 +63,7 @@
                     <!-- Calander Buttons-->
                     <Button text="View Calendar" styleClass="task-header-button"
                             onAction="#handleOpenGoogleCalendar"/>
-                    <Button text="Export to Google" styleClass="task-header-button"
-                            onAction="#handleExportTasksToCalendar"/>
-                    <Button text="Export to File" styleClass="task-header-button"
+                    <Button text="Export as Calendar File" styleClass="task-header-button"
                             onAction="#handleExportTasksToICS"/>
 
                     <Button fx:id="detailButton" text="Detail View" styleClass="task-header-button"/>
