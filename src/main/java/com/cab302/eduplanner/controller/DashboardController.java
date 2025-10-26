@@ -24,12 +24,15 @@ import java.awt.Desktop;
 import java.net.URI;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Controller for the main dashboard view.
@@ -39,7 +42,9 @@ public class DashboardController {
 
     // User header
     @FXML private Label greetingLabel;
+    @FXML private Label motivationalLabel;
     @FXML private Label localTimeLabel;
+    @FXML private Label localDateLabel;
 
     // Tasks panel header
     @FXML private Button sortButton;
@@ -76,13 +81,18 @@ public class DashboardController {
         // Clear any placeholder nodes
         cardsBox.getChildren().clear();
 
-        // Greeting from session
+        // Greeting from session with motivational support copy underneath
         var user = UserSession.getCurrentUser();
         String first = (user != null && user.getFirstName() != null && !user.getFirstName().isBlank())
                 ? user.getFirstName() : "User";
         greetingLabel.setText("Welcome back, " + first);
 
+        if (motivationalLabel != null) {
+            motivationalLabel.setText(randomMotivationalQuip());
+        }
+
         tickClock();
+        showLocalDate();
         startMinuteTicker();
 
         // Button handlers
@@ -101,13 +111,42 @@ public class DashboardController {
         refreshTasks(); // loads from DB and renders
     }
 
+    private static final List<String> MOTIVATIONAL_QUIPS = List.of(
+            "Stay focused, you've got this!",
+            "Small steps lead to big wins.",
+            "Your effort today fuels success.",
+            "Keep pushing, progress is near."
+    );
+
+    public static List<String> motivationalQuips() {
+        return MOTIVATIONAL_QUIPS;
+    }
+
+    public static String randomMotivationalQuip() {
+        return randomMotivationalQuip(null);
+    }
+
+    public static String randomMotivationalQuip(Random random) {
+        Random rng = (random == null) ? ThreadLocalRandom.current() : random;
+        return MOTIVATIONAL_QUIPS.get(rng.nextInt(MOTIVATIONAL_QUIPS.size()));
+    }
+
     // Local time helpers
 
     /**
      * Updates the local-time label to the current time in {@code HH:mm} format.
      */
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
+    private static final DateTimeFormatter DATE_HEADER_FMT = DateTimeFormatter.ofPattern("EEE, d MMM");
+
     private void tickClock() {
-        localTimeLabel.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+        localTimeLabel.setText(LocalTime.now().format(TIME_FMT));
+    }
+
+    private void showLocalDate() {
+        if (localDateLabel != null) {
+            localDateLabel.setText(LocalDate.now().format(DATE_HEADER_FMT));
+        }
     }
 
     /**
@@ -119,7 +158,10 @@ public class DashboardController {
                 while (true) {
                     //noinspection BusyWait (supresses warning)
                     Thread.sleep(60_000);
-                    Platform.runLater(this::tickClock);
+                    Platform.runLater(() -> {
+                        tickClock();
+                        showLocalDate();
+                    });
                 }
             } catch (InterruptedException ignored) {}
         });
