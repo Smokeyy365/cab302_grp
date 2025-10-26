@@ -3,14 +3,14 @@
 EduPlanner is a JavaFX desktop application that helps students plan assessments, track study progress, and keep their resources organised. The app combines task management, rubric tracking, flashcards, and note-taking so students can stay on top of their workload from a single workspace.
 
 ## Project Resources
-- `src/main/java/com/cab302/eduplanner/App.java` � JavaFX entry point and application bootstrap.
-- `src/main/java/com/cab302/eduplanner/controller` � View controllers that connect FXML layouts to business logic.
-- `src/main/java/com/cab302/eduplanner/service` � Core services (authentication, rubric operations, schedulers).
-- `src/main/java/com/cab302/eduplanner/repository` � SQLite-backed repositories handling persistence.
-- `src/main/resources/com/cab302/eduplanner` � FXML layouts and CSS that define the UI.
-- `src/test/java/com/cab302/eduplanner` � Unit tests for models, repositories, controllers, and services.
-- `eduplanner_database.db` � Local SQLite database used for development data.
-- `.github/workflows/build.yml` � GitHub Actions workflow that runs the automated test suite.
+- `src/main/java/com/cab302/eduplanner/App.java` : JavaFX entry point and application bootstrap.
+- `src/main/java/com/cab302/eduplanner/controller` : View controllers that connect FXML layouts to business logic.
+- `src/main/java/com/cab302/eduplanner/service` : Core services (authentication, rubric operations, schedulers).
+- `src/main/java/com/cab302/eduplanner/repository` : SQLite-backed repositories handling persistence.
+- `src/main/resources/com/cab302/eduplanner` : FXML layouts and CSS that define the UI.
+- `src/test/java/com/cab302/eduplanner` : Unit tests for models, repositories, controllers, and services.
+- `eduplanner_database.db` : Local SQLite database used for development data.
+- `.github/workflows/build.yml` : GitHub Actions workflow that runs the automated test suite.
 
 ## Feature Checklist
 
@@ -24,16 +24,16 @@ EduPlanner is a JavaFX desktop application that helps students plan assessments,
 - [ ] Planner timetable and drag-and-drop scheduling.
 
 ### Integrations & Automation
-- [ ] Google Calendar export.
-- [ ] Google Drive / OneDrive resource sync.
-- [ ] OCR ingestion for rubric files.
+- [x] Google Calendar export.
+- [x] Google Drive / OneDrive resource sync.
+- [x] OCR ingestion for rubric files.
 - [ ] Smart notifications and reminders.
 
 ### Quality & Delivery
 - [x] SQLite persistence layer with repositories and services.
 - [x] JUnit 5 unit tests for auth, flashcards, folders, dashboard, and rubrics.
 - [x] GitHub Actions CI running the Maven wrapper on pull requests to `main`.
-- [ ] UI / integration test suite.
+- [x] UI / integration test suite.
 - [ ] Automated packaging & release pipeline.
 
 ## Project Management & CI
@@ -44,6 +44,7 @@ EduPlanner is a JavaFX desktop application that helps students plan assessments,
 ## Running the Application
 - **With the Maven wrapper:** `./mvnw clean javafx:run` (macOS / Linux) or `mvnw.cmd clean javafx:run` (Windows PowerShell or Command Prompt).
 - **Inside IntelliJ IDEA:** use the JavaFX run configuration pointing to `com.cab302.eduplanner.AppLauncher`.
+- **Rubric Analysis:** if needing to test the rubric analysis, the required environment variable can be found in the .zip submission within the text file. You will need to add it before starting the program. 
 
 JavaFX 21 libraries are pulled automatically by Maven; no manual SDK setup is required beyond installing JDK 21.
 
@@ -54,7 +55,6 @@ JavaFX 21 libraries are pulled automatically by Maven; no manual SDK setup is re
    - Windows PowerShell / CMD: `mvnw.cmd test`
    - macOS / Linux / Git Bash: `./mvnw test`
 3. Maven downloads dependencies on the first run and executes all tests under `src/test/java` via the Surefire plugin.
-4. Review the summary in the terminal or open `target/surefire-reports/*.txt` for detailed results.
 
 ### Running a single test class
 ```

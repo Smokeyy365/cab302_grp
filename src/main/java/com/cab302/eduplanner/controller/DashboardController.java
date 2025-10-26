@@ -20,8 +20,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.awt.Desktop;
-import java.net.URI;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -426,6 +424,7 @@ public class DashboardController {
         System.out.println(msg);
     }
 
+    // Allows user to view their google calendar
     @FXML
     private void handleOpenGoogleCalendar() {
         try {
@@ -445,24 +444,7 @@ public class DashboardController {
         }
     }
 
-    @FXML
-    private void handleExportTasksToCalendar() {
-        if (tasks == null || tasks.isEmpty()) {
-            new Alert(Alert.AlertType.INFORMATION, "No tasks to export.").showAndWait();
-            return;
-        }
-
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "This will open " + tasks.size() + " browser tab(s) to create calendar events. Continue?",
-                ButtonType.YES, ButtonType.NO);
-        confirm.setHeaderText("Export Tasks to Google Calendar");
-        var result = confirm.showAndWait();
-
-        if (result.isPresent() && result.get() == ButtonType.YES) {
-            exportTasksToGoogleCalendar();
-        }
-    }
-
+// Exports tasks as an ICS file (calendar file)
     @FXML
     private void handleExportTasksToICS() {
         if (tasks == null || tasks.isEmpty()) {
@@ -495,6 +477,7 @@ public class DashboardController {
         }
     }
 
+// creates format for the events
     private List<GoogleCalendarExport.Event> convertTasksToEvents() {
         List<GoogleCalendarExport.Event> events = new ArrayList<>();
 
@@ -540,46 +523,5 @@ public class DashboardController {
         return events;
     }
 
-    private void exportTasksToGoogleCalendar() {
-        int exported = 0;
 
-        for (Task task : tasks) {
-            if (task.getDueDate() == null)
-                continue;
-
-            ZonedDateTime start = task.getDueDate()
-                    .atTime(LocalTime.of(9, 0))
-                    .atZone(ZoneId.systemDefault());
-            ZonedDateTime end = start.plusHours(1);
-
-            String title = safeTitle(task);
-
-            StringBuilder desc = new StringBuilder();
-            desc.append("Subject: ").append(safeSubject(task)).append("\n");
-
-            if (task.getNotes() != null && !task.getNotes().isBlank()) {
-                desc.append("\n").append(task.getNotes());
-            }
-
-            String url = GoogleCalendarExport.createGoogleLink(
-                    title,
-                    desc.toString(),
-                    start,
-                    end);
-
-            GoogleCalendarExport.openInBrowser(url);
-            exported++;
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ignored) {}
-        }
-
-        if (exported > 0) {
-            info("Opened " + exported + " calendar event(s) in browser");
-        } else {
-            new Alert(Alert.AlertType.INFORMATION,
-                    "No tasks with due dates to export.").showAndWait();
-        }
-    }
 }

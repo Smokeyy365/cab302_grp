@@ -50,7 +50,7 @@ public class FlashcardController {
     private Stage addFlashcardStage;
     private Stage editFlashcardStage;
 
-    // Services (lazy-init to avoid FXMLLoader crashes if deps/OS features are missing)
+    // Export Services
     private GoogleDriveService driveService;
     private FlashcardExportService cardExport;
 
